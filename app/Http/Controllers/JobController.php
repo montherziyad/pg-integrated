@@ -2,61 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\Project;
+use App\Models\JobCategory;
+use App\Models\JobStatus;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-{
-    return view('jobs.index');
-}
+    {
+        return view('jobs.index');
+    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-   public function create()
-{
-    return view('jobs.create');
-}
+    public function create()
+    {
+        $clients = Client::orderBy('name')->get();
+        $projects = Project::orderBy('name')->get();
+        $categories = JobCategory::orderBy('name')->get();
+        $statuses = JobStatus::orderBy('sort_order')->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
+        return view('jobs.create', compact(
+            'clients',
+            'projects',
+            'categories',
+            'statuses'
+        ));
+    }
+
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
