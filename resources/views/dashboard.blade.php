@@ -1,17 +1,152 @@
 <x-app-layout>
+
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        Dashboard
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+    <div class="space-y-8">
+
+        <!-- Welcome -->
+        <div>
+            <h2 class="pg-title">
+                Welcome back, {{ Auth::user()->name }}
+            </h2>
+
+            <p class="pg-subtitle mt-1">
+                PG Integrated Creative Operations Dashboard
+            </p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="pg-stat-label">Today's Jobs</div>
+                    <div class="pg-stat-value">48</div>
                 </div>
             </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="pg-stat-label">Urgent Jobs</div>
+                    <div class="pg-stat-value text-red-600">6</div>
+                </div>
+            </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="pg-stat-label">Waiting Review</div>
+                    <div class="pg-stat-value text-amber-500">5</div>
+                </div>
+            </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="pg-stat-label">Completed Today</div>
+                    <div class="pg-stat-value text-emerald-600">12</div>
+                </div>
+            </div>
+
         </div>
+
+        <!-- Two Columns -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+            <!-- Traffic Board -->
+            <div class="pg-card">
+                <div class="pg-card-body">
+
+                    <h3 class="text-lg font-bold mb-6">
+                        Traffic Board
+                    </h3>
+
+                    <div class="space-y-4">
+
+                        <div class="flex justify-between">
+                            <span>New Jobs</span>
+                            <span class="pg-badge pg-badge-new">14</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span>In Progress</span>
+                            <span class="pg-badge pg-badge-progress">19</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span>Waiting Review</span>
+                            <span class="pg-badge pg-badge-review">5</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span>Completed</span>
+                            <span class="pg-badge pg-badge-completed">12</span>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Team Workload -->
+            <div class="pg-card">
+                <div class="pg-card-body">
+
+                    <h3 class="text-lg font-bold mb-6">
+                        Team Workload
+                    </h3>
+
+                    <table class="w-full">
+
+                        <thead>
+                            <tr class="text-left border-b">
+                                <th class="pb-3">Employee</th>
+                                <th class="pb-3">Status</th>
+                                <th class="pb-3">Jobs</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr class="border-b">
+                                <td class="py-3">Ahmed</td>
+                                <td>
+                                    <span class="pg-badge pg-badge-progress">
+                                        Busy
+                                    </span>
+                                </td>
+                                <td>8</td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="py-3">Sarah</td>
+                                <td>
+                                    <span class="pg-badge pg-badge-completed">
+                                        Available
+                                    </span>
+                                </td>
+                                <td>2</td>
+                            </tr>
+
+                            <tr>
+                                <td class="py-3">Mohammed</td>
+                                <td>
+                                    <span class="pg-badge pg-badge-review">
+                                        Review
+                                    </span>
+                                </td>
+                                <td>4</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
     </div>
+
 </x-app-layout>

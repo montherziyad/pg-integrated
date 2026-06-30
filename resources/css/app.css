@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .pg-card {
+        @apply bg-white rounded-2xl shadow-sm border border-slate-200;
+    }
+
+    .pg-card-body {
+        @apply p-6;
+    }
+
+    .pg-title {
+        @apply text-2xl font-bold text-slate-900;
+    }
+
+    .pg-subtitle {
+        @apply text-sm text-slate-500;
+    }
+
+    .pg-stat-label {
+        @apply text-sm font-medium text-slate-500;
+    }
+
+    .pg-stat-value {
+        @apply mt-2 text-3xl font-bold text-slate-900;
+    }
+
+    .pg-badge {
+        @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .pg-badge-new {
+        @apply bg-blue-100 text-blue-700;
+    }
+
+    .pg-badge-progress {
+        @apply bg-amber-100 text-amber-700;
+    }
+
+    .pg-badge-review {
+        @apply bg-purple-100 text-purple-700;
+    }
+
+    .pg-badge-completed {
+        @apply bg-emerald-100 text-emerald-700;
+    }
+
+    .pg-btn-primary {
+        @apply inline-flex items-center px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800;
+    }
+
+    .pg-btn-secondary {
+        @apply inline-flex items-center px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50;
+    }
+}
