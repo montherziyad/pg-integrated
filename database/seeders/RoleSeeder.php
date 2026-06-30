@@ -1,0 +1,75 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Role;
+
+class RoleSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Role::insert([
+            [
+                'name' => 'Super Admin',
+                'code' => 'SUPER_ADMIN',
+                'description' => 'System Administrator',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Operations Manager',
+                'code' => 'OPERATIONS_MANAGER',
+                'description' => 'Operations Manager',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Traffic Manager',
+                'code' => 'TRAFFIC_MANAGER',
+                'description' => 'Traffic Manager',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Account Manager',
+                'code' => 'ACCOUNT_MANAGER',
+                'description' => 'Account Manager',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Designer',
+                'code' => 'DESIGNER',
+                'description' => 'Graphic Designer',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Senior Designer',
+                'code' => 'SENIOR_DESIGNER',
+                'description' => 'Senior Designer',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Content Writer',
+                'code' => 'CONTENT_WRITER',
+                'description' => 'Content Writer',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Motion Designer',
+                'code' => 'MOTION_DESIGNER',
+                'description' => 'Motion Graphics Designer',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'QA Reviewer',
+                'code' => 'QA_REVIEWER',
+                'description' => 'Quality Assurance Reviewer',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Archive Officer',
+                'code' => 'ARCHIVE_OFFICER',
+                'description' => 'Archive Officer',
+                'is_active' => true,
+            ],
+        ]);
+    }
+}
