@@ -28,6 +28,7 @@
                         <th>Type</th>
                         <th>Size</th>
                         <th>Uploaded By</th>
+                        <th></th>
                     </tr>
                 </thead>
 
@@ -38,10 +39,16 @@
                             <td>{{ strtoupper($asset->file_type) }}</td>
                             <td>{{ number_format($asset->file_size / 1024, 2) }} KB</td>
                             <td>{{ $asset->uploader?->name ?? '-' }}</td>
+                            <td class="text-right">
+                                <a href="{{ route('assets.download', $asset->id) }}"
+                                   class="pg-btn-secondary">
+                                    Download
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-6 text-center text-slate-500">
+                            <td colspan="5" class="py-6 text-center text-slate-500">
                                 No attachments uploaded.
                             </td>
                         </tr>

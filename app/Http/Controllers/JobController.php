@@ -13,6 +13,8 @@ use App\Modules\Jobs\Requests\AssignJobRequest;
 use App\Modules\Jobs\Requests\StoreJobRequest;
 use App\Modules\Jobs\Requests\UploadJobAttachmentsRequest;
 use App\Modules\Jobs\Services\JobService;
+use App\Models\Asset;
+use Illuminate\Support\Facades\Storage;
 
 class JobController extends Controller
 {
@@ -99,7 +101,17 @@ class JobController extends Controller
     {
         //
     }
+    public function downloadAttachment(Asset $asset)
+    {
+    if (!Storage::disk($asset->storage_type)->exists($asset->storage_path)) {
+        abort(404, 'File not found.');
+    }
 
+    return Storage::disk($asset->storage_type)->download(
+        $asset->storage_path,
+        $asset->original_name
+    );  
+    }   
     public function update(int $id)
     {
         //

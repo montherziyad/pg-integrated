@@ -13,7 +13,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
-
+Route::get('/assets/{asset}/download', [JobController::class, 'downloadAttachment'])
+    ->name('assets.download');
     Route::resource('jobs', JobController::class);
 
     Route::post('/jobs/{job}/assign', [JobController::class, 'assign'])
