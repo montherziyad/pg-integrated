@@ -19,6 +19,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/jobs/{job}/assign', [JobController::class, 'assign'])
         ->name('jobs.assign');
 
+    Route::post('/jobs/{job}/attachments', [JobController::class, 'uploadAttachments'])
+        ->name('jobs.attachments.upload');
+
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 

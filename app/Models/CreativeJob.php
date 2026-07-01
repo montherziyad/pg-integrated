@@ -40,11 +40,6 @@ class CreativeJob extends Model
         'created_by',
     ];
 
-    public function currentWorkflowStage()
-    {
-        return $this->belongsTo(WorkflowStage::class, 'current_workflow_stage_id');
-    }
-
     public function client()
     {
         return $this->belongsTo(Client::class);
@@ -58,5 +53,25 @@ class CreativeJob extends Model
     public function category()
     {
         return $this->belongsTo(JobCategory::class, 'job_category_id');
+    }
+
+    public function currentWorkflowStage()
+    {
+        return $this->belongsTo(WorkflowStage::class, 'current_workflow_stage_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(JobAssignment::class, 'creative_job_id');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(JobActivity::class, 'creative_job_id');
+    }
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class, 'creative_job_id');
     }
 }

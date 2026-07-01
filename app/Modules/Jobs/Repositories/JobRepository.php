@@ -35,6 +35,11 @@ class JobRepository extends BaseRepository
                 'project',
                 'category',
                 'currentWorkflowStage',
+                'assignments.team',
+                'assignments.supervisor',
+                'assignments.assignee',
+                'activities.user',
+                'assets.uploader',
             ])
             ->find($id);
     }

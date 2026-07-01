@@ -52,6 +52,17 @@ class JobService
         return $assignment;
     }
 
+    public function uploadAttachments(CreativeJob $job, array $files): void
+    {
+        $this->uploadJobAttachmentsAction->execute($job, $files);
+
+        $this->logJobActivityAction->execute(
+            $job,
+            'ATTACHMENTS_UPLOADED',
+            'Brief attachments uploaded successfully.'
+        );
+    }
+
     public function find(int $id): ?CreativeJob
     {
         return $this->repository->find($id);
