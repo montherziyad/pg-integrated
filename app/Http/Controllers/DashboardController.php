@@ -28,17 +28,17 @@ class DashboardController extends Controller
             'project',
             'currentWorkflowStage',
         ])
-        ->latest()
-        ->take(10)
-        ->get();
+            ->latest()
+            ->take(10)
+            ->get();
 
         $latestActivities = JobActivity::with([
             'job',
             'user',
         ])
-        ->latest('activity_at')
-        ->take(10)
-        ->get();
+            ->latest('activity_at')
+            ->take(10)
+            ->get();
 
         $workflowStages = WorkflowStage::withCount('jobs')
             ->orderBy('sort_order')

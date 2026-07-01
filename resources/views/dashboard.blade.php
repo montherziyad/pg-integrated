@@ -17,39 +17,46 @@
             </p>
         </div>
 
-        <!-- Statistics -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+       <!-- Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-            <div class="pg-card">
-                <div class="pg-card-body">
-                    <div class="pg-stat-label">Today's Jobs</div>
-                    <div class="pg-stat-value">48</div>
-                </div>
+    <div class="pg-card">
+        <div class="pg-card-body">
+            <div class="pg-stat-label">Total Jobs</div>
+            <div class="pg-stat-value">
+                {{ $totalJobs }}
             </div>
-
-            <div class="pg-card">
-                <div class="pg-card-body">
-                    <div class="pg-stat-label">Urgent Jobs</div>
-                    <div class="pg-stat-value text-red-600">6</div>
-                </div>
-            </div>
-
-            <div class="pg-card">
-                <div class="pg-card-body">
-                    <div class="pg-stat-label">Waiting Review</div>
-                    <div class="pg-stat-value text-amber-500">5</div>
-                </div>
-            </div>
-
-            <div class="pg-card">
-                <div class="pg-card-body">
-                    <div class="pg-stat-label">Completed Today</div>
-                    <div class="pg-stat-value text-emerald-600">12</div>
-                </div>
-            </div>
-
         </div>
+    </div>
 
+    <div class="pg-card">
+        <div class="pg-card-body">
+            <div class="pg-stat-label">Urgent Jobs</div>
+            <div class="pg-stat-value text-red-600">
+                {{ $urgentJobs }}
+            </div>
+        </div>
+    </div>
+
+    <div class="pg-card">
+        <div class="pg-card-body">
+            <div class="pg-stat-label">Clients</div>
+            <div class="pg-stat-value">
+                {{ $totalClients }}
+            </div>
+        </div>
+    </div>
+
+    <div class="pg-card">
+        <div class="pg-card-body">
+            <div class="pg-stat-label">Projects</div>
+            <div class="pg-stat-value">
+                {{ $totalProjects }}
+            </div>
+        </div>
+    </div>
+
+</div>
         <!-- Two Columns -->
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
