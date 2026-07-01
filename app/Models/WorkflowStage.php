@@ -20,4 +20,12 @@ class WorkflowStage extends Model
         'allow_comments',
         'is_active',
     ];
+
+    public function jobs()
+    {
+        return $this->hasMany(
+            CreativeJob::class,
+            'current_workflow_stage_id'
+        );
+    }
 }
