@@ -1,106 +1,136 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\CreativeJob;
-use App\Models\WorkflowStage;
-use Illuminate\Support\Facades\Auth;
+
 use App\Models\Client;
-use App\Models\Project;
+use App\Models\CreativeJob;
 use App\Models\JobCategory;
 use App\Models\JobStatus;
-use Illuminate\Http\Request;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+
+use App\Modules\Jobs\Requests\StoreJobRequest;
+use App\Modules\Jobs\Requests\AssignJobRequest;
 use App\Modules\Jobs\Services\JobService;
 
 class JobController extends Controller
 {
+    public function __construct(
+        protected JobService $jobService
+    ) {}
+
+    /**
+     * Jobs List
+     */
     public function index()
     {
-        return view('jobs.index');
+        $jobs = $this->jobService->all();
+
+        return view('jobs.index', compact('jobs'));
     }
 
+    /**
+     * Create Job Form
+     */
     public function create()
     {
-        $clients = Client::orderBy('name')->get();
-        $projects = Project::orderBy('name')->get();
-        $categories = JobCategory::orderBy('name')->get();
-        $statuses = JobStatus::orderBy('sort_order')->get();
+        return view('jobs.create', [
 
-        return view('jobs.create', compact(
-            'clients',
-            'projects',
-            'categories',
-            'statuses'
-        ));
+            'clients' => Client::orderBy('name')->get(),
+
+            'projects' => Project::orderBy('name')->get(),
+
+            'categories' => JobCategory::orderBy('name')->get(),
+
+            'statuses' => JobStatus::orderBy('sort_order')->get(),
+
+        ]);
     }
 
-    public function store(Request $request)
-{
-    $validated = $request->validate([
-        'title' => ['required', 'string', 'max:255'],
-        'client_id' => ['required', 'exists:clients,id'],
-        'project_id' => ['nullable', 'exists:projects,id'],
-        'job_category_id' => ['nullable', 'exists:job_categories,id'],
-        'priority' => ['required', 'in:LOW,MEDIUM,HIGH,URGENT,CRITICAL'],
-        'first_draft_due_at' => ['nullable', 'date'],
-        'final_due_at' => ['nullable', 'date'],
-        'estimated_hours' => ['nullable', 'numeric', 'min:0'],
-        'brief' => ['nullable', 'string'],
-        'attachments.*' => ['nullable', 'file', 'max:51200'],
-    ]);
+    /**
+     * Store Job
+     */
+    public function store(StoreJobRequest $request)
+    {
+        $job = $this->jobService->create(
+            $request->validated()
+        );
 
-    $trafficStage = WorkflowStage::where('code', 'TRAFFIC')->first();
+        return redirect()
+            ->route('jobs.show', $job->id)
+            ->with(
+                'success',
+                'Creative Job created successfully.'
+            );
+    }
 
-    $jobNumber = 'JOB-' . now()->format('Y') . '-' . str_pad(
-        (CreativeJob::count() + 1),
-        5,
-        '0',
-        STR_PAD_LEFT
-    );
+    /**
+     * Job Details
+     */
+    public function show(int $id)
+    {
+        $job = $this->jobService->find($id);
 
-    $job = CreativeJob::create([
-        'job_number' => $jobNumber,
-        'client_id' => $validated['client_id'],
-        'project_id' => $validated['project_id'] ?? null,
-        'job_category_id' => $validated['job_category_id'] ?? null,
-        'current_workflow_stage_id' => $trafficStage?->id,
-        'title' => $validated['title'],
-        'brief' => $validated['brief'] ?? null,
-        'priority' => $validated['priority'],
-        'received_at' => now(),
-        'first_draft_due_at' => $validated['first_draft_due_at'] ?? null,
-        'final_due_at' => $validated['final_due_at'] ?? null,
-        'estimated_hours' => $validated['estimated_hours'] ?? 0,
-        'created_by' => Auth::id(),
-    ]);
+        abort_unless($job, 404);
 
-    return redirect()
-        ->route('jobs.show', $job)
-        ->with('success', 'Job created successfully.');
-}
+        $teams = Team::orderBy('name')->get();
 
-    public function show(string $id)
-{
-    $job = CreativeJob::with([
-        'client',
-        'project',
-        'category',
-        'currentWorkflowStage',
-    ])->findOrFail($id);
+        $users = User::where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
-    return view('jobs.show', compact('job'));
-}
+        return view('jobs.show', [
 
-    public function edit(string $id)
+            'job' => $job,
+
+            'teams' => $teams,
+
+            'users' => $users,
+
+        ]);
+    }
+
+    /**
+     * Assign Job
+     */
+    public function assign(
+        AssignJobRequest $request,
+        CreativeJob $job
+    ) {
+        $this->jobService->assign(
+            $job,
+            $request->validated()
+        );
+
+        return redirect()
+            ->route('jobs.show', $job->id)
+            ->with(
+                'success',
+                'Job assigned successfully.'
+            );
+    }
+
+    /**
+     * Edit
+     */
+    public function edit(int $id)
     {
         //
     }
 
-    public function update(Request $request, string $id)
+    /**
+     * Update
+     */
+    public function update(int $id)
     {
         //
     }
 
-    public function destroy(string $id)
+    /**
+     * Delete
+     */
+    public function destroy(int $id)
     {
         //
     }
