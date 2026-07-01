@@ -2,63 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Client;
+use App\Modules\Clients\Requests\StoreClientRequest;
+use App\Modules\Clients\Requests\UpdateClientRequest;
+use App\Modules\Clients\Services\ClientService;
 
 class ClientController extends Controller
 {
+    public function __construct(
+        protected ClientService $clientService
+    ) {}
+
     /**
-     * Display a listing of the resource.
+     * Clients List
      */
     public function index()
     {
-        //
+        $clients = $this->clientService->all();
+
+        return view('clients.index', compact('clients'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create Client Form
      */
     public function create()
     {
-        //
+        return view('clients.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store Client
      */
-    public function store(Request $request)
+    public function store(StoreClientRequest $request)
     {
-        //
+        $client = $this->clientService->create(
+            $request->validated()
+        );
+
+        return redirect()
+            ->route('clients.show', $client)
+            ->with('success', 'Client created successfully.');
     }
 
     /**
-     * Display the specified resource.
+     * Client Details
      */
-    public function show(string $id)
+    public function show(Client $client)
     {
-        //
+        return view('clients.show', [
+            'client' => $this->clientService->find($client->id),
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edit Client
      */
-    public function edit(string $id)
+    public function edit(Client $client)
     {
-        //
+        return view('clients.edit', compact('client'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Client
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(
+        UpdateClientRequest $request,
+        Client $client
+    ) {
+        $this->clientService->update(
+            $client,
+            $request->validated()
+        );
+
+        return redirect()
+            ->route('clients.show', $client)
+            ->with('success', 'Client updated successfully.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Client
      */
-    public function destroy(string $id)
+    public function destroy(Client $client)
     {
-        //
+        $this->clientService->delete($client);
+
+        return redirect()
+            ->route('clients.index')
+            ->with('success', 'Client deleted successfully.');
     }
 }
