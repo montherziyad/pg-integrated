@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\JobCategory;
 use App\Models\JobStatus;
 use Illuminate\Http\Request;
+use App\Modules\Jobs\Services\JobService;
 
 class JobController extends Controller
 {
