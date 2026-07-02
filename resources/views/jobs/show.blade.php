@@ -10,9 +10,10 @@
                 <p class="pg-subtitle">{{ $job->title }}</p>
             </div>
 
-            <a href="{{ route('jobs.index') }}" class="pg-btn-secondary">
-                Back to Jobs
-            </a>
+            <div class="flex gap-3">
+                <a href="{{ route('jobs.edit', $job) }}" class="pg-btn-primary">Edit Job</a>
+                <a href="{{ route('jobs.index') }}" class="pg-btn-secondary">Back to Jobs</a>
+            </div>
         </div>
 
         @if(session('success'))

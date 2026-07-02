@@ -26,15 +26,16 @@
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-2">
-                <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded-xl bg-slate-800 text-white font-medium">Dashboard</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Jobs</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Traffic Board</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Team Workload</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Clients</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Projects</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Archive</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Reports</a>
-                <a href="#" class="block px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white">Settings</a>
+                <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Dashboard</a>
+                <a href="{{ route('email-intakes.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('email-intakes.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Email Intake</a>
+                <a href="{{ route('jobs.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('jobs.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Jobs</a>
+                <a href="{{ route('traffic.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('traffic.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Traffic Board</a>
+                <a href="{{ route('workload.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('workload.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Team Workload</a>
+                <a href="{{ route('admin.clients.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Clients</a>
+                <a href="{{ route('admin.projects.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.projects.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Projects</a>
+                <a href="{{ route('archive.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('archive.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Archive</a>
+                <a href="{{ route('reports.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('reports.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Reports</a>
+                <a href="{{ route('admin.settings.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Settings</a>
             </nav>
 
             <div class="p-4 border-t border-slate-800 text-xs text-slate-400">

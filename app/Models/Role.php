@@ -12,4 +12,9 @@ class Role extends Model
         'description',
         'is_active',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

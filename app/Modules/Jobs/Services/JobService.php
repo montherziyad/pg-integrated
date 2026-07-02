@@ -35,7 +35,7 @@ class JobService
     {
         $job = $this->createJobAction->execute($data);
 
-        if (!empty($data['attachments'])) {
+        if (! empty($data['attachments'])) {
             $this->uploadJobAttachmentsAction->execute($job, $data['attachments']);
         }
 
@@ -139,7 +139,7 @@ class JobService
         $this->logJobActivityAction->execute(
             $job,
             'WORKFLOW_STAGE_CHANGED',
-            'Workflow stage changed to ' . $stage->name
+            'Workflow stage changed to '.$stage->name
         );
 
         return $result;
@@ -153,5 +153,18 @@ class JobService
     public function all()
     {
         return $this->repository->all();
+    }
+
+    public function update(CreativeJob $job, array $data): bool
+    {
+        $result = $this->repository->update($job, $data);
+
+        $this->logJobActivityAction->execute(
+            $job,
+            'JOB_UPDATED',
+            'Creative Job updated successfully.'
+        );
+
+        return $result;
     }
 }

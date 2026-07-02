@@ -8,7 +8,7 @@
         <div>
             <h2 class="pg-title">Administration Center</h2>
             <p class="pg-subtitle mt-1">
-                Manage users, teams, roles, branches, clients and projects.
+                Manage users, teams, roles, branches, clients, projects and job categories.
             </p>
         </div>
 
@@ -55,6 +55,13 @@
                 <div class="pg-card-body">
                     <div class="pg-stat-label">Projects</div>
                     <div class="pg-stat-value">{{ $projectsCount }}</div>
+                </div>
+            </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="pg-stat-label">Categories</div>
+                    <div class="pg-stat-value">{{ $categoriesCount }}</div>
                 </div>
             </div>
 

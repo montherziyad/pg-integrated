@@ -11,6 +11,11 @@ class Branch extends Model
         'code',
         'country',
         'city',
-        'is_active'
+        'is_active',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

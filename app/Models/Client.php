@@ -16,4 +16,19 @@ class Client extends Model
         'phone',
         'is_active',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function accountManager()
+    {
+        return $this->belongsTo(User::class, 'account_manager_id');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

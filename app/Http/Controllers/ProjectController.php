@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Client;
+use App\Models\Project;
+use App\Models\User;
+use App\Modules\Projects\Requests\StoreProjectRequest;
+use App\Modules\Projects\Requests\UpdateProjectRequest;
+use App\Modules\Projects\Services\ProjectService;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected ProjectService $service) {}
+
     public function index()
     {
-        //
+        return view('admin.projects.index', ['projects' => $this->service->all()]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.projects.create', $this->formData(new Project));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        //
+        $project = $this->service->create($request->validated());
+
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Project created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Project $project)
     {
-        //
+        return view('admin.projects.show', ['project' => $this->service->find($project->id)]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Project $project)
     {
-        //
+        return view('admin.projects.edit', $this->formData($project));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $this->service->update($project, $request->validated());
+
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Project updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Project $project)
     {
-        //
+        $this->service->delete($project);
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    private function formData(Project $project): array
+    {
+        return ['project' => $project, 'clients' => Client::orderBy('name')->get(), 'projectManagers' => User::orderBy('name')->get()];
     }
 }

@@ -12,7 +12,7 @@ class OutlookWebhookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,11 @@ class OutlookWebhookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'value' => ['nullable', 'array'],
+            'value.*.subscriptionId' => ['required_with:value', 'string'],
+            'value.*.clientState' => ['required_with:value', 'string'],
+            'value.*.resource' => ['required_with:value', 'string'],
+            'value.*.resourceData.id' => ['nullable', 'string'],
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Client;
+use App\Models\User;
 use App\Modules\Clients\Requests\StoreClientRequest;
 use App\Modules\Clients\Requests\UpdateClientRequest;
 use App\Modules\Clients\Services\ClientService;
@@ -13,27 +15,22 @@ class ClientController extends Controller
         protected ClientService $clientService
     ) {}
 
-    /**
-     * Clients List
-     */
     public function index()
     {
         $clients = $this->clientService->all();
 
-        return view('clients.index', compact('clients'));
+        return view('admin.clients.index', compact('clients'));
     }
 
-    /**
-     * Create Client Form
-     */
     public function create()
     {
-        return view('clients.create');
+        return view('admin.clients.create', [
+            'client' => new Client,
+            'branches' => Branch::orderBy('name')->get(),
+            'accountManagers' => User::orderBy('name')->get(),
+        ]);
     }
 
-    /**
-     * Store Client
-     */
     public function store(StoreClientRequest $request)
     {
         $client = $this->clientService->create(
@@ -41,31 +38,26 @@ class ClientController extends Controller
         );
 
         return redirect()
-            ->route('clients.show', $client)
+            ->route('admin.clients.show', $client)
             ->with('success', 'Client created successfully.');
     }
 
-    /**
-     * Client Details
-     */
     public function show(Client $client)
     {
-        return view('clients.show', [
+        return view('admin.clients.show', [
             'client' => $this->clientService->find($client->id),
         ]);
     }
 
-    /**
-     * Edit Client
-     */
     public function edit(Client $client)
     {
-        return view('clients.edit', compact('client'));
+        return view('admin.clients.edit', [
+            'client' => $client,
+            'branches' => Branch::orderBy('name')->get(),
+            'accountManagers' => User::orderBy('name')->get(),
+        ]);
     }
 
-    /**
-     * Update Client
-     */
     public function update(
         UpdateClientRequest $request,
         Client $client
@@ -76,19 +68,16 @@ class ClientController extends Controller
         );
 
         return redirect()
-            ->route('clients.show', $client)
+            ->route('admin.clients.show', $client)
             ->with('success', 'Client updated successfully.');
     }
 
-    /**
-     * Delete Client
-     */
     public function destroy(Client $client)
     {
         $this->clientService->delete($client);
 
         return redirect()
-            ->route('clients.index')
+            ->route('admin.clients.index')
             ->with('success', 'Client deleted successfully.');
     }
 }

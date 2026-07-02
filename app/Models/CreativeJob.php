@@ -40,6 +40,19 @@ class CreativeJob extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'received_at' => 'datetime',
+            'first_draft_due_at' => 'datetime',
+            'final_due_at' => 'datetime',
+            'first_draft_sent_at' => 'datetime',
+            'final_delivered_at' => 'datetime',
+            'archived_at' => 'datetime',
+            'is_archived' => 'boolean',
+        ];
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class);

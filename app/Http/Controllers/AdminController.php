@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Team;
-use App\Models\Role;
 use App\Models\Branch;
 use App\Models\Client;
+use App\Models\JobCategory;
 use App\Models\Project;
+use App\Models\Role;
+use App\Models\Team;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -20,6 +21,7 @@ class AdminController extends Controller
             'branchesCount' => Branch::count(),
             'clientsCount' => Client::count(),
             'projectsCount' => Project::count(),
+            'categoriesCount' => JobCategory::count(),
         ]);
     }
 }
