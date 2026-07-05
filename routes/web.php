@@ -6,6 +6,7 @@ use App\Http\Controllers\AiWorkspaceController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
@@ -36,6 +37,8 @@ Route::get('/work', [PublicWebsiteController::class, 'work'])->name('website.wor
 Route::get('/team', [PublicWebsiteController::class, 'team'])->name('website.team');
 Route::get('/clients', [PublicWebsiteController::class, 'clients'])->name('website.clients');
 Route::get('/contact', [PublicWebsiteController::class, 'contact'])->name('website.contact');
+Route::get('/join-us', [CareerController::class, 'index'])->name('careers.index');
+Route::post('/join-us/apply', [CareerController::class, 'apply'])->name('careers.apply');
 Route::get('/pages/{page:slug}', [PublicWebsiteController::class, 'show'])->name('website.page');
 
 Route::middleware('guest:client')->group(function () {
@@ -163,6 +166,36 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');
+
+    Route::get('/admin/careers/applications', [CareerController::class, 'applications'])
+        ->name('admin.career-applications.index');
+
+    Route::get('/admin/careers/applications/{application}', [CareerController::class, 'showApplication'])
+        ->name('admin.career-applications.show');
+
+    Route::patch('/admin/careers/applications/{application}', [CareerController::class, 'updateApplication'])
+        ->name('admin.career-applications.update');
+
+    Route::get('/admin/careers/applications/{application}/cv', [CareerController::class, 'downloadCv'])
+        ->name('admin.career-applications.cv');
+
+    Route::get('/admin/careers', [CareerController::class, 'adminIndex'])
+        ->name('admin.careers.index');
+
+    Route::get('/admin/careers/create', [CareerController::class, 'create'])
+        ->name('admin.careers.create');
+
+    Route::post('/admin/careers', [CareerController::class, 'store'])
+        ->name('admin.careers.store');
+
+    Route::get('/admin/careers/{career}/edit', [CareerController::class, 'edit'])
+        ->name('admin.careers.edit');
+
+    Route::put('/admin/careers/{career}', [CareerController::class, 'update'])
+        ->name('admin.careers.update');
+
+    Route::delete('/admin/careers/{career}', [CareerController::class, 'destroy'])
+        ->name('admin.careers.destroy');
 
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');

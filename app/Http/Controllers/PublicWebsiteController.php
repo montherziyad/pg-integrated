@@ -73,6 +73,11 @@ class PublicWebsiteController extends Controller
 
     private function navigationPages(): array
     {
+        return $this->publicNavigationPages();
+    }
+
+    public function publicNavigationPages(): array
+    {
         return [
             ['label' => 'Home', 'route' => 'website.home'],
             ['label' => 'About', 'route' => 'website.about'],
@@ -80,6 +85,7 @@ class PublicWebsiteController extends Controller
             ['label' => 'Work', 'route' => 'website.work'],
             ['label' => 'Team', 'route' => 'website.team'],
             ['label' => 'Clients', 'route' => 'website.clients'],
+            ['label' => 'Join Us', 'route' => 'careers.index'],
             ['label' => 'Contact', 'route' => 'website.contact'],
         ];
     }
