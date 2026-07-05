@@ -29,6 +29,41 @@
                         <div><label class="block mb-2 font-semibold">Final Delivery Due</label><input name="final_due_at" type="datetime-local" value="{{ old('final_due_at', $job->final_due_at?->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-300"></div>
                         <div><label class="block mb-2 font-semibold">Estimated Hours</label><input name="estimated_hours" type="number" step="0.5" min="0" value="{{ old('estimated_hours', $job->estimated_hours) }}" class="w-full rounded-xl border-slate-300"></div>
                     </div>
+
+                    <div class="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                        <div class="mb-5">
+                            <h3 class="text-lg font-bold text-slate-950">Client Portal Visibility</h3>
+                            <p class="mt-1 text-sm text-slate-600">هذه الحقول هي التي تظهر للعميل في Dashboard و Projects مثل المرحلة، النسبة، الروابط، وتاريخ التسليم.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block mb-2 font-semibold">Stage shown to client</label>
+                                <select name="current_workflow_stage_id" class="w-full rounded-xl border-slate-300">
+                                    <option value="">Preparing / Not selected</option>
+                                    @foreach($workflowStages as $stage)
+                                        <option value="{{ $stage->id }}" @selected((string) old('current_workflow_stage_id', $job->current_workflow_stage_id) === (string) $stage->id)>{{ $stage->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 font-semibold">Progress %</label>
+                                <input name="completion_percentage" type="number" min="0" max="100" value="{{ old('completion_percentage', $job->completion_percentage) }}" class="w-full rounded-xl border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block mb-2 font-semibold">Brief / Dropbox link</label>
+                                <input name="dropbox_folder_path" value="{{ old('dropbox_folder_path', $job->dropbox_folder_path) }}" placeholder="https://www.dropbox.com/..." class="w-full rounded-xl border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block mb-2 font-semibold">Final / WeTransfer link</label>
+                                <input name="final_delivery_path" value="{{ old('final_delivery_path', $job->final_delivery_path) }}" placeholder="https://wetransfer.com/..." class="w-full rounded-xl border-slate-300">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label class="block mb-2 font-semibold">Client notes</label>
+                            <textarea name="client_notes" rows="4" class="w-full rounded-xl border-slate-300" placeholder="Short note visible internally and ready for client-facing updates.">{{ old('client_notes', $job->client_notes) }}</textarea>
+                        </div>
+                    </div>
+
                     <div class="mt-8"><label class="block mb-2 font-semibold">Brief</label><textarea name="brief" rows="8" class="w-full rounded-xl border-slate-300">{{ old('brief', $job->brief) }}</textarea></div>
                     <div class="mt-8 flex gap-4"><button class="pg-btn-primary">Update Job</button><a href="{{ route('jobs.show', $job) }}" class="pg-btn-secondary">Cancel</a></div>
                 </div>

@@ -22,6 +22,11 @@ class StoreJobRequest extends FormRequest
             'first_draft_due_at' => ['nullable', 'date'],
             'final_due_at' => ['nullable', 'date'],
             'estimated_hours' => ['nullable', 'numeric', 'min:0'],
+            'current_workflow_stage_id' => ['nullable', 'exists:workflow_stages,id'],
+            'completion_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'client_notes' => ['nullable', 'string'],
+            'dropbox_folder_path' => ['nullable', 'string', 'max:1000'],
+            'final_delivery_path' => ['nullable', 'string', 'max:1000'],
             'brief' => ['nullable', 'string'],
             'attachments.*' => ['nullable', 'file', 'max:51200'],
         ];

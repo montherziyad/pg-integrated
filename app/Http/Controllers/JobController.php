@@ -10,6 +10,7 @@ use App\Models\JobStatus;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\WorkflowStage;
 use App\Modules\Jobs\Requests\AssignJobRequest;
 use App\Modules\Jobs\Requests\StoreJobRequest;
 use App\Modules\Jobs\Requests\UpdateJobRequest;
@@ -110,6 +111,7 @@ class JobController extends Controller
             'projects' => Project::orderBy('name')->get(),
             'categories' => JobCategory::orderBy('name')->get(),
             'statuses' => JobStatus::orderBy('sort_order')->get(),
+            'workflowStages' => WorkflowStage::orderBy('sort_order')->get(),
         ]);
     }
 
