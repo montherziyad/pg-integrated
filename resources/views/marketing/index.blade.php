@@ -1,0 +1,4 @@
+<x-app-layout><x-slot name="header">Marketing Automation</x-slot>
+<div class="flex justify-between mb-6"><h2 class="text-2xl font-bold">Campaigns</h2><a href="{{ route('marketing.create') }}" class="px-4 py-2 bg-slate-900 text-white rounded-lg">New Campaign</a></div>
+<div class="bg-white rounded-xl shadow overflow-hidden"><table class="w-full text-sm"><thead class="bg-slate-50"><tr><th class="p-4 text-left">Name</th><th>Channel</th><th>Status</th><th>Recipients</th><th>Schedule</th></tr></thead><tbody>@forelse($campaigns as $campaign)<tr class="border-t"><td class="p-4 font-semibold">{{ $campaign->name }}</td><td>{{ $campaign->channel }}</td><td>{{ $campaign->status }}</td><td>{{ $campaign->recipients_count }}</td><td>{{ $campaign->scheduled_at?->format('Y-m-d H:i') ?? '-' }}</td></tr>@empty<tr><td class="p-4" colspan="5">No campaigns yet.</td></tr>@endforelse</tbody></table></div>
+</x-app-layout>

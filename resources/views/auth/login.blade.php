@@ -1,47 +1,67 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Employee Login | PG Integrated</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-screen bg-slate-950 font-sans text-white antialiased">
+    <main class="grid min-h-screen lg:grid-cols-2">
+        <section class="relative hidden overflow-hidden p-12 lg:flex lg:flex-col lg:justify-between">
+            <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-rose-400/30 blur-3xl"></div>
+            <div class="absolute -right-20 bottom-12 h-96 w-96 rounded-full bg-amber-300/30 blur-3xl"></div>
+            <a href="{{ route('website.home') }}" class="relative text-xl font-extrabold">PG Integrated</a>
+            <div class="relative max-w-xl">
+                <p class="mb-5 text-sm font-bold uppercase tracking-[.24em] text-amber-300">Employee workspace</p>
+                <h1 class="text-6xl font-extrabold leading-[.95] tracking-[-.05em]">One place to move every project forward.</h1>
+                <p class="mt-7 text-lg leading-8 text-slate-300">Access client work, studio operations, traffic, support, CRM, marketing, and reports.</p>
+            </div>
+            <p class="relative text-sm text-slate-400">Authorized PG Integrated employees only.</p>
+        </section>
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+        <section class="flex items-center justify-center bg-[#f5f2eb] px-6 py-12 text-slate-950">
+            <div class="w-full max-w-md">
+                <a href="{{ route('website.home') }}" class="mb-12 inline-flex font-extrabold lg:hidden">PG Integrated</a>
+                <p class="text-sm font-bold uppercase tracking-[.22em] text-slate-500">Team access</p>
+                <h2 class="mt-4 text-4xl font-extrabold tracking-tight">Employee login</h2>
+                <p class="mt-3 text-slate-600">Use your company account to enter the operations platform.</p>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                <x-auth-session-status class="mt-6" :status="session('status')" />
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+                <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-5">
+                    @csrf
+                    <label class="block">
+                        <span class="mb-2 block text-sm font-semibold">Company email</span>
+                        <input type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                               class="w-full rounded-2xl border-slate-300 bg-white px-4 py-3">
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </label>
+                    <label class="block">
+                        <span class="mb-2 block text-sm font-semibold">Password</span>
+                        <input type="password" name="password" required autocomplete="current-password"
+                               class="w-full rounded-2xl border-slate-300 bg-white px-4 py-3">
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </label>
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="inline-flex items-center gap-2">
+                            <input type="checkbox" name="remember" class="rounded border-slate-300 text-slate-950">
+                            Remember me
+                        </label>
+                        <a href="{{ route('password.request') }}" class="font-semibold underline">Forgot password?</a>
+                    </div>
+                    <button class="w-full rounded-2xl bg-slate-950 px-5 py-3 font-bold text-white">Enter dashboard</button>
+                </form>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+                <div class="mt-8 border-t border-black/10 pt-6 text-sm text-slate-600">
+                    Are you a client?
+                    <a href="{{ route('client.login') }}" class="font-bold text-slate-950 underline">Open the client portal</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

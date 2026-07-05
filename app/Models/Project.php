@@ -34,4 +34,9 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'project_manager_id');
     }
+
+    public function jobs()
+    {
+        return $this->hasMany(CreativeJob::class);
+    }
 }

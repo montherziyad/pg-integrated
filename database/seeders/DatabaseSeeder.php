@@ -6,12 +6,13 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-  public function run(): void
-{
-    $this->call([
-        BranchSeeder::class,
-        TeamSeeder::class,
-    ]);
-}
-    
+    public function run(): void
+    {
+        $this->call([
+            BranchSeeder::class,
+            TeamSeeder::class,
+            CmsPageSeeder::class,
+            ClientPortalDemoSeeder::class,
+        ]);
+    }
 }

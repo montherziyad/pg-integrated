@@ -24,6 +24,8 @@ class ClientService
     public function create(array $data): Client
     {
         $data['is_active'] = $data['is_active'] ?? true;
+        $data['portal_enabled'] = $data['portal_enabled'] ?? false;
+        unset($data['password_confirmation']);
 
         return $this->repository->create($data);
     }
@@ -31,6 +33,12 @@ class ClientService
     public function update(Client $client, array $data): bool
     {
         $data['is_active'] = $data['is_active'] ?? false;
+        $data['portal_enabled'] = $data['portal_enabled'] ?? false;
+        unset($data['password_confirmation']);
+
+        if (blank($data['password'] ?? null)) {
+            unset($data['password']);
+        }
 
         return $this->repository->update($client, $data);
     }

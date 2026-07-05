@@ -62,4 +62,26 @@
             <span class="font-semibold">Active</span>
         </label>
     </div>
+
+    <div class="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+        <label class="inline-flex items-center gap-2">
+            <input type="checkbox" name="portal_enabled" value="1"
+                   @checked(old('portal_enabled', $client->portal_enabled ?? false))>
+            <span class="font-semibold">Enable client portal</span>
+        </label>
+        <p class="mt-1 text-sm text-slate-500">The client will sign in with the email above and the password below.</p>
+
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <div>
+                <label class="block mb-2 font-semibold">Portal Password</label>
+                <input type="password" name="password" class="w-full rounded-xl border-slate-300"
+                       autocomplete="new-password">
+            </div>
+            <div>
+                <label class="block mb-2 font-semibold">Confirm Password</label>
+                <input type="password" name="password_confirmation" class="w-full rounded-xl border-slate-300"
+                       autocomplete="new-password">
+            </div>
+        </div>
+    </div>
 </div>

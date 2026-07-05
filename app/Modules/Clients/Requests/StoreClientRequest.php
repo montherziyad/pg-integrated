@@ -19,9 +19,11 @@ class StoreClientRequest extends FormRequest
             'branch_id' => ['nullable', 'exists:branches,id'],
             'account_manager_id' => ['nullable', 'exists:users,id'],
             'industry' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'email' => ['nullable', 'required_if:portal_enabled,1', 'email', 'max:255', 'unique:clients,email'],
+            'password' => ['nullable', 'required_if:portal_enabled,1', 'string', 'min:8', 'confirmed'],
             'phone' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+            'portal_enabled' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -26,6 +26,10 @@
                 Projects
             </a>
 
+            <a href="{{ route('admin.cms.index') }}" class="pg-btn-secondary justify-center">
+                Website Pages
+            </a>
+
             <a href="{{ route('admin.categories.index') }}" class="pg-btn-secondary justify-center">
                 Categories
             </a>
