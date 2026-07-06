@@ -1,6 +1,17 @@
 @php
     $pageTitle = 'Join Us | PG Integrated';
     $description = 'Join PG Integrated and work with a team connecting strategy, creative, digital, production, and delivery operations.';
+    $navUrl = function (array $item): string {
+        if (! empty($item['url'])) {
+            return url($item['url']);
+        }
+
+        if (! empty($item['route']) && \Illuminate\Support\Facades\Route::has($item['route'])) {
+            return route($item['route']);
+        }
+
+        return '#';
+    };
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr">
@@ -11,24 +22,45 @@
     <title>{{ $pageTitle }}</title>
     <link rel="icon" href="{{ asset('prd-assets/images/favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .pg-site-desktop-nav,
+        .pg-site-desktop-actions {
+            display: none;
+        }
+
+        .pg-site-mobile-menu {
+            display: block;
+        }
+
+        @media (min-width: 1180px) {
+            .pg-site-desktop-nav,
+            .pg-site-desktop-actions {
+                display: flex;
+            }
+
+            .pg-site-mobile-menu {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body class="bg-[#f7f3ec] text-slate-950 antialiased">
     <header class="sticky top-0 z-40 border-b border-black/10 bg-[#f7f3ec]/90 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-            <a href="{{ route('website.home') }}" class="flex items-center gap-3">
-                <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-11 w-auto">
-                <span class="hidden text-sm font-extrabold uppercase tracking-[.22em] sm:inline">PG Integrated</span>
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 lg:px-8">
+            <a href="{{ route('website.home') }}" class="flex min-w-0 items-center gap-3" aria-label="PG Integrated home">
+                <span class="flex h-12 w-24 shrink-0 items-center overflow-hidden sm:w-28">
+                    <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="block w-auto object-contain" style="max-height: 44px; height: 44px;">
+                </span>
+                <span class="hidden truncate text-sm font-extrabold uppercase tracking-[.22em] 2xl:inline">PG Integrated</span>
             </a>
 
-            <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 lg:flex">
+            <nav class="pg-site-desktop-nav items-center gap-4 text-xs font-bold uppercase tracking-[.12em] text-slate-700 2xl:gap-6 2xl:text-sm">
                 @foreach ($navigationPages as $item)
-                    <a href="{{ route($item['route']) }}" class="{{ $item['route'] === 'careers.index' ? 'text-amber-700' : 'hover:text-amber-600' }}">
-                        {{ $item['label'] }}
-                    </a>
+                    <a href="{{ $navUrl($item) }}" class="{{ ($item['route'] ?? null) === 'careers.index' ? 'text-amber-700' : 'hover:text-amber-600' }}">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
 
-            <div class="flex items-center gap-2">
+            <div class="pg-site-desktop-actions items-center gap-2">
                 <a href="{{ route('client.login') }}" class="rounded-full border border-black/15 px-4 py-2 text-sm font-bold hover:bg-white">Client</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white">Dashboard</a>
@@ -36,15 +68,37 @@
                     <a href="{{ route('employee.login') }}" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white">Employee</a>
                 @endauth
             </div>
-        </div>
 
-        <nav class="flex gap-4 overflow-x-auto px-5 pb-4 text-xs font-bold uppercase tracking-[.12em] text-slate-600 lg:hidden">
-            @foreach ($navigationPages as $item)
-                <a href="{{ route($item['route']) }}" class="shrink-0 {{ $item['route'] === 'careers.index' ? 'text-amber-700' : '' }}">
-                    {{ $item['label'] }}
-                </a>
-            @endforeach
-        </nav>
+            <details class="pg-site-mobile-menu group relative">
+                <summary class="flex cursor-pointer list-none items-center gap-3 rounded-full border border-black/15 bg-white/70 px-4 py-3 text-sm font-black uppercase tracking-[.16em] text-slate-950 shadow-sm transition hover:bg-white">
+                    <span>Menu</span>
+                    <span class="relative h-4 w-5">
+                        <span class="absolute left-0 top-0 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:top-2 group-open:rotate-45"></span>
+                        <span class="absolute left-0 top-2 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:opacity-0"></span>
+                        <span class="absolute left-0 top-4 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:top-2 group-open:-rotate-45"></span>
+                    </span>
+                </summary>
+
+                <div class="absolute right-0 mt-3 w-[min(88vw,360px)] overflow-hidden rounded-[1.75rem] border border-black/10 bg-white p-3 shadow-2xl">
+                    <nav class="grid gap-1">
+                        @foreach ($navigationPages as $item)
+                            <a href="{{ $navUrl($item) }}" class="rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[.14em] {{ ($item['route'] ?? null) === 'careers.index' ? 'bg-amber-50 text-amber-700' : 'text-slate-700 hover:bg-slate-50 hover:text-amber-700' }}">
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+                    </nav>
+
+                    <div class="mt-3 grid gap-2 border-t border-black/10 pt-3">
+                        <a href="{{ route('client.login') }}" class="rounded-2xl border border-black/15 px-4 py-3 text-center text-sm font-black">Client Portal</a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="rounded-2xl bg-slate-950 px-4 py-3 text-center text-sm font-black text-white">Dashboard</a>
+                        @else
+                            <a href="{{ route('employee.login') }}" class="rounded-2xl bg-slate-950 px-4 py-3 text-center text-sm font-black text-white">Employee Login</a>
+                        @endauth
+                    </div>
+                </div>
+            </details>
+        </div>
     </header>
 
     <main>
@@ -203,13 +257,13 @@
         </section>
     </main>
 
-    <footer class="border-t border-black/10 py-10">
-        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 text-sm font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-            <div>© {{ date('Y') }} PG Integrated</div>
-            <div class="flex gap-4">
-                <a href="{{ route('website.contact') }}" class="hover:text-amber-700">Contact</a>
-                <a href="{{ route('careers.index') }}" class="hover:text-amber-700">Join Us</a>
-            </div>
+    <footer class="mx-auto flex max-w-7xl flex-col gap-4 border-t border-black/10 px-5 py-10 text-sm font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+        <p>© {{ now()->year }} PG Integrated.</p>
+        <div class="flex flex-wrap gap-4">
+            <a href="{{ route('client.login') }}">Client portal</a>
+            <a href="{{ route('employee.login') }}">Employee login</a>
+            <a href="{{ route('website.contact') }}">Contact</a>
+            <a href="{{ route('careers.index') }}">Join Us</a>
         </div>
     </footer>
 </body>
