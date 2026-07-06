@@ -8,7 +8,7 @@ use Illuminate\View\View;
 class AdminWebsiteChatController extends Controller {
     public function index(): View {
         return view('admin.website-chat.index',[
-            'sessions'=>WebsiteChatSession::with(['messages'=>fn($q)=>$q->latest()->take(3)])->whereIn('status',['needs_attention','escalated'])->latest('last_message_at')->paginate(20),
+            'sessions'=>WebsiteChatSession::with(['messages'=>fn($q)=>$q->latest()->take(10)])->latest('last_message_at')->paginate(20),
             'knowledge'=>WebsiteChatKnowledge::where('status','pending')->latest()->take(50)->get(),
         ]);
     }

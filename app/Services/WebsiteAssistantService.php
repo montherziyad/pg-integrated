@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 use App\Models\CmsPage;
+use App\Models\JobCategory;
 use App\Models\WebsiteChatKnowledge;
 use App\Models\WebsiteChatSession;
 use App\Services\Ai\Providers\OpenAiProvider;
@@ -26,6 +27,52 @@ class WebsiteAssistantService {
     private function knowledge(): string {
         $pages = CmsPage::where('is_published',true)->orderBy('key')->get(['key','title','sections'])->map(fn($p)=>['source'=>$p->key,'title'=>$p->title,'content'=>$p->sections])->all();
         $answers = WebsiteChatKnowledge::where('status','approved')->whereNotNull('answer')->latest('reviewed_at')->take(100)->get(['question','answer'])->toArray();
-        return str(json_encode(['published_pages'=>$pages,'approved_answers'=>$answers],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES))->limit(30000)->toString();
+        $services = JobCategory::query()
+            ->where('is_active', true)
+            ->where('code', 'not like', 'INTERNAL%')
+            ->orderBy('parent_id')
+            ->orderBy('name')
+            ->get(['name', 'code', 'parent_id', 'description'])
+            ->toArray();
+        $processes = [
+            'start_brief' => [
+                'summary' => 'A company can submit a new brief through the secure Client Portal.',
+                'new_company' => [
+                    'Open the client registration page.',
+                    'Enter company and contact information using a valid company email.',
+                    'Verify the email address.',
+                    'Wait for PG Integrated admin approval and portal activation.',
+                    'Sign in to the Client Portal.',
+                ],
+                'existing_client' => [
+                    'Sign in to the Client Portal.',
+                    'Open New Request.',
+                    'Choose Brief as the request type.',
+                    'Choose the relevant PG Integrated service and related project, if any.',
+                    'Enter the title, objective, audience, message, mandatories, references, timeline, country, launch date, deliverables, and external links.',
+                    'Upload the available attachments and submit.',
+                    'The request appears in the PG Integrated admin dashboard for Client Service review and follow-up.',
+                ],
+                'links' => [
+                    'register' => route('client.register'),
+                    'login' => route('client.login'),
+                    'public_contact' => route('website.contact'),
+                ],
+                'important' => 'The assistant must not promise acceptance, price, timeline, or project start. PG Integrated reviews the request first.',
+            ],
+            'human_contact' => [
+                'summary' => 'A visitor may request a callback or preferred meeting time using the Talk to a team member form in the website chat.',
+                'result' => 'The request appears in Admin > Website Chat for employee follow-up.',
+            ],
+            'client_portal' => [
+                'available_after_approval' => ['Profile', 'Projects', 'New Request', 'Calendar', 'delivery links and progress when published by PG Integrated'],
+            ],
+        ];
+        return str(json_encode([
+            'published_pages'=>$pages,
+            'public_service_catalog'=>$services,
+            'approved_system_processes'=>$processes,
+            'approved_answers'=>$answers,
+        ],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES))->limit(45000)->toString();
     }
 }

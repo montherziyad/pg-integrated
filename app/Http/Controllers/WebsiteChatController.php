@@ -13,7 +13,10 @@ class WebsiteChatController extends Controller {
         $userMessage=$session->messages()->create(['role'=>'user','message'=>$data['message']]);
         $result=$assistant->reply($session,$data['message']); $needsHuman=$result['needs_human']||$result['confidence']<0.55;
         $session->messages()->create(['role'=>'assistant','message'=>$result['answer'],'confidence'=>$result['confidence'],'needs_human'=>$needsHuman,'source_refs'=>$result['sources']]);
-        if($needsHuman) WebsiteChatKnowledge::firstOrCreate(['question'=>$data['message'],'status'=>'pending'],['source_message_id'=>$userMessage->id]);
+        if($needsHuman) WebsiteChatKnowledge::updateOrCreate(
+            ['question'=>$data['message'],'status'=>'pending'],
+            ['source_message_id'=>$userMessage->id,'answer'=>$result['answer']]
+        );
         $session->update(['status'=>$needsHuman?'needs_attention':$session->status,'last_message_at'=>now()]);
         return response()->json(['visitor_token'=>$session->visitor_token,'answer'=>$result['answer'],'needs_human'=>$needsHuman]);
     }
