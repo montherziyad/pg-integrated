@@ -373,6 +373,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('marketing.create');
     Route::post('/marketing', [MarketingCampaignController::class, 'store'])
         ->name('marketing.store');
+    Route::get('/marketing/{campaign}', [MarketingCampaignController::class, 'show'])
+        ->name('marketing.show');
+    Route::post('/marketing/{campaign}/request-approval', [MarketingCampaignController::class, 'requestApproval'])
+        ->name('marketing.request-approval');
+    Route::post('/marketing/{campaign}/approve', [MarketingCampaignController::class, 'approve'])
+        ->name('marketing.approve');
 
 });
 
