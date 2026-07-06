@@ -3,10 +3,17 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <div><h2 class="pg-title">Outlook Intake Review</h2><p class="pg-subtitle mt-1">Validate, accept or reject incoming job emails before they enter production.</p></div>
-            <a href="{{ route('admin.settings.index') }}" class="pg-btn-secondary">Outlook Settings</a>
+            <div class="flex items-center gap-3">
+                <form method="POST" action="{{ route('email-intakes.sync-outlook') }}">
+                    @csrf
+                    <button type="submit" class="pg-btn-primary">Sync Outlook</button>
+                </form>
+                <a href="{{ route('admin.settings.index') }}" class="pg-btn-secondary">Outlook Settings</a>
+            </div>
         </div>
 
         @if(session('success'))<div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">{{ session('success') }}</div>@endif
+        @if($errors->has('outlook'))<div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">{{ $errors->first('outlook') }}</div>@endif
 
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             @foreach([['New',$counts['new']],['Valid',$counts['valid']],['Converted',$counts['converted']],['Rejected',$counts['rejected']],['Failed',$counts['failed']]] as [$label,$value])

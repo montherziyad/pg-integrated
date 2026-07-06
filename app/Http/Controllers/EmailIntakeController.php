@@ -6,9 +6,12 @@ use App\Models\Client;
 use App\Models\EmailIntake;
 use App\Models\JobCategory;
 use App\Models\Project;
+use App\Actions\ImportOutlookEmailAction;
 use App\Modules\EmailIntakes\Requests\AcceptEmailIntakeRequest;
 use App\Modules\EmailIntakes\Requests\RejectEmailIntakeRequest;
 use App\Modules\EmailIntakes\Services\EmailIntakeService;
+use App\Modules\EmailIntakes\Services\MicrosoftGraphService;
+use Throwable;
 
 class EmailIntakeController extends Controller
 {
@@ -30,6 +33,33 @@ class EmailIntakeController extends Controller
             'projects' => Project::orderBy('name')->get(),
             'categories' => JobCategory::where('is_active', true)->orderBy('name')->get(),
         ]);
+    }
+
+    public function sync(MicrosoftGraphService $graph, ImportOutlookEmailAction $importer)
+    {
+        try {
+            $messages = $graph->fetchLatestMessages(10);
+            $imported = 0;
+
+            foreach ($messages as $message) {
+                if (EmailIntake::where('message_id', $message['id'] ?? null)->exists()) {
+                    continue;
+                }
+
+                $importer->execute($graph->withSafeAttachments($message));
+                $imported++;
+            }
+
+            return redirect()
+                ->route('email-intakes.index')
+                ->with('success', 'Outlook sync completed. New emails imported: '.$imported.'.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return redirect()
+                ->route('email-intakes.index')
+                ->withErrors(['outlook' => 'Outlook sync failed: '.$exception->getMessage()]);
+        }
     }
 
     public function accept(AcceptEmailIntakeRequest $request, EmailIntake $emailIntake)

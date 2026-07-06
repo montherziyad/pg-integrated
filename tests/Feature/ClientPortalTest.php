@@ -20,6 +20,7 @@ it('allows an enabled client to access only its portal data', function () {
         'client_code' => 'CLIENT-001',
         'name' => 'Portal Client',
         'email' => 'client@example.com',
+        'email_verified_at' => now(),
         'password' => 'secure-password',
         'is_active' => true,
         'portal_enabled' => true,
@@ -29,6 +30,7 @@ it('allows an enabled client to access only its portal data', function () {
         'client_code' => 'CLIENT-002',
         'name' => 'Other Client',
         'email' => 'other@example.com',
+        'email_verified_at' => now(),
         'password' => 'secure-password',
         'is_active' => true,
         'portal_enabled' => true,
@@ -98,6 +100,7 @@ it('lets a client submit a new project request that appears for admins', functio
 
     $this->actingAs($client, 'client')
         ->post(route('client.requests.store'), [
+            'service_name' => 'Campaign Strategy',
             'type' => 'campaign',
             'title' => 'National Day Campaign',
             'brief' => 'We need a campaign brief.',

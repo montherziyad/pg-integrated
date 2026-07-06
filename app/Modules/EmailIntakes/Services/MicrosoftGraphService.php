@@ -10,18 +10,84 @@ use RuntimeException;
 
 class MicrosoftGraphService
 {
+    public function fetchLatestMessages(int $limit = 10): array
+    {
+        $mailbox = $this->setting('outlook_mailbox_address', config('services.outlook.mailbox'));
+        throw_unless($mailbox, RuntimeException::class, 'Outlook mailbox is not configured.');
+
+        $limit = max(1, min($limit, 25));
+
+        return $this->client()
+            ->get('https://graph.microsoft.com/v1.0/users/'.rawurlencode($mailbox).'/mailFolders/inbox/messages', [
+                '$top' => $limit,
+                '$orderby' => 'receivedDateTime desc',
+                '$select' => 'id,internetMessageId,conversationId,subject,body,bodyPreview,from,toRecipients,ccRecipients,receivedDateTime,hasAttachments',
+            ])
+            ->throw()
+            ->json('value') ?? [];
+    }
+
     public function fetchMessage(string $messageId): array
     {
         $mailbox = $this->setting('outlook_mailbox_address', config('services.outlook.mailbox'));
         throw_unless($mailbox, RuntimeException::class, 'Outlook mailbox is not configured.');
 
-        return $this->client()
+        $message = $this->client()
             ->get('https://graph.microsoft.com/v1.0/users/'.rawurlencode($mailbox).'/messages/'.rawurlencode($messageId), [
                 '$select' => 'id,internetMessageId,conversationId,subject,body,bodyPreview,from,toRecipients,ccRecipients,receivedDateTime,hasAttachments',
-                '$expand' => 'attachments',
             ])
             ->throw()
             ->json();
+
+        return $this->withSafeAttachments($message);
+    }
+
+    public function withSafeAttachments(array $message): array
+    {
+        $message['attachments'] = [];
+
+        if (! ($message['hasAttachments'] ?? false) || blank($message['id'] ?? null)) {
+            return $message;
+        }
+
+        $mailbox = $this->setting('outlook_mailbox_address', config('services.outlook.mailbox'));
+        throw_unless($mailbox, RuntimeException::class, 'Outlook mailbox is not configured.');
+
+        $baseUrl = 'https://graph.microsoft.com/v1.0/users/'.rawurlencode($mailbox)
+            .'/messages/'.rawurlencode($message['id']).'/attachments';
+
+        $metadata = $this->client()
+            ->get($baseUrl, [
+                '$select' => 'id,name,contentType,size,isInline',
+                '$top' => 50,
+            ])
+            ->throw()
+            ->json('value') ?? [];
+
+        $configuredMax = ((int) $this->setting('outlook_max_attachment_mb', 50)) * 1024 * 1024;
+        $safeDownloadMax = min($configuredMax, 10 * 1024 * 1024);
+
+        foreach ($metadata as $attachment) {
+            $attachment['contentBytes'] = null;
+            $isInline = (bool) ($attachment['isInline'] ?? false);
+            $size = (int) ($attachment['size'] ?? 0);
+            $id = $attachment['id'] ?? null;
+
+            if (! $isInline && $id && $size > 0 && $size <= $safeDownloadMax) {
+                $downloaded = $this->client()
+                    ->get($baseUrl.'/'.rawurlencode($id), [
+                        '$select' => 'id,name,contentType,size,isInline,contentBytes',
+                    ])
+                    ->throw()
+                    ->json();
+
+                $attachment = array_merge($attachment, $downloaded);
+            }
+
+            $message['attachments'][] = $attachment;
+        }
+
+        return $message;
     }
 
     public function testConnection(): array

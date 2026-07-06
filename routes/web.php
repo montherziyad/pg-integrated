@@ -214,6 +214,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/email-intakes', [EmailIntakeController::class, 'index'])
         ->name('email-intakes.index');
 
+    Route::post('/email-intakes/sync-outlook', [EmailIntakeController::class, 'sync'])
+        ->name('email-intakes.sync-outlook');
+
     Route::get('/email-intakes/{emailIntake}', [EmailIntakeController::class, 'show'])
         ->name('email-intakes.show');
 
