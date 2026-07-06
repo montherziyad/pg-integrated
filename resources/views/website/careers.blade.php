@@ -32,7 +32,7 @@
             display: block;
         }
 
-        @media (min-width: 1180px) {
+        @media (min-width: 980px) {
             .pg-site-desktop-nav,
             .pg-site-desktop-actions {
                 display: flex;
