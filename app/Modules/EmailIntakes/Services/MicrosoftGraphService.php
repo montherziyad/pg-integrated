@@ -75,9 +75,7 @@ class MicrosoftGraphService
 
             if (! $isInline && $id && $size > 0 && $size <= $safeDownloadMax) {
                 $downloaded = $this->client()
-                    ->get($baseUrl.'/'.rawurlencode($id), [
-                        '$select' => 'id,name,contentType,size,isInline,contentBytes',
-                    ])
+                    ->get($baseUrl.'/'.rawurlencode($id))
                     ->throw()
                     ->json();
 
