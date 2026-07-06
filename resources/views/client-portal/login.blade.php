@@ -47,10 +47,15 @@
                 <a href="{{ route('client.register') }}" class="font-bold text-slate-950 underline">Register your company</a>
             </div>
 
-            <p class="mt-7 border-t border-black/10 pt-6 text-sm text-slate-500">
-                PG Integrated employee?
-                <a href="{{ route('employee.login') }}" class="font-bold text-slate-950 underline">Employee login</a>
-            </p>
+            <div class="mt-7 space-y-4 border-t border-black/10 pt-6 text-sm text-slate-500">
+                <p>
+                    PG Integrated employee?
+                    <a href="{{ route('employee.login') }}" class="font-bold text-slate-950 underline">Employee login</a>
+                </p>
+                <a href="{{ route('website.home') }}" class="inline-flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-950 hover:bg-slate-50">
+                    Back to home
+                </a>
+            </div>
         </section>
     </main>
 </body>

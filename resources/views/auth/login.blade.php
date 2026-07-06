@@ -65,9 +65,14 @@
                     <a href="{{ route('employee.register') }}" class="font-bold text-slate-950 underline">Register employee account</a>
                 </div>
 
-                <div class="mt-8 border-t border-black/10 pt-6 text-sm text-slate-600">
-                    Are you a client?
-                    <a href="{{ route('client.login') }}" class="font-bold text-slate-950 underline">Open the client portal</a>
+                <div class="mt-8 space-y-4 border-t border-black/10 pt-6 text-sm text-slate-600">
+                    <p>
+                        Are you a client?
+                        <a href="{{ route('client.login') }}" class="font-bold text-slate-950 underline">Open the client portal</a>
+                    </p>
+                    <a href="{{ route('website.home') }}" class="inline-flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-950 hover:bg-slate-50">
+                        Back to home
+                    </a>
                 </div>
             </div>
         </section>
