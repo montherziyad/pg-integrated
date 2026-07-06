@@ -1,5 +1,5 @@
 <x-dynamic-component component="client-portal.layout" :client="$client" title="New Request">
-    <h1 class="text-4xl font-extrabold">Request a brief, campaign, or project</h1>
+    <h1 class="text-4xl font-extrabold">Request a quotation, brief, or project</h1>
     <p class="mt-2 text-slate-500">Submit a new request with attachments, links, launch date, and required deliverables.</p>
 
     <form method="POST" action="{{ route('client.requests.store') }}" enctype="multipart/form-data" class="mt-8 rounded-3xl bg-white p-6">
@@ -11,8 +11,25 @@
                     <option value="brief">Brief</option>
                     <option value="campaign">Campaign</option>
                     <option value="project">Project</option>
-                    <option value="job">Job</option>
-                    <option value="adaptation">Adaptation</option>
+                </select>
+            </label>
+            <label class="block">
+                <span class="mb-2 block text-sm font-semibold">Service required / الخدمة المطلوبة</span>
+                <select name="service_name" class="w-full rounded-xl border-slate-300" required>
+                    <option value="">Select a service</option>
+                    <option value="Campaign Strategy & Brand Narrative">Campaign Strategy & Brand Narrative</option>
+                    <option value="Creative Campaigns">Creative Campaigns</option>
+                    <option value="Outdoor Campaigns">Outdoor Campaigns</option>
+                    <option value="Internal Campaigns">Internal Campaigns</option>
+                    <option value="TV / Video Advertising">TV / Video Advertising</option>
+                    <option value="Media Zone Services">Media Zone Services</option>
+                    <option value="Activations / Events">Activations / Events</option>
+                    <option value="Branding & Identity">Branding & Identity</option>
+                    <option value="Digital / Social Media">Digital / Social Media</option>
+                    <option value="Production / Adaptation">Production / Adaptation</option>
+                    <option value="Web / Landing Pages">Web / Landing Pages</option>
+                    <option value="Printing / POSM">Printing / POSM</option>
+                    <option value="Other / Custom Request">Other / Custom Request</option>
                 </select>
             </label>
             <label class="block">

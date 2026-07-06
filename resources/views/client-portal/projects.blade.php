@@ -26,15 +26,19 @@
     <section class="mt-8 overflow-hidden rounded-3xl bg-white">
         <div class="border-b border-slate-200 p-6"><h2 class="text-2xl font-extrabold">Jobs and delivery links</h2></div>
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[980px] text-left text-sm">
+            <table class="w-full min-w-[1100px] text-left text-sm">
                 <thead class="bg-slate-50 text-slate-500">
-                    <tr><th class="px-6 py-4">Job</th><th>Project</th><th>Progress</th><th>Due</th><th>Brief / Dropbox</th><th>Final / WeTransfer</th></tr>
+                    <tr><th class="px-6 py-4">Job</th><th>Project</th><th>Job Responsible</th><th>Progress</th><th>Due</th><th>Brief / Dropbox</th><th>Final / WeTransfer</th></tr>
                 </thead>
                 <tbody>
                 @forelse ($jobs as $job)
                     <tr class="border-t border-slate-100">
                         <td class="px-6 py-4"><div class="font-bold">{{ $job->title }}</div><div class="text-xs text-slate-500">{{ $job->job_number }}</div></td>
                         <td>{{ $job->project?->name ?? '—' }}</td>
+                        <td>
+                            <div class="font-bold">{{ $job->responsibleUser?->name ?? 'Not assigned' }}</div>
+                            <div class="text-xs text-slate-500">Final delivery owner</div>
+                        </td>
                         <td>{{ $job->completion_percentage }}%</td>
                         <td>{{ $job->final_due_at?->format('Y-m-d') ?? '—' }}</td>
                         <td>
@@ -45,7 +49,7 @@
                             @endif
                         </td>
                         <td>
-                            @if ($job->final_delivery_path)
+                            @if ($job->final_delivery_path && $job->delivery_review_status === 'published')
                                 <a href="{{ $job->final_delivery_path }}" target="_blank" class="font-bold text-blue-600">Open</a>
                             @else
                                 <span class="text-slate-400">Pending</span>
@@ -53,7 +57,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="px-6 py-8 text-slate-500">No jobs yet.</td></tr>
+                    <tr><td colspan="7" class="px-6 py-8 text-slate-500">No jobs yet.</td></tr>
                 @endforelse
                 </tbody>
             </table>

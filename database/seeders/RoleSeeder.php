@@ -9,7 +9,7 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        Role::insert([
+        $roles = [
             [
                 'name' => 'Super Admin',
                 'code' => 'SUPER_ADMIN',
@@ -32,6 +32,12 @@ class RoleSeeder extends Seeder
                 'name' => 'Account Manager',
                 'code' => 'ACCOUNT_MANAGER',
                 'description' => 'Account Manager',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Client Service Manager',
+                'code' => 'CLIENT_SERVICE_MANAGER',
+                'description' => 'Reviews final output, manages client handover, and publishes approved delivery links to the client portal.',
                 'is_active' => true,
             ],
             [
@@ -70,6 +76,13 @@ class RoleSeeder extends Seeder
                 'description' => 'Archive Officer',
                 'is_active' => true,
             ],
-        ]);
+        ];
+
+        foreach ($roles as $role) {
+            Role::query()->updateOrCreate(
+                ['code' => $role['code']],
+                $role,
+            );
+        }
     }
 }

@@ -12,6 +12,7 @@
 
             <div class="flex gap-3">
                 <a href="{{ route('jobs.edit', $job) }}" class="pg-btn-primary">Edit Job</a>
+                <a href="{{ route('deliveries.edit', $job) }}" class="pg-btn-secondary">Delivery / Handover</a>
                 <a href="{{ route('jobs.index') }}" class="pg-btn-secondary">Back to Jobs</a>
             </div>
         </div>

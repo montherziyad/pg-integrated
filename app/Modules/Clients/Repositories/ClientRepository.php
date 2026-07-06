@@ -8,7 +8,7 @@ class ClientRepository
 {
     public function all()
     {
-        return Client::with(['branch', 'accountManager'])
+        return Client::with(['branch', 'accountManager', 'clientServiceUsers'])
             ->withCount('projects')
             ->orderBy('name')
             ->get();
@@ -19,6 +19,7 @@ class ClientRepository
         return Client::with([
             'branch',
             'accountManager',
+            'clientServiceUsers',
             'projects',
         ])->find($id);
     }

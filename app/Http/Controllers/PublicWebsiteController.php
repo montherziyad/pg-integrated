@@ -42,6 +42,11 @@ class PublicWebsiteController extends Controller
         return $this->renderPage('contact');
     }
 
+    public function joinUs(): View
+    {
+        return $this->renderPage('join-us');
+    }
+
     public function show(CmsPage $page): View
     {
         abort_unless($page->is_published, 404);
@@ -240,6 +245,26 @@ class PublicWebsiteController extends Controller
                 'locations' => [
                     ['city' => 'Jeddah', 'address' => 'PG Integrated main office'],
                     ['city' => 'Riyadh', 'address' => 'PG Integrated regional operations'],
+                ],
+            ],
+            'join-us' => [
+                'type' => 'content',
+                'hero' => [
+                    'eyebrow' => 'Join Us',
+                    'title' => 'Join PG Integrated.',
+                    'body' => 'Explore open opportunities and share your profile with the PG Integrated team.',
+                    'primary_label' => 'Send your profile',
+                    'primary_url' => route('website.contact'),
+                ],
+                'intro' => [
+                    'eyebrow' => 'Careers',
+                    'title' => 'We welcome people who can move ideas from brief to delivery.',
+                    'body' => 'Submit your details, portfolio, or CV through the careers workflow when available. Our team reviews applications based on current openings and future needs.',
+                ],
+                'items' => [
+                    ['title' => 'Account & Client Service', 'body' => 'Client-facing talent who can understand business needs, shape briefs, and coordinate delivery.'],
+                    ['title' => 'Creative & Design', 'body' => 'Designers, writers, motion specialists, and art directors with strong craft and execution.'],
+                    ['title' => 'Traffic & Operations', 'body' => 'Organized operators who can keep work moving clearly across teams and deadlines.'],
                 ],
             ],
         ];

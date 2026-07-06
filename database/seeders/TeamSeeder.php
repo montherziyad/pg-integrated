@@ -2,59 +2,37 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Team;
+use Illuminate\Database\Seeder;
 
 class TeamSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Team::insert([
-            [
-                'name' => 'Traffic Team',
-                'code' => 'TRAFFIC',
-                'description' => 'Traffic Management Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Design Team',
-                'code' => 'DESIGN',
-                'description' => 'Graphic Design Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Content Team',
-                'code' => 'CONTENT',
-                'description' => 'Content Creation Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Motion Team',
-                'code' => 'MOTION',
-                'description' => 'Motion Graphics Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'QA Team',
-                'code' => 'QA',
-                'description' => 'Quality Assurance Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Archive Team',
-                'code' => 'ARCHIVE',
-                'description' => 'Archive and Storage Team',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Customer Service Team',
-                'code' => 'CS',
-                'description' => 'Customer Service Team',
-                'is_active' => true,
-            ],
-        ]);
+        $teams = [
+            ['name' => 'Client Service', 'code' => 'CLIENT_SERVICE', 'description' => 'PG client service and account follow-up team.'],
+            ['name' => 'Account Management', 'code' => 'ACCOUNT_MANAGEMENT', 'description' => 'Account managers and client relationship owners.'],
+            ['name' => 'Traffic Team', 'code' => 'TRAFFIC', 'description' => 'Traffic management and workflow coordination team.'],
+            ['name' => 'Creative Team', 'code' => 'CREATIVE', 'description' => 'Creative direction, concepts, copy, and campaign ideas.'],
+            ['name' => 'Design Team', 'code' => 'DESIGN', 'description' => 'Graphic design, key visuals, layouts, and adaptations.'],
+            ['name' => 'Motion Team', 'code' => 'MOTION', 'description' => 'Motion graphics, animation, and video adaptation team.'],
+            ['name' => 'Content Team', 'code' => 'CONTENT', 'description' => 'Content writing, social copy, and editorial production.'],
+            ['name' => 'Digital Team', 'code' => 'DIGITAL', 'description' => 'Digital, social media, web, and performance support.'],
+            ['name' => 'Production Team', 'code' => 'PRODUCTION', 'description' => 'Production, final artwork, print, POSM, and delivery preparation.'],
+            ['name' => 'Events & Activations', 'code' => 'EVENTS_ACTIVATIONS', 'description' => 'Events, activations, branding, and on-ground execution.'],
+            ['name' => 'Media Zone', 'code' => 'MEDIA_ZONE', 'description' => 'Media Zone services and media production support.'],
+            ['name' => 'QA Team', 'code' => 'QA', 'description' => 'Quality assurance, review, and output checking.'],
+            ['name' => 'Archive Team', 'code' => 'ARCHIVE', 'description' => 'Archive, storage, file organization, and final asset control.'],
+            ['name' => 'Customer Support', 'code' => 'CUSTOMER_SUPPORT', 'description' => 'Support tickets and customer service operations.'],
+            ['name' => 'Strategy Team', 'code' => 'STRATEGY', 'description' => 'Campaign strategy, brand narrative, planning, and positioning.'],
+            ['name' => 'Operations Management', 'code' => 'OPERATIONS', 'description' => 'Operations leadership and delivery governance.'],
+        ];
+
+        foreach ($teams as $team) {
+            Team::updateOrCreate(
+                ['code' => $team['code']],
+                $team + ['is_active' => true]
+            );
+        }
     }
 }

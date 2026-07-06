@@ -37,6 +37,20 @@
         </select>
     </div>
 
+    <div class="md:col-span-2">
+        <label class="block mb-2 font-semibold">Client Service Team <span class="text-sm font-normal text-slate-500">(choose up to 3 PG employees)</span></label>
+        @php($selectedClientService = collect(old('client_service_user_ids', $client->clientServiceUsers?->pluck('id')->all() ?? []))->map(fn($id) => (string) $id)->all())
+        <select name="client_service_user_ids[]" multiple size="6" class="w-full rounded-xl border-slate-300">
+            @foreach($accountManagers as $accountManager)
+                <option value="{{ $accountManager->id }}" @selected(in_array((string) $accountManager->id, $selectedClientService, true))>
+                    {{ $accountManager->name }} — {{ $accountManager->email }}
+                </option>
+            @endforeach
+        </select>
+        <p class="mt-2 text-sm text-slate-500">Hold Command/Ctrl to select multiple employees. The system accepts maximum 3.</p>
+        <x-input-error :messages="$errors->get('client_service_user_ids')" class="mt-2" />
+    </div>
+
     <div>
         <label class="block mb-2 font-semibold">Industry</label>
         <input type="text" name="industry" value="{{ old('industry', $client->industry) }}"

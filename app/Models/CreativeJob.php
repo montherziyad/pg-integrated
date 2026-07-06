@@ -17,6 +17,7 @@ class CreativeJob extends Model
         'current_workflow_stage_id',
         'traffic_manager_id',
         'project_manager_id',
+        'responsible_user_id',
         'title',
         'brief',
         'priority',
@@ -35,6 +36,10 @@ class CreativeJob extends Model
         'nas_folder_path',
         'dropbox_folder_path',
         'final_delivery_path',
+        'delivery_review_status',
+        'delivery_reviewed_by',
+        'delivery_reviewed_at',
+        'delivery_published_at',
         'is_archived',
         'archived_at',
         'created_by',
@@ -48,6 +53,8 @@ class CreativeJob extends Model
             'final_due_at' => 'datetime',
             'first_draft_sent_at' => 'datetime',
             'final_delivered_at' => 'datetime',
+            'delivery_reviewed_at' => 'datetime',
+            'delivery_published_at' => 'datetime',
             'archived_at' => 'datetime',
             'is_archived' => 'boolean',
         ];
@@ -86,5 +93,15 @@ class CreativeJob extends Model
     public function assets()
     {
         return $this->hasMany(Asset::class, 'creative_job_id');
+    }
+
+    public function responsibleUser()
+    {
+        return $this->belongsTo(User::class, 'responsible_user_id');
+    }
+
+    public function deliveryReviewer()
+    {
+        return $this->belongsTo(User::class, 'delivery_reviewed_by');
     }
 }

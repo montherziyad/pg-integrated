@@ -3,6 +3,17 @@
     $hero = data_get($content, 'hero', []);
     $title = data_get($seo, 'title', $page?->title ?? data_get($hero, 'title', 'PG Integrated'));
     $description = data_get($seo, 'description', data_get($hero, 'body', 'PG Integrated creative, digital, production, and client operations.'));
+    $navUrl = function (array $item): string {
+        if (! empty($item['url'])) {
+            return url($item['url']);
+        }
+
+        if (! empty($item['route']) && \Illuminate\Support\Facades\Route::has($item['route'])) {
+            return route($item['route']);
+        }
+
+        return '#';
+    };
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -23,7 +34,7 @@
             </a>
             <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 lg:flex">
                 @foreach ($navigationPages as $item)
-                    <a href="{{ route($item['route']) }}" class="hover:text-amber-600">{{ $item['label'] }}</a>
+                    <a href="{{ $navUrl($item) }}" class="hover:text-amber-600">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
             <div class="flex items-center gap-2">
@@ -42,7 +53,7 @@
         </div>
         <nav class="flex gap-4 overflow-x-auto px-5 pb-4 text-xs font-bold uppercase tracking-[.12em] text-slate-600 lg:hidden">
             @foreach ($navigationPages as $item)
-                <a href="{{ route($item['route']) }}" class="shrink-0">{{ $item['label'] }}</a>
+                <a href="{{ $navUrl($item) }}" class="shrink-0">{{ $item['label'] }}</a>
             @endforeach
         </nav>
     </header>

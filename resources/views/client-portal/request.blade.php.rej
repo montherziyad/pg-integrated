@@ -1,0 +1,15 @@
+@@ -8,11 +8,9 @@
+             <label class="block">
+                 <span class="mb-2 block text-sm font-semibold">Request type</span>
+                 <select name="type" class="w-full rounded-xl border-slate-300">
+-                    <option value="brief">Brief</option>
+-                    <option value="campaign">Campaign</option>
+-                    <option value="project">Project</option>
+-                    <option value="job">Job</option>
+-                    <option value="adaptation">Adaptation</option>
++                    <option value="quotation">عرض سعر</option>
++                    <option value="new_brief">بريف جديد</option>
++                    <option value="new_project">مشروع جديد</option>
+                 </select>
+             </label>
+             <label class="block">

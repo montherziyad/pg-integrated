@@ -17,6 +17,84 @@
             </p>
         </div>
 
+
+        <!-- Action Center / Notifications -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <a href="{{ route('admin.clients.index') }}" class="rounded-3xl border border-amber-200 bg-amber-50 p-5 hover:border-amber-400">
+                <div class="text-sm font-bold uppercase tracking-wide text-amber-700">Client approvals</div>
+                <div class="mt-3 text-4xl font-extrabold text-amber-950">{{ $pendingClientApprovals }}</div>
+                <div class="mt-1 text-sm text-amber-800">Clients waiting activation or portal access</div>
+            </a>
+            <a href="{{ route('admin.users.index') }}" class="rounded-3xl border border-blue-200 bg-blue-50 p-5 hover:border-blue-400">
+                <div class="text-sm font-bold uppercase tracking-wide text-blue-700">Employee approvals</div>
+                <div class="mt-3 text-4xl font-extrabold text-blue-950">{{ $pendingEmployeeApprovals }}</div>
+                <div class="mt-1 text-sm text-blue-800">Employees waiting admin approval</div>
+            </a>
+            <a href="{{ route('admin.client-requests.index') }}" class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 hover:border-emerald-400">
+                <div class="text-sm font-bold uppercase tracking-wide text-emerald-700">New client requests</div>
+                <div class="mt-3 text-4xl font-extrabold text-emerald-950">{{ $newClientRequests }}</div>
+                <div class="mt-1 text-sm text-emerald-800">Briefs, quotations, and project requests</div>
+            </a>
+            <a href="{{ route('email-intakes.index') }}" class="rounded-3xl border border-slate-200 bg-white p-5 hover:border-slate-400">
+                <div class="text-sm font-bold uppercase tracking-wide text-slate-500">Email intake</div>
+                <div class="mt-3 text-4xl font-extrabold">{{ $pendingEmailIntakes }}</div>
+                <div class="mt-1 text-sm text-slate-500">New traffic emails waiting review</div>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="mb-4 flex items-center justify-between"><h3 class="text-lg font-bold">Pending client approvals</h3><a href="{{ route('admin.clients.index') }}" class="text-sm font-semibold text-slate-600">Open →</a></div>
+                    <div class="space-y-3">
+                        @forelse($pendingClients as $client)
+                            <a href="{{ route('admin.clients.edit', $client) }}" class="block rounded-2xl border border-slate-100 p-4 hover:bg-slate-50">
+                                <div class="font-bold">{{ $client->name }}</div>
+                                <div class="mt-1 text-sm text-slate-500">{{ $client->email ?: 'No email' }} · {{ $client->company_name ?: 'No company profile' }}</div>
+                                <div class="mt-2 text-xs font-bold uppercase tracking-wide text-amber-700">Needs activation / portal approval</div>
+                            </a>
+                        @empty
+                            <div class="text-sm text-slate-500">No pending client approvals.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="mb-4 flex items-center justify-between"><h3 class="text-lg font-bold">Pending employee approvals</h3><a href="{{ route('admin.users.index') }}" class="text-sm font-semibold text-slate-600">Open →</a></div>
+                    <div class="space-y-3">
+                        @forelse($pendingEmployees as $employee)
+                            <a href="{{ route('admin.users.edit', $employee) }}" class="block rounded-2xl border border-slate-100 p-4 hover:bg-slate-50">
+                                <div class="font-bold">{{ $employee->name }}</div>
+                                <div class="mt-1 text-sm text-slate-500">{{ $employee->email }}</div>
+                                <div class="mt-2 text-xs font-bold uppercase tracking-wide text-blue-700">Waiting admin approval</div>
+                            </a>
+                        @empty
+                            <div class="text-sm text-slate-500">No pending employee approvals.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="pg-card">
+                <div class="pg-card-body">
+                    <div class="mb-4 flex items-center justify-between"><h3 class="text-lg font-bold">New client requests</h3><a href="{{ route('admin.client-requests.index') }}" class="text-sm font-semibold text-slate-600">Open →</a></div>
+                    <div class="space-y-3">
+                        @forelse($latestClientRequests as $request)
+                            <a href="{{ route('admin.client-requests.show', $request) }}" class="block rounded-2xl border border-slate-100 p-4 hover:bg-slate-50">
+                                <div class="font-bold">{{ $request->title }}</div>
+                                <div class="mt-1 text-sm text-slate-500">{{ $request->client?->name ?? 'Client' }} · {{ $request->service_name ?? $request->type }}</div>
+                                <div class="mt-2 text-xs font-bold uppercase tracking-wide text-emerald-700">New request</div>
+                            </a>
+                        @empty
+                            <div class="text-sm text-slate-500">No new client requests.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Website Shortcuts -->
         <div class="pg-card">
             <div class="pg-card-body">

@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\ClientVerifyEmailNotification;
 
 #[Hidden(['password', 'remember_token'])]
-class Client extends Authenticatable
+class Client extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 
@@ -23,6 +25,7 @@ class Client extends Authenticatable
         'city',
         'website',
         'email',
+        'email_verified_at',
         'password',
         'phone',
         'avatar_path',
@@ -35,11 +38,17 @@ class Client extends Authenticatable
     protected function casts(): array
     {
         return [
+            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
             'portal_enabled' => 'boolean',
             'last_login_at' => 'datetime',
         ];
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new ClientVerifyEmailNotification());
     }
 
     public function branch()
@@ -50,6 +59,18 @@ class Client extends Authenticatable
     public function accountManager()
     {
         return $this->belongsTo(User::class, 'account_manager_id');
+    }
+
+    public function clientServiceUsers()
+    {
+        return $this->belongsToMany(User::class, 'client_service_user')->withTimestamps();
+    }
+
+    public function clientServiceNames(): string
+    {
+        $team = $this->relationLoaded('clientServiceUsers') ? $this->clientServiceUsers : collect();
+
+        return $team->pluck('name')->filter()->join(', ') ?: ($this->accountManager?->name ?? '-');
     }
 
     public function projects()

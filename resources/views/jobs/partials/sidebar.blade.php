@@ -11,6 +11,11 @@
         </div>
 
         <div>
+            <div class="pg-stat-label">Job Responsible</div>
+            <div class="font-semibold">{{ $job->client?->clientServiceNames() ?? '-' }}</div>
+        </div>
+
+        <div>
             <div class="pg-stat-label">Category</div>
             <div class="font-semibold">{{ $job->category?->name ?? '-' }}</div>
         </div>

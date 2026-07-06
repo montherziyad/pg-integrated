@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\ClientProjectRequest;
 use App\Models\CmsPage;
 use App\Models\CreativeJob;
 use App\Models\EmailIntake;
 use App\Models\JobActivity;
 use App\Models\Project;
+use App\Models\User;
 use App\Models\WorkflowStage;
 use App\Modules\Workload\Services\WorkloadService;
 
@@ -31,6 +33,28 @@ class DashboardController extends Controller
         $totalProjects = Project::count();
 
         $pendingEmailIntakes = EmailIntake::where('status', 'NEW')->count();
+        $pendingClientApprovals = Client::where('is_active', false)->orWhere('portal_enabled', false)->count();
+        $pendingEmployeeApprovals = User::where('is_active', false)->count();
+        $newClientRequests = ClientProjectRequest::where('status', 'new')->count();
+
+        $pendingClients = Client::with('accountManager')
+            ->where('is_active', false)
+            ->orWhere('portal_enabled', false)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $pendingEmployees = User::with(['role', 'team'])
+            ->where('is_active', false)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $latestClientRequests = ClientProjectRequest::with(['client', 'project'])
+            ->where('status', 'new')
+            ->latest()
+            ->take(5)
+            ->get();
 
         $websitePages = CmsPage::query()
             ->orderByRaw("case key when 'home' then 1 when 'about' then 2 when 'services' then 3 when 'work' then 4 when 'team' then 5 when 'clients' then 6 when 'contact' then 7 else 99 end")
@@ -65,6 +89,12 @@ class DashboardController extends Controller
             'totalClients',
             'totalProjects',
             'pendingEmailIntakes',
+            'pendingClientApprovals',
+            'pendingEmployeeApprovals',
+            'newClientRequests',
+            'pendingClients',
+            'pendingEmployees',
+            'latestClientRequests',
             'websitePages',
             'latestJobs',
             'latestActivities',

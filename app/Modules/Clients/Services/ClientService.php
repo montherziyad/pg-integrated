@@ -25,22 +25,30 @@ class ClientService
     {
         $data['is_active'] = $data['is_active'] ?? true;
         $data['portal_enabled'] = $data['portal_enabled'] ?? false;
-        unset($data['password_confirmation']);
+        $clientServiceUserIds = array_slice($data['client_service_user_ids'] ?? [], 0, 3);
+        unset($data['password_confirmation'], $data['client_service_user_ids']);
 
-        return $this->repository->create($data);
+        $client = $this->repository->create($data);
+        $client->clientServiceUsers()->sync($clientServiceUserIds);
+
+        return $client;
     }
 
     public function update(Client $client, array $data): bool
     {
         $data['is_active'] = $data['is_active'] ?? false;
         $data['portal_enabled'] = $data['portal_enabled'] ?? false;
-        unset($data['password_confirmation']);
+        $clientServiceUserIds = array_slice($data['client_service_user_ids'] ?? [], 0, 3);
+        unset($data['password_confirmation'], $data['client_service_user_ids']);
 
         if (blank($data['password'] ?? null)) {
             unset($data['password']);
         }
 
-        return $this->repository->update($client, $data);
+        $updated = $this->repository->update($client, $data);
+        $client->clientServiceUsers()->sync($clientServiceUserIds);
+
+        return $updated;
     }
 
     public function delete(Client $client): bool

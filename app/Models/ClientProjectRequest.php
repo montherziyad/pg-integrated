@@ -10,6 +10,7 @@ class ClientProjectRequest extends Model
         'request_number',
         'client_id',
         'project_id',
+        'service_name',
         'type',
         'title',
         'brief',

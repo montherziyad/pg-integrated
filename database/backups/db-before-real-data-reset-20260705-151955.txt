@@ -1,0 +1,56 @@
+
+ PostgreSQL .. 18.4 (Homebrew) 
+ Connection .. pgsql 
+ Database .. pg_integrated 
+ Host .. 127.0.0.1 
+ Port .. 5432 
+ Username .. mziyad 
+ URL .. 
+ Open Connections .. 9 
+ Tables .. 42 
+ Total Size .. 1.30 MB 
+
+ Schema / Table .. Size / Rows 
+ public / ai_approval_suggestions .. 24.00 KB / 0 
+ public / ai_interactions .. 24.00 KB / 0 
+ public / assets .. 32.00 KB / 2 
+ public / branches .. 48.00 KB / 4 
+ public / cache .. 48.00 KB / 0 
+ public / cache_locks .. 24.00 KB / 0 
+ public / client_project_requests .. 24.00 KB / 0 
+ public / clients .. 48.00 KB / 3 
+ public / cms_pages .. 96.00 KB / 7 
+ public / creative_jobs .. 48.00 KB / 5 
+ public / crm_activities .. 16.00 KB / 0 
+ public / crm_companies .. 16.00 KB / 0 
+ public / crm_contacts .. 16.00 KB / 0 
+ public / crm_tasks .. 16.00 KB / 0 
+ public / email_intake_attachments .. 16.00 KB / 0 
+ public / email_intake_traffic_members .. 16.00 KB / 0 
+ public / email_intake_validations .. 16.00 KB / 0 
+ public / email_intakes .. 24.00 KB / 0 
+ public / failed_jobs .. 32.00 KB / 0 
+ public / job_activities .. 32.00 KB / 3 
+ public / job_assignments .. 32.00 KB / 5 
+ public / job_batches .. 16.00 KB / 0 
+ public / job_categories .. 24.00 KB / 0 
+ public / job_stage_histories .. 16.00 KB / 0 
+ public / job_statuses .. 24.00 KB / 0 
+ public / jobs .. 24.00 KB / 0 
+ public / marketing_campaign_recipients .. 16.00 KB / 0 
+ public / marketing_campaigns .. 16.00 KB / 0 
+ public / migrations .. 24.00 KB / 35 
+ public / password_reset_tokens .. 16.00 KB / 0 
+ public / projects .. 48.00 KB / 3 
+ public / revisions .. 8.00 KB / 0 
+ public / roles .. 48.00 KB / 10 
+ public / sessions .. 104.00 KB / 43 
+ public / settings .. 24.00 KB / 0 
+ public / support_messages .. 16.00 KB / 0 
+ public / support_tickets .. 24.00 KB / 0 
+ public / teams .. 48.00 KB / 7 
+ public / user_outlook_accounts .. 48.00 KB / 0 
+ public / users .. 48.00 KB / 2 
+ public / workflow_stages .. 48.00 KB / 10 
+ public / workflow_transitions .. 48.00 KB / 12 
+

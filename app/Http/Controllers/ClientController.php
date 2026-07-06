@@ -52,7 +52,7 @@ class ClientController extends Controller
     public function edit(Client $client)
     {
         return view('admin.clients.edit', [
-            'client' => $client,
+            'client' => $client->loadMissing('clientServiceUsers'),
             'branches' => Branch::orderBy('name')->get(),
             'accountManagers' => User::orderBy('name')->get(),
         ]);

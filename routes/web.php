@@ -13,6 +13,7 @@ use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\CmsPageController;
 use App\Http\Controllers\CrmController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmailIntakeController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MarketingCampaignController;
@@ -44,6 +45,11 @@ Route::get('/pages/{page:slug}', [PublicWebsiteController::class, 'show'])->name
 Route::middleware('guest:client')->group(function () {
     Route::get('/client/login', [ClientAuthController::class, 'create'])->name('client.login');
     Route::post('/client/login', [ClientAuthController::class, 'store'])->name('client.login.store');
+    Route::get('/client/register', [ClientAuthController::class, 'register'])->name('client.register');
+    Route::post('/client/register', [ClientAuthController::class, 'storeRegistration'])->name('client.register.store');
+    Route::get('/client/register/pending', [ClientAuthController::class, 'pending'])->name('client.register.pending');
+    Route::get('/client/verify-email/{id}/{hash}', [ClientAuthController::class, 'verifyEmail'])->name('client.verification.verify');
+    Route::post('/client/email/verification-notification', [ClientAuthController::class, 'resendVerification'])->name('client.verification.send');
 });
 
 Route::middleware('auth:client')->group(function () {
@@ -167,36 +173,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');
 
-    Route::get('/admin/careers/applications', [CareerController::class, 'applications'])
-        ->name('admin.career-applications.index');
-
-    Route::get('/admin/careers/applications/{application}', [CareerController::class, 'showApplication'])
-        ->name('admin.career-applications.show');
-
-    Route::patch('/admin/careers/applications/{application}', [CareerController::class, 'updateApplication'])
-        ->name('admin.career-applications.update');
-
-    Route::get('/admin/careers/applications/{application}/cv', [CareerController::class, 'downloadCv'])
-        ->name('admin.career-applications.cv');
-
-    Route::get('/admin/careers', [CareerController::class, 'adminIndex'])
-        ->name('admin.careers.index');
-
-    Route::get('/admin/careers/create', [CareerController::class, 'create'])
-        ->name('admin.careers.create');
-
-    Route::post('/admin/careers', [CareerController::class, 'store'])
-        ->name('admin.careers.store');
-
-    Route::get('/admin/careers/{career}/edit', [CareerController::class, 'edit'])
-        ->name('admin.careers.edit');
-
-    Route::put('/admin/careers/{career}', [CareerController::class, 'update'])
-        ->name('admin.careers.update');
-
-    Route::delete('/admin/careers/{career}', [CareerController::class, 'destroy'])
-        ->name('admin.careers.destroy');
-
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
 
@@ -225,6 +201,15 @@ Route::middleware(['auth'])->group(function () {
     */
 
     Route::resource('jobs', JobController::class);
+
+    Route::get('/deliveries', [DeliveryController::class, 'index'])
+        ->name('deliveries.index');
+
+    Route::get('/deliveries/{job}', [DeliveryController::class, 'edit'])
+        ->name('deliveries.edit');
+
+    Route::put('/deliveries/{job}', [DeliveryController::class, 'update'])
+        ->name('deliveries.update');
 
     Route::get('/email-intakes', [EmailIntakeController::class, 'index'])
         ->name('email-intakes.index');
@@ -321,6 +306,27 @@ Route::middleware(['auth'])->group(function () {
         ->parameters(['cms' => 'cms'])
         ->except(['show'])
         ->names('admin.cms');
+
+    Route::get('/admin/careers', [CareerController::class, 'adminIndex'])
+        ->name('admin.careers.index');
+    Route::get('/admin/careers/create', [CareerController::class, 'create'])
+        ->name('admin.careers.create');
+    Route::post('/admin/careers', [CareerController::class, 'store'])
+        ->name('admin.careers.store');
+    Route::get('/admin/careers/{career}/edit', [CareerController::class, 'edit'])
+        ->name('admin.careers.edit');
+    Route::put('/admin/careers/{career}', [CareerController::class, 'update'])
+        ->name('admin.careers.update');
+    Route::delete('/admin/careers/{career}', [CareerController::class, 'destroy'])
+        ->name('admin.careers.destroy');
+    Route::get('/admin/career-applications', [CareerController::class, 'applications'])
+        ->name('admin.career-applications.index');
+    Route::get('/admin/career-applications/{application}', [CareerController::class, 'showApplication'])
+        ->name('admin.career-applications.show');
+    Route::patch('/admin/career-applications/{application}', [CareerController::class, 'updateApplication'])
+        ->name('admin.career-applications.update');
+    Route::get('/admin/career-applications/{application}/cv', [CareerController::class, 'downloadCv'])
+        ->name('admin.career-applications.cv');
 
     Route::get('/crm', [CrmController::class, 'index'])
         ->name('crm.index');

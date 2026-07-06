@@ -21,8 +21,8 @@
                     <div class="font-semibold">{{ $client->branch?->name ?? '-' }}</div>
                 </div>
                 <div>
-                    <div class="pg-stat-label">Account Manager</div>
-                    <div class="font-semibold">{{ $client->accountManager?->name ?? '-' }}</div>
+                    <div class="pg-stat-label">Client Service</div>
+                    <div class="font-semibold">{{ $client->clientServiceNames() }}</div>
                 </div>
                 <div>
                     <div class="pg-stat-label">Industry</div>

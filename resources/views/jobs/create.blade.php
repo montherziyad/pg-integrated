@@ -39,6 +39,16 @@
                         </div>
 
                         <div>
+                            <label class="block mb-2 font-semibold">Job Responsible / Final delivery owner</label>
+                            <select name="responsible_user_id" class="w-full rounded-xl border-slate-300">
+                                <option value="">Select responsible employee</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" @selected((string) old('responsible_user_id') === (string) $user->id)>{{ $user->name }} — {{ $user->email }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label class="block mb-2 font-semibold">Category</label>
                             <select name="job_category_id" class="w-full rounded-xl border-slate-300">
                                 <option value="">Select Category</option>

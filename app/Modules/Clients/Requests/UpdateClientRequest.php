@@ -26,6 +26,8 @@ class UpdateClientRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'branch_id' => ['nullable', 'exists:branches,id'],
             'account_manager_id' => ['nullable', 'exists:users,id'],
+            'client_service_user_ids' => ['nullable', 'array', 'max:3'],
+            'client_service_user_ids.*' => ['exists:users,id'],
             'industry' => ['nullable', 'string', 'max:255'],
             'email' => [
                 'nullable',

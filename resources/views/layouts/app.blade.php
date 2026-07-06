@@ -30,6 +30,7 @@
 
                 <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Website</div>
                 <a href="{{ route('admin.cms.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.cms.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Website Pages</a>
+                <a href="{{ route('admin.careers.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.careers.*') || request()->routeIs('admin.career-applications.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Careers / Join Us</a>
 
                 <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Clients</div>
                 <a href="{{ route('admin.clients.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Clients</a>
@@ -42,11 +43,11 @@
                 <a href="{{ route('ai-employee.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('ai-employee.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">AI Employee</a>
                 <a href="{{ route('ai.workspace') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('ai.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">AI Workspace</a>
                 <a href="{{ route('marketing.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('marketing.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Marketing</a>
-                <a href="{{ route('admin.careers.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.careers.*') || request()->routeIs('admin.career-applications.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Careers</a>
 
                 <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Traffic</div>
                 <a href="{{ route('email-intakes.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('email-intakes.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Email Intake</a>
                 <a href="{{ route('jobs.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('jobs.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Jobs</a>
+                <a href="{{ route('deliveries.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('deliveries.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Delivery / Handover</a>
                 <a href="{{ route('traffic.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('traffic.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Traffic Board</a>
                 <a href="{{ route('workload.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('workload.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Team Workload</a>
                 <a href="{{ route('archive.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('archive.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Archive</a>

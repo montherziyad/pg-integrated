@@ -8,6 +8,7 @@
             <p class="mt-4 whitespace-pre-line leading-7 text-slate-600">{{ $request->brief ?: 'No brief text.' }}</p>
 
             <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <div class="rounded-xl bg-slate-50 p-4"><div class="text-xs text-slate-500">Service</div><div class="font-bold">{{ $request->service_name ?? '—' }}</div></div>
                 <div class="rounded-xl bg-slate-50 p-4"><div class="text-xs text-slate-500">Country</div><div class="font-bold">{{ $request->target_country ?: '—' }}</div></div>
                 <div class="rounded-xl bg-slate-50 p-4"><div class="text-xs text-slate-500">Launch</div><div class="font-bold">{{ $request->desired_launch_date?->format('Y-m-d') ?? '—' }}</div></div>
                 <div class="rounded-xl bg-slate-50 p-4"><div class="text-xs text-slate-500">Priority</div><div class="font-bold">{{ $request->priority }}</div></div>

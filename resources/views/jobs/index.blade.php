@@ -61,6 +61,7 @@
                                 <th>Title</th>
                                 <th>Client</th>
                                 <th>Project</th>
+                                <th>Job Responsible</th>
                                 <th>Stage</th>
                                 <th>Priority</th>
                                 <th>Created</th>
@@ -85,6 +86,11 @@
 
                                     <td>
                                         {{ $job->project?->name ?? '-' }}
+                                    </td>
+
+                                    <td>
+                                        <div class="font-semibold">{{ $job->client?->clientServiceNames() ?? '-' }}</div>
+                                        <div class="text-xs text-slate-500">PG Job Responsible</div>
                                     </td>
 
                                     <td>

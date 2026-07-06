@@ -17,10 +17,12 @@ class JobRepository extends BaseRepository
         return $this->model
             ->newQuery()
             ->with([
-                'client',
+                'client.accountManager',
+                'client.clientServiceUsers',
                 'project',
                 'category',
                 'currentWorkflowStage',
+                'responsibleUser',
             ])
             ->latest()
             ->get();
@@ -31,10 +33,12 @@ class JobRepository extends BaseRepository
         return $this->model
             ->newQuery()
             ->with([
-                'client',
+                'client.accountManager',
+                'client.clientServiceUsers',
                 'project',
                 'category',
                 'currentWorkflowStage',
+                'responsibleUser',
                 'assignments.team',
                 'assignments.supervisor',
                 'assignments.assignee',

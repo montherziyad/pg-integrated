@@ -30,8 +30,9 @@
                                 <th class="py-3">Client</th>
                                 <th>Code</th>
                                 <th>Branch</th>
-                                <th>Account Manager</th>
+                                <th>Client Service</th>
                                 <th>Projects</th>
+                                <th>Email</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
@@ -43,8 +44,9 @@
                                     <td class="py-4 font-semibold">{{ $client->name }}</td>
                                     <td>{{ $client->client_code }}</td>
                                     <td>{{ $client->branch?->name ?? '-' }}</td>
-                                    <td>{{ $client->accountManager?->name ?? '-' }}</td>
+                                    <td>{{ $client->clientServiceNames() }}</td>
                                     <td>{{ $client->projects_count }}</td>
+                                    <td><span class="pg-badge {{ $client->hasVerifiedEmail() ? 'pg-badge-completed' : 'pg-badge-review' }}">{{ $client->hasVerifiedEmail() ? 'Verified' : 'Unverified' }}</span></td>
                                     <td>
                                         @if($client->is_active)
                                             <span class="pg-badge pg-badge-completed">Active</span>
@@ -60,7 +62,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="py-10 text-center text-slate-500">
+                                    <td colspan="8" class="py-10 text-center text-slate-500">
                                         No clients found.
                                     </td>
                                 </tr>

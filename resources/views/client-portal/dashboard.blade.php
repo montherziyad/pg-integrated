@@ -27,6 +27,31 @@
         </div>
     </section>
 
+
+    <section class="mt-8 rounded-3xl bg-white p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-extrabold">Your PG Client Service team</h2>
+                <p class="mt-1 text-slate-500">These PG employees are assigned to support your account.</p>
+            </div>
+        </div>
+        <div class="mt-5 grid gap-4 md:grid-cols-3">
+            @forelse($client->clientServiceUsers as $serviceUser)
+                <div class="rounded-2xl border border-slate-200 p-4">
+                    <div class="text-xs font-bold uppercase tracking-wide text-slate-400">Client Service</div>
+                    <div class="mt-2 font-bold">{{ $serviceUser->name }}</div>
+                    <div class="text-sm text-slate-500">{{ $serviceUser->email }}</div>
+                </div>
+            @empty
+                <div class="rounded-2xl border border-slate-200 p-4">
+                    <div class="text-xs font-bold uppercase tracking-wide text-slate-400">Client Service</div>
+                    <div class="mt-2 font-bold">{{ $client->accountManager?->name ?? 'Not assigned yet' }}</div>
+                    <div class="text-sm text-slate-500">{{ $client->accountManager?->email ?? 'PG Integrated will assign your service team soon.' }}</div>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
     <section class="mt-8 grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
         <div class="rounded-3xl bg-white p-6">
             <div class="flex items-center justify-between">
@@ -70,20 +95,24 @@
             <a href="{{ route('client.projects') }}" class="text-sm font-bold text-slate-500">All projects →</a>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[820px] text-left text-sm">
+            <table class="w-full min-w-[980px] text-left text-sm">
                 <thead class="bg-slate-50 text-slate-500">
-                    <tr><th class="px-6 py-4">Job</th><th>Project</th><th>Stage</th><th>Progress</th><th>Due</th><th>Links</th></tr>
+                    <tr><th class="px-6 py-4">Job</th><th>Project</th><th>Job Responsible</th><th>Stage</th><th>Progress</th><th>Due</th><th>Links</th></tr>
                 </thead>
                 <tbody>
                     @forelse ($jobs as $job)
                         <tr class="border-t border-slate-100">
                             <td class="px-6 py-4"><div class="font-bold">{{ $job->title }}</div><div class="text-xs text-slate-500">{{ $job->job_number }}</div></td>
                             <td>{{ $job->project?->name ?? '—' }}</td>
+                            <td>
+                                <div class="font-bold">{{ $job->responsibleUser?->name ?? 'Not assigned' }}</div>
+                                <div class="text-xs text-slate-500">Final delivery owner</div>
+                            </td>
                             <td>{{ $job->currentWorkflowStage?->name ?? 'Preparing' }}</td>
                             <td>{{ $job->completion_percentage }}%</td>
                             <td>{{ $job->final_due_at?->format('Y-m-d') ?? '—' }}</td>
                             <td>
-                                @if ($job->final_delivery_path)
+                                @if ($job->final_delivery_path && $job->delivery_review_status === 'published')
                                     <a href="{{ $job->final_delivery_path }}" class="font-bold text-blue-600" target="_blank">Delivery</a>
                                 @else
                                     <span class="text-slate-400">Pending</span>
@@ -91,7 +120,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-6 py-8 text-slate-500">No jobs are available yet.</td></tr>
+                        <tr><td colspan="7" class="px-6 py-8 text-slate-500">No jobs are available yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>

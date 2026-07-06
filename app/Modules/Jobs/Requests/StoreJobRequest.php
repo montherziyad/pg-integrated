@@ -17,6 +17,7 @@ class StoreJobRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'client_id' => ['required', 'exists:clients,id'],
             'project_id' => ['nullable', 'exists:projects,id'],
+            'responsible_user_id' => ['nullable', 'exists:users,id'],
             'job_category_id' => ['nullable', 'exists:job_categories,id'],
             'priority' => ['required', 'in:LOW,MEDIUM,HIGH,URGENT,CRITICAL'],
             'first_draft_due_at' => ['nullable', 'date'],

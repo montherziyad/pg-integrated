@@ -8,12 +8,12 @@ class ProjectRepository
 {
     public function all()
     {
-        return Project::with(['client', 'projectManager'])->orderBy('name')->get();
+        return Project::with(['client.accountManager', 'client.clientServiceUsers', 'projectManager'])->orderBy('name')->get();
     }
 
     public function find(int $id): ?Project
     {
-        return Project::with(['client', 'projectManager'])->find($id);
+        return Project::with(['client.accountManager', 'client.clientServiceUsers', 'projectManager'])->find($id);
     }
 
     public function create(array $data): Project

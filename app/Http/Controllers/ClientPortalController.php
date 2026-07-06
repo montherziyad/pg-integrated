@@ -13,7 +13,7 @@ class ClientPortalController extends Controller
 {
     public function index(Request $request): View
     {
-        $client = $request->user('client');
+        $client = $request->user('client')->loadMissing(['accountManager', 'clientServiceUsers']);
 
         return view('client-portal.dashboard', [
             'client' => $client,
@@ -23,7 +23,7 @@ class ClientPortalController extends Controller
                 ->get(),
             'jobs' => CreativeJob::query()
                 ->whereBelongsTo($client)
-                ->with(['project', 'currentWorkflowStage'])
+                ->with(['project', 'currentWorkflowStage', 'responsibleUser'])
                 ->latest()
                 ->get(),
             'projectRequests' => $client->projectRequests()->latest()->take(6)->get(),
@@ -72,7 +72,7 @@ class ClientPortalController extends Controller
             'projects' => $client->projects()->withCount('jobs')->latest()->get(),
             'jobs' => CreativeJob::query()
                 ->whereBelongsTo($client)
-                ->with(['project', 'currentWorkflowStage', 'assets'])
+                ->with(['project', 'currentWorkflowStage', 'assets', 'responsibleUser'])
                 ->latest()
                 ->get(),
             'projectRequests' => $client->projectRequests()->latest()->get(),
@@ -95,7 +95,8 @@ class ClientPortalController extends Controller
 
         $data = $request->validate([
             'project_id' => ['nullable', 'exists:projects,id'],
-            'type' => ['required', 'string', 'max:60'],
+            'service_name' => ['required', 'string', 'max:180'],
+            'type' => ['required', Rule::in(['brief', 'campaign', 'project'])],
             'title' => ['required', 'string', 'max:255'],
             'brief' => ['nullable', 'string', 'max:5000'],
             'target_country' => ['nullable', 'string', 'max:255'],
@@ -129,6 +130,7 @@ class ClientPortalController extends Controller
             'request_number' => 'CPR-'.now()->format('YmdHis').'-'.$client->id,
             'client_id' => $client->id,
             'project_id' => $data['project_id'] ?? null,
+            'service_name' => $data['service_name'],
             'type' => $data['type'],
             'title' => $data['title'],
             'brief' => $data['brief'] ?? null,

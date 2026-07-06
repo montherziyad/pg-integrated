@@ -23,45 +23,12 @@
                         <div><label class="block mb-2 font-semibold">Job Title</label><input name="title" value="{{ old('title', $job->title) }}" class="w-full rounded-xl border-slate-300" required></div>
                         <div><label class="block mb-2 font-semibold">Client</label><select name="client_id" class="w-full rounded-xl border-slate-300" required>@foreach($clients as $client)<option value="{{ $client->id }}" @selected((string) old('client_id', $job->client_id) === (string) $client->id)>{{ $client->name }}</option>@endforeach</select></div>
                         <div><label class="block mb-2 font-semibold">Project</label><select name="project_id" class="w-full rounded-xl border-slate-300"><option value="">Select Project</option>@foreach($projects as $project)<option value="{{ $project->id }}" @selected((string) old('project_id', $job->project_id) === (string) $project->id)>{{ $project->name }}</option>@endforeach</select></div>
+                        <div><label class="block mb-2 font-semibold">Job Responsible / Final delivery owner</label><select name="responsible_user_id" class="w-full rounded-xl border-slate-300"><option value="">Select responsible employee</option>@foreach($users as $user)<option value="{{ $user->id }}" @selected((string) old('responsible_user_id', $job->responsible_user_id) === (string) $user->id)>{{ $user->name }} — {{ $user->email }}</option>@endforeach</select></div>
                         <div><label class="block mb-2 font-semibold">Category</label><select name="job_category_id" class="w-full rounded-xl border-slate-300"><option value="">Select Category</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected((string) old('job_category_id', $job->job_category_id) === (string) $category->id)>{{ $category->name }}</option>@endforeach</select></div>
                         <div><label class="block mb-2 font-semibold">Priority</label><select name="priority" class="w-full rounded-xl border-slate-300">@foreach(['LOW','MEDIUM','HIGH','URGENT','CRITICAL'] as $priority)<option value="{{ $priority }}" @selected(old('priority', $job->priority) === $priority)>{{ str($priority)->title() }}</option>@endforeach</select></div>
                         <div><label class="block mb-2 font-semibold">First Draft Due</label><input name="first_draft_due_at" type="datetime-local" value="{{ old('first_draft_due_at', $job->first_draft_due_at?->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-300"></div>
                         <div><label class="block mb-2 font-semibold">Final Delivery Due</label><input name="final_due_at" type="datetime-local" value="{{ old('final_due_at', $job->final_due_at?->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-300"></div>
                         <div><label class="block mb-2 font-semibold">Estimated Hours</label><input name="estimated_hours" type="number" step="0.5" min="0" value="{{ old('estimated_hours', $job->estimated_hours) }}" class="w-full rounded-xl border-slate-300"></div>
-                    </div>
-
-                    <div class="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                        <div class="mb-5">
-                            <h3 class="text-lg font-bold text-slate-950">Client Portal Visibility</h3>
-                            <p class="mt-1 text-sm text-slate-600">هذه الحقول هي التي تظهر للعميل في Dashboard و Projects مثل المرحلة، النسبة، الروابط، وتاريخ التسليم.</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block mb-2 font-semibold">Stage shown to client</label>
-                                <select name="current_workflow_stage_id" class="w-full rounded-xl border-slate-300">
-                                    <option value="">Preparing / Not selected</option>
-                                    @foreach($workflowStages as $stage)
-                                        <option value="{{ $stage->id }}" @selected((string) old('current_workflow_stage_id', $job->current_workflow_stage_id) === (string) $stage->id)>{{ $stage->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block mb-2 font-semibold">Progress %</label>
-                                <input name="completion_percentage" type="number" min="0" max="100" value="{{ old('completion_percentage', $job->completion_percentage) }}" class="w-full rounded-xl border-slate-300">
-                            </div>
-                            <div>
-                                <label class="block mb-2 font-semibold">Brief / Dropbox link</label>
-                                <input name="dropbox_folder_path" value="{{ old('dropbox_folder_path', $job->dropbox_folder_path) }}" placeholder="https://www.dropbox.com/..." class="w-full rounded-xl border-slate-300">
-                            </div>
-                            <div>
-                                <label class="block mb-2 font-semibold">Final / WeTransfer link</label>
-                                <input name="final_delivery_path" value="{{ old('final_delivery_path', $job->final_delivery_path) }}" placeholder="https://wetransfer.com/..." class="w-full rounded-xl border-slate-300">
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <label class="block mb-2 font-semibold">Client notes</label>
-                            <textarea name="client_notes" rows="4" class="w-full rounded-xl border-slate-300" placeholder="Short note visible internally and ready for client-facing updates.">{{ old('client_notes', $job->client_notes) }}</textarea>
-                        </div>
                     </div>
 
                     <div class="mt-8"><label class="block mb-2 font-semibold">Brief</label><textarea name="brief" rows="8" class="w-full rounded-xl border-slate-300">{{ old('brief', $job->brief) }}</textarea></div>

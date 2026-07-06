@@ -38,6 +38,7 @@ class JobController extends Controller
             'projects' => Project::orderBy('name')->get(),
             'categories' => JobCategory::orderBy('name')->get(),
             'statuses' => JobStatus::orderBy('sort_order')->get(),
+            'users' => User::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
@@ -112,6 +113,7 @@ class JobController extends Controller
             'categories' => JobCategory::orderBy('name')->get(),
             'statuses' => JobStatus::orderBy('sort_order')->get(),
             'workflowStages' => WorkflowStage::orderBy('sort_order')->get(),
+            'users' => User::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
