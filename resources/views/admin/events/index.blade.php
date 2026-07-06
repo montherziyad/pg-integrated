@@ -1,10 +1,10 @@
 <x-app-layout>
-    <x-slot name="header">الفعاليات</x-slot>
+    <x-slot name="header">Events</x-slot>
 
     <div class="space-y-8">
         <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-                <h2 class="pg-title">تقويم الفعاليات والمواسم</h2>
+                <h2 class="pg-title">Events & campaign calendar</h2>
                 <p class="pg-subtitle mt-1">Saudi market calendar for campaign planning, traffic readiness, and client content windows.</p>
             </div>
             <div class="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3 text-sm font-bold text-amber-800">
