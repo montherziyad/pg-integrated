@@ -74,6 +74,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/website-chat', [AdminWebsiteChatController::class, 'index'])->name('admin.website-chat.index');
     Route::post('/admin/website-chat/knowledge/{knowledge}/approve', [AdminWebsiteChatController::class, 'approveKnowledge'])->name('admin.website-chat.knowledge.approve');
+    Route::delete('/admin/website-chat/reset', [AdminWebsiteChatController::class, 'reset'])->name('admin.website-chat.reset');
 
     /*
     |--------------------------------------------------------------------------
