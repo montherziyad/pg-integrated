@@ -28,20 +28,22 @@
 </head>
 <body class="bg-[#f7f3ec] text-slate-950 antialiased">
     <header class="sticky top-0 z-40 border-b border-black/10 bg-[#f7f3ec]/90 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
             <a href="{{ route('website.home') }}" class="flex items-center gap-3">
-                <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-11 w-auto">
-                <span class="hidden text-sm font-extrabold uppercase tracking-[.22em] sm:inline">PG Integrated</span>
+                <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-12 w-auto">
+                <span class="hidden text-sm font-extrabold uppercase tracking-[.22em] md:inline">PG Integrated</span>
             </a>
-            <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 lg:flex">
+
+            <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 xl:flex">
                 @foreach ($navigationPages as $item)
                     <a href="{{ $navUrl($item) }}" class="hover:text-amber-600">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
-            <div class="flex items-center gap-2">
+
+            <div class="hidden items-center gap-2 xl:flex">
                 @auth
                     @if ($page?->exists)
-                        <a href="{{ route('admin.cms.edit', $page) }}" class="hidden rounded-full border border-amber-400 bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-amber-200 sm:inline-flex">Edit this page</a>
+                        <a href="{{ route('admin.cms.edit', $page) }}" class="rounded-full border border-amber-400 bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-amber-200">Edit this page</a>
                     @endif
                 @endauth
                 <a href="{{ route('client.login') }}" class="rounded-full border border-black/15 px-4 py-2 text-sm font-bold hover:bg-white">Client</a>
@@ -51,12 +53,40 @@
                     <a href="{{ route('employee.login') }}" class="rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white">Employee</a>
                 @endauth
             </div>
+
+            <details class="group relative xl:hidden">
+                <summary class="flex cursor-pointer list-none items-center gap-3 rounded-full border border-black/15 bg-white/70 px-4 py-3 text-sm font-black uppercase tracking-[.16em] text-slate-950 shadow-sm transition hover:bg-white">
+                    <span>Menu</span>
+                    <span class="relative h-4 w-5">
+                        <span class="absolute left-0 top-0 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:top-2 group-open:rotate-45"></span>
+                        <span class="absolute left-0 top-2 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:opacity-0"></span>
+                        <span class="absolute left-0 top-4 h-0.5 w-5 rounded-full bg-slate-950 transition group-open:top-2 group-open:-rotate-45"></span>
+                    </span>
+                </summary>
+
+                <div class="absolute right-0 mt-3 w-[min(88vw,360px)] overflow-hidden rounded-[1.75rem] border border-black/10 bg-white p-3 shadow-2xl">
+                    <nav class="grid gap-1">
+                        @foreach ($navigationPages as $item)
+                            <a href="{{ $navUrl($item) }}" class="rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[.14em] text-slate-700 hover:bg-slate-50 hover:text-amber-700">
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+                    </nav>
+
+                    <div class="mt-3 grid gap-2 border-t border-black/10 pt-3">
+                        <a href="{{ route('client.login') }}" class="rounded-2xl border border-black/15 px-4 py-3 text-center text-sm font-black">Client Portal</a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="rounded-2xl bg-slate-950 px-4 py-3 text-center text-sm font-black text-white">Dashboard</a>
+                            @if ($page?->exists)
+                                <a href="{{ route('admin.cms.edit', $page) }}" class="rounded-2xl bg-amber-300 px-4 py-3 text-center text-sm font-black text-slate-950">Edit page</a>
+                            @endif
+                        @else
+                            <a href="{{ route('employee.login') }}" class="rounded-2xl bg-slate-950 px-4 py-3 text-center text-sm font-black text-white">Employee Login</a>
+                        @endauth
+                    </div>
+                </div>
+            </details>
         </div>
-        <nav class="flex gap-4 overflow-x-auto px-5 pb-4 text-xs font-bold uppercase tracking-[.12em] text-slate-600 lg:hidden">
-            @foreach ($navigationPages as $item)
-                <a href="{{ $navUrl($item) }}" class="shrink-0">{{ $item['label'] }}</a>
-            @endforeach
-        </nav>
     </header>
 
     <main>
