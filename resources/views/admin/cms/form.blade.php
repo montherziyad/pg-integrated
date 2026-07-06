@@ -325,6 +325,11 @@
                             <div class="mb-3 text-sm font-bold text-slate-500">Location {{ $index + 1 }}</div>
                             <input name="locations[{{ $index }}][city]" value="{{ data_get($location, 'city') }}" placeholder="City" class="{{ $inputClass }}">
                             <textarea name="locations[{{ $index }}][address]" rows="3" placeholder="Address" class="{{ $inputClass }} mt-3">{{ data_get($location, 'address') }}</textarea>
+                            <div class="mt-3 grid gap-3 md:grid-cols-2">
+                                <input name="locations[{{ $index }}][lat]" value="{{ data_get($location, 'lat') }}" placeholder="Latitude e.g. 21.4858" class="{{ $inputClass }}">
+                                <input name="locations[{{ $index }}][lng]" value="{{ data_get($location, 'lng') }}" placeholder="Longitude e.g. 39.1925" class="{{ $inputClass }}">
+                            </div>
+                            <input name="locations[{{ $index }}][map_url]" value="{{ data_get($location, 'map_url') }}" placeholder="Google Maps URL" class="{{ $inputClass }} mt-3">
                         </div>
                     @endforeach
                 </div>

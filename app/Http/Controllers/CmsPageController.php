@@ -242,7 +242,7 @@ class CmsPageController extends Controller
             $sections['contacts'] = $contacts;
         }
 
-        $locations = $this->cleanRows($request->input('locations', []), ['city', 'address']);
+        $locations = $this->cleanRows($request->input('locations', []), ['city', 'address', 'lat', 'lng', 'map_url']);
         if ($locations !== []) {
             $sections['locations'] = $locations;
         }

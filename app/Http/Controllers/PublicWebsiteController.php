@@ -243,8 +243,11 @@ class PublicWebsiteController extends Controller
                     ['label' => 'Fax', 'value' => '+966 12 665 6423', 'url' => null],
                 ],
                 'locations' => [
-                    ['city' => 'Jeddah', 'address' => 'PG Integrated main office'],
-                    ['city' => 'Riyadh', 'address' => 'PG Integrated regional operations'],
+                    ['city' => 'Jeddah', 'address' => 'PG Integrated main office', 'lat' => '21.4858', 'lng' => '39.1925', 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Jeddah%20PG%20Integrated'],
+                    ['city' => 'Riyadh', 'address' => 'PG Integrated regional operations', 'lat' => '24.7136', 'lng' => '46.6753', 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Riyadh%20PG%20Integrated'],
+                    ['city' => 'Dubai', 'address' => 'PG Integrated regional partner office', 'lat' => '25.2048', 'lng' => '55.2708', 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Dubai%20PG%20Integrated'],
+                    ['city' => 'Cairo', 'address' => 'PG Integrated regional operations', 'lat' => '30.0444', 'lng' => '31.2357', 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Cairo%20PG%20Integrated'],
+                    ['city' => 'Beirut', 'address' => 'PG Integrated Levant operations', 'lat' => '33.8938', 'lng' => '35.5018', 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Beirut%20PG%20Integrated'],
                 ],
             ],
             'join-us' => [

@@ -277,12 +277,50 @@
                     </div>
                 </div>
                 <div class="rounded-[2rem] bg-slate-950 p-8 text-white shadow-sm">
-                    <h2 class="text-3xl font-black">Locations</h2>
+                    <h2 class="text-3xl font-black">Our regional offices</h2>
+                    <p class="mt-3 leading-7 text-slate-400">PG Integrated locations across Saudi Arabia and regional markets.</p>
+
+                    @php
+                        $locations = collect(data_get($content, 'locations', []))->values();
+                        $latitudes = $locations->pluck('lat')->filter(fn ($value) => is_numeric($value));
+                        $longitudes = $locations->pluck('lng')->filter(fn ($value) => is_numeric($value));
+                        $minLat = $latitudes->min() ?: 18;
+                        $maxLat = $latitudes->max() ?: 34;
+                        $minLng = $longitudes->min() ?: 30;
+                        $maxLng = $longitudes->max() ?: 56;
+                        $latRange = max(($maxLat - $minLat), 1);
+                        $lngRange = max(($maxLng - $minLng), 1);
+                    @endphp
+
+                    <div class="relative mt-8 min-h-80 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-6">
+                        <div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 20% 30%, rgba(251,191,36,.7) 0 2px, transparent 3px), radial-gradient(circle at 65% 45%, rgba(255,255,255,.45) 0 1px, transparent 3px), linear-gradient(135deg, transparent 0 48%, rgba(255,255,255,.18) 49% 51%, transparent 52%); background-size: 72px 72px, 96px 96px, 120px 120px;"></div>
+                        <div class="absolute left-6 top-6 rounded-full bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-amber-200">Branch Map</div>
+
+                        @foreach ($locations as $location)
+                            @php
+                                $lat = is_numeric(data_get($location, 'lat')) ? (float) data_get($location, 'lat') : null;
+                                $lng = is_numeric(data_get($location, 'lng')) ? (float) data_get($location, 'lng') : null;
+                                $left = $lng !== null ? 10 + (($lng - $minLng) / $lngRange) * 80 : 50;
+                                $top = $lat !== null ? 85 - (($lat - $minLat) / $latRange) * 70 : 50;
+                            @endphp
+                            <a href="{{ data_get($location, 'map_url') ?: 'https://www.google.com/maps/search/?api=1&query='.urlencode(data_get($location, 'city').' '.data_get($location, 'address')) }}" target="_blank" rel="noopener" class="group absolute -translate-x-1/2 -translate-y-1/2" style="left: {{ round($left, 2) }}%; top: {{ round($top, 2) }}%;">
+                                <span class="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300/25 group-hover:bg-amber-300/40"></span>
+                                <span class="relative flex h-5 w-5 items-center justify-center rounded-full bg-amber-300 ring-4 ring-white/20"></span>
+                                <span class="absolute left-1/2 top-7 hidden -translate-x-1/2 whitespace-nowrap rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-950 shadow-xl group-hover:block">{{ data_get($location, 'city') }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+
                     <div class="mt-8 grid gap-5">
-                        @foreach (data_get($content, 'locations', []) as $location)
+                        @foreach ($locations as $location)
                             <article class="rounded-2xl border border-white/10 p-5">
-                                <h3 class="text-2xl font-black">{{ data_get($location, 'city') }}</h3>
-                                <p class="mt-2 text-slate-300">{{ data_get($location, 'address') }}</p>
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                    <div>
+                                        <h3 class="text-2xl font-black">{{ data_get($location, 'city') }}</h3>
+                                        <p class="mt-2 text-slate-300">{{ data_get($location, 'address') }}</p>
+                                    </div>
+                                    <a href="{{ data_get($location, 'map_url') ?: 'https://www.google.com/maps/search/?api=1&query='.urlencode(data_get($location, 'city').' '.data_get($location, 'address')) }}" target="_blank" rel="noopener" class="shrink-0 rounded-full border border-white/15 px-4 py-2 text-sm font-bold text-amber-200 hover:bg-white/10">Open map</a>
+                                </div>
                             </article>
                         @endforeach
                     </div>
