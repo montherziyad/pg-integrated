@@ -28,10 +28,12 @@
 </head>
 <body class="bg-[#f7f3ec] text-slate-950 antialiased">
     <header class="sticky top-0 z-40 border-b border-black/10 bg-[#f7f3ec]/90 backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-            <a href="{{ route('website.home') }}" class="flex items-center gap-3">
-                <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-10 w-auto sm:h-11">
-                <span class="hidden text-sm font-extrabold uppercase tracking-[.22em] md:inline">PG Integrated</span>
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 lg:px-8">
+            <a href="{{ route('website.home') }}" class="flex min-w-0 items-center gap-3" aria-label="PG Integrated home">
+                <span class="flex h-12 w-24 shrink-0 items-center overflow-hidden sm:w-28">
+                    <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="block w-auto object-contain" style="max-height: 44px; height: 44px;">
+                </span>
+                <span class="hidden truncate text-sm font-extrabold uppercase tracking-[.22em] md:inline">PG Integrated</span>
             </a>
 
             <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 xl:flex">
