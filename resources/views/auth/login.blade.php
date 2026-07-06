@@ -14,7 +14,9 @@
         <section class="relative hidden overflow-hidden p-12 lg:flex lg:flex-col lg:justify-between">
             <div class="absolute -left-32 top-24 h-96 w-96 rounded-full bg-rose-400/30 blur-3xl"></div>
             <div class="absolute -right-20 bottom-12 h-96 w-96 rounded-full bg-amber-300/30 blur-3xl"></div>
-            <a href="{{ route('website.home') }}" class="relative inline-flex items-center gap-3 text-xl font-extrabold"><img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-12 w-auto"> <span>PG Integrated</span></a>
+            <a href="{{ route('website.home') }}" class="relative inline-flex h-14 w-28 items-center overflow-hidden" aria-label="PG Integrated home">
+                <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="block w-auto object-contain" style="height: 48px; max-height: 48px;">
+            </a>
             <div class="relative max-w-xl">
                 <p class="mb-5 text-sm font-bold uppercase tracking-[.24em] text-amber-300">Employee workspace</p>
                 <h1 class="text-6xl font-extrabold leading-[.95] tracking-[-.05em]">One place to move every project forward.</h1>
@@ -25,7 +27,9 @@
 
         <section class="flex items-center justify-center bg-[#f5f2eb] px-6 py-12 text-slate-950">
             <div class="w-full max-w-md">
-                <a href="{{ route('website.home') }}" class="mb-12 inline-flex items-center gap-3 font-extrabold lg:hidden"><img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="h-12 w-auto"> <span>PG Integrated</span></a>
+                <a href="{{ route('website.home') }}" class="mb-12 inline-flex h-14 w-28 items-center overflow-hidden lg:hidden" aria-label="PG Integrated home">
+                    <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="block w-auto object-contain" style="height: 48px; max-height: 48px;">
+                </a>
                 <p class="text-sm font-bold uppercase tracking-[.22em] text-slate-500">Team access</p>
                 <h2 class="mt-4 text-4xl font-extrabold tracking-tight">Employee login</h2>
                 <p class="mt-3 text-slate-600">Use your company account to enter the operations platform.</p>
