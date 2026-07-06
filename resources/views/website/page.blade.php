@@ -33,16 +33,16 @@
                 <span class="flex h-12 w-24 shrink-0 items-center overflow-hidden sm:w-28">
                     <img src="{{ asset('prd-assets/PGi-Logo.png') }}" alt="PG Integrated" class="block w-auto object-contain" style="max-height: 44px; height: 44px;">
                 </span>
-                <span class="hidden truncate text-sm font-extrabold uppercase tracking-[.22em] md:inline">PG Integrated</span>
+                <span class="hidden truncate text-sm font-extrabold uppercase tracking-[.22em] 2xl:inline">PG Integrated</span>
             </a>
 
-            <nav class="hidden items-center gap-6 text-sm font-bold uppercase tracking-[.12em] text-slate-700 xl:flex">
+            <nav class="hidden items-center gap-4 text-xs font-bold uppercase tracking-[.12em] text-slate-700 min-[1120px]:flex 2xl:gap-6 2xl:text-sm">
                 @foreach ($navigationPages as $item)
                     <a href="{{ $navUrl($item) }}" class="hover:text-amber-600">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
 
-            <div class="hidden items-center gap-2 xl:flex">
+            <div class="hidden items-center gap-2 min-[1120px]:flex">
                 @auth
                     @if ($page?->exists)
                         <a href="{{ route('admin.cms.edit', $page) }}" class="rounded-full border border-amber-400 bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-amber-200">Edit this page</a>
@@ -56,7 +56,7 @@
                 @endauth
             </div>
 
-            <details class="group relative xl:hidden">
+            <details class="group relative min-[1120px]:hidden">
                 <summary class="flex cursor-pointer list-none items-center gap-3 rounded-full border border-black/15 bg-white/70 px-4 py-3 text-sm font-black uppercase tracking-[.16em] text-slate-950 shadow-sm transition hover:bg-white">
                     <span>Menu</span>
                     <span class="relative h-4 w-5">
