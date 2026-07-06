@@ -22,6 +22,7 @@ class AiWorkspaceController extends Controller
         return view('ai.workspace', [
             'interactions' => AiInteraction::query()->latest()->limit(30)->get(),
             'providers' => $this->ai->options(),
+            'assistants' => $this->ai->assistantCatalog(),
             'defaultProvider' => config('services.ai.default_provider'),
         ]);
     }
@@ -29,7 +30,7 @@ class AiWorkspaceController extends Controller
     public function draft(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'agent' => ['required', 'string', 'max:80'],
+            'agent' => ['required', Rule::in($this->ai->assistantNames())],
             'provider' => ['required', Rule::in($this->ai->names())],
             'prompt' => ['required', 'string', 'max:20000'],
         ]);

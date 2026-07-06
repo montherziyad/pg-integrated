@@ -41,6 +41,16 @@ class AiManager
         return array_keys(config('services.ai.providers'));
     }
 
+    public function assistantCatalog(): array
+    {
+        return app(PromptBuilder::class)->catalog();
+    }
+
+    public function assistantNames(): array
+    {
+        return app(PromptBuilder::class)->names();
+    }
+
     public function model(string $provider): string
     {
         return $this->provider($provider)->model();

@@ -24,9 +24,13 @@
             <label class="block">
                 <span class="mb-1 block text-sm font-medium text-slate-700">Assistant</span>
                 <select name="agent" class="w-full rounded border-slate-300">
-                    <option value="support" @selected(old('agent') === 'support')>Support Reply</option>
-                    <option value="proposal" @selected(old('agent') === 'proposal')>Proposal</option>
-                    <option value="marketing" @selected(old('agent') === 'marketing')>Marketing Message</option>
+                    @foreach($assistants as $group => $groupAssistants)
+                        <optgroup label="{{ $group }}">
+                            @foreach($groupAssistants as $assistant)
+                                <option value="{{ $assistant['value'] }}" @selected(old('agent', 'brief_analyzer') === $assistant['value'])>{{ $assistant['label'] }}</option>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
                 </select>
             </label>
 
