@@ -171,18 +171,31 @@ it('runs the support ticket and reply workflow', function () {
 
 it('creates a marketing campaign linked to its employee', function () {
     $user = User::factory()->create();
+    $company = CrmCompany::create([
+        'name' => 'Prospect Company',
+        'status' => 'new',
+    ]);
+    $contact = CrmContact::create([
+        'company_id' => $company->id,
+        'name' => 'Prospect Contact',
+        'email' => 'prospect@example.com',
+    ]);
 
-    $this->actingAs($user)
+    $response = $this->actingAs($user)
         ->post(route('marketing.store'), [
             'name' => 'Agency Outreach',
-            'channel' => 'email',
-            'status' => 'draft',
+            'objective' => 'Introduce PG Integrated services.',
+            'email_subject' => 'PG Integrated introduction',
             'message_template' => 'Hello {{ name }}',
-        ])
-        ->assertRedirect(route('marketing.index'));
+            'recipient_ids' => [$contact->id],
+        ]);
 
     $campaign = MarketingCampaign::query()->firstOrFail();
+    $response->assertRedirect(route('marketing.show', $campaign));
 
     expect($campaign->created_by)->toBe($user->id)
+        ->and($campaign->channel)->toBe('outlook_email')
+        ->and($campaign->status)->toBe('draft')
+        ->and($campaign->recipients()->count())->toBe(1)
         ->and(AiInteraction::query()->count())->toBe(0);
 });
