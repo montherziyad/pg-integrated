@@ -11,6 +11,7 @@ class UpdateCategoryRequest extends StoreCategoryRequest
         $rules = parent::rules();
         $id = $this->route('category')?->id ?? $this->route('category');
         $rules['code'] = ['required', 'string', 'max:255', Rule::unique('job_categories', 'code')->ignore($id)];
+        $rules['parent_id'] = ['nullable', 'integer', Rule::exists('job_categories', 'id')->where(fn ($query) => $query->where('id', '!=', $id))];
 
         return $rules;
     }

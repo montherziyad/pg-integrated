@@ -1,6 +1,10 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div><label class="block mb-2 font-semibold">Category Name</label><input name="name" value="{{ old('name', $category->name) }}" class="w-full rounded-xl border-slate-300" required></div>
     <div><label class="block mb-2 font-semibold">Code</label><input name="code" value="{{ old('code', $category->code) }}" class="w-full rounded-xl border-slate-300" required></div>
+    <div><label class="block mb-2 font-semibold">Parent Category</label><select name="parent_id" class="w-full rounded-xl border-slate-300"><option value="">Main category</option>@foreach($parentCategories as $parent)<option value="{{ $parent->id }}" @selected((string) old('parent_id', $category->parent_id) === (string) $parent->id)>{{ $parent->name }}</option>@endforeach</select></div>
+    <div><label class="block mb-2 font-semibold">Default Team</label><input name="default_team" value="{{ old('default_team', $category->default_team) }}" class="w-full rounded-xl border-slate-300" placeholder="Creative, Motion, Media..."></div>
+    <div><label class="block mb-2 font-semibold">Estimated Hours</label><input type="number" min="0" step="0.5" name="estimated_hours" value="{{ old('estimated_hours', $category->estimated_hours ?? 0) }}" class="w-full rounded-xl border-slate-300"></div>
     <div class="md:col-span-2"><label class="block mb-2 font-semibold">Description</label><textarea name="description" rows="4" class="w-full rounded-xl border-slate-300">{{ old('description', $category->description) }}</textarea></div>
-    <div class="md:col-span-2"><label class="inline-flex items-center gap-2"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $category->is_active ?? true))><span class="font-semibold">Active</span></label></div>
+    <div><label class="inline-flex items-center gap-2"><input type="checkbox" name="requires_approval" value="1" @checked(old('requires_approval', $category->requires_approval ?? true))><span class="font-semibold">Requires Approval</span></label></div>
+    <div><label class="inline-flex items-center gap-2"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $category->is_active ?? true))><span class="font-semibold">Active</span></label></div>
 </div>

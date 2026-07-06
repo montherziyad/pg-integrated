@@ -22,6 +22,7 @@ class CategoryService
     public function create(array $data): JobCategory
     {
         $data['is_active'] ??= true;
+        $data['requires_approval'] ??= false;
 
         return $this->repository->create($data);
     }
@@ -29,6 +30,7 @@ class CategoryService
     public function update(JobCategory $category, array $data): bool
     {
         $data['is_active'] ??= false;
+        $data['requires_approval'] ??= false;
 
         return $this->repository->update($category, $data);
     }

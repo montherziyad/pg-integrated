@@ -8,12 +8,21 @@ class CategoryRepository
 {
     public function all()
     {
-        return JobCategory::withCount('jobs')->orderBy('name')->get();
+        return JobCategory::with('parent')
+            ->withCount(['jobs', 'descendantJobs'])
+            ->orderByRaw('CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END')
+            ->orderBy('parent_id')
+            ->orderBy('name')
+            ->get();
     }
 
     public function find(int $id): ?JobCategory
     {
-        return JobCategory::with(['jobs' => fn ($query) => $query->with(['client', 'currentWorkflowStage'])->latest()])->find($id);
+        return JobCategory::with([
+            'parent',
+            'children',
+            'jobs' => fn ($query) => $query->with(['client', 'currentWorkflowStage'])->latest(),
+        ])->find($id);
     }
 
     public function create(array $data): JobCategory

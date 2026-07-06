@@ -18,7 +18,10 @@ class CategoryController extends Controller
 
     public function create()
     {
-        return view('admin.categories.create', ['category' => new JobCategory]);
+        return view('admin.categories.create', [
+            'category' => new JobCategory,
+            'parentCategories' => JobCategory::whereNull('parent_id')->orderBy('name')->get(),
+        ]);
     }
 
     public function store(StoreCategoryRequest $request)
@@ -35,7 +38,13 @@ class CategoryController extends Controller
 
     public function edit(JobCategory $category)
     {
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.categories.edit', [
+            'category' => $category,
+            'parentCategories' => JobCategory::whereNull('parent_id')
+                ->whereKeyNot($category->id)
+                ->orderBy('name')
+                ->get(),
+        ]);
     }
 
     public function update(UpdateCategoryRequest $request, JobCategory $category)
