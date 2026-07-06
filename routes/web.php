@@ -177,6 +177,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/settings', [SettingController::class, 'update'])
         ->name('admin.settings.update');
 
+    Route::post('/admin/settings/clear-cache', [SettingController::class, 'clearCache'])
+        ->name('admin.settings.clear-cache');
+
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');
 

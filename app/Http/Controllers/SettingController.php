@@ -6,6 +6,7 @@ use App\Models\EmailIntakeTrafficMember;
 use App\Models\User;
 use App\Modules\Settings\Requests\UpdateSettingsRequest;
 use App\Modules\Settings\Services\SettingService;
+use Illuminate\Support\Facades\Artisan;
 
 class SettingController extends Controller
 {
@@ -21,6 +22,13 @@ class SettingController extends Controller
             'trafficMemberIds' => EmailIntakeTrafficMember::where('is_active', true)->pluck('user_id')->all(),
             'outlookSecretConfigured' => filled(config('services.outlook.client_secret')),
         ]);
+    }
+
+    public function clearCache()
+    {
+        Artisan::call('optimize:clear');
+
+        return back()->with('success', 'System cache cleared successfully.');
     }
 
     public function update(UpdateSettingsRequest $request)

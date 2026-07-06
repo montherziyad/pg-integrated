@@ -75,7 +75,14 @@
                     <p class="text-sm text-slate-500">Studio operations command center</p>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <form method="POST" action="{{ route('admin.settings.clear-cache') }}" onsubmit="return confirm('Clear system cache now?');">
+                        @csrf
+                        <button class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                            Clear Cache
+                        </button>
+                    </form>
+
                     <div class="text-right">
                         <div class="text-sm font-semibold">{{ Auth::user()->name }}</div>
                         <div class="text-xs text-slate-500">{{ Auth::user()->email }}</div>
