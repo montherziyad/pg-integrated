@@ -27,7 +27,7 @@ class UpdateSettingsRequest extends FormRequest
             'outlook_tenant_id' => ['nullable', 'required_if:outlook_enabled,1', 'uuid'],
             'outlook_client_id' => ['nullable', 'required_if:outlook_enabled,1', 'uuid'],
             'outlook_mailbox_address' => ['nullable', 'required_if:outlook_enabled,1', 'email', 'max:255'],
-            'outlook_company_domain' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z0-9.-]+$/'],
+            'outlook_company_domain' => ['required', 'string', 'max:500', 'regex:/^[A-Za-z0-9.,\\s-]+$/'],
             'outlook_job_number_pattern' => ['required', 'string', 'max:255'],
             'outlook_allowed_extensions' => ['required', 'string', 'max:1000'],
             'outlook_max_attachment_mb' => ['required', 'integer', 'min:1', 'max:150'],

@@ -44,7 +44,7 @@ class SettingService
             'outlook_tenant_id' => null,
             'outlook_client_id' => null,
             'outlook_mailbox_address' => null,
-            'outlook_company_domain' => 'pgintegrated.com',
+            'outlook_company_domain' => 'pgintegrated.com,mediazone.com',
             'outlook_job_number_pattern' => '\\b(?:JOB-)?\\d{5}\\b',
             'outlook_allowed_extensions' => 'pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,psd,ai,aep,png,jpg,jpeg,mp4,mov',
             'outlook_max_attachment_mb' => 50,

@@ -14,11 +14,19 @@ class ValidateEmailIntakeAction
         $intake->validations()->delete();
 
         $senderEmail = strtolower((string) $intake->sender_email);
-        $domain = strtolower((string) $this->setting('outlook_company_domain', 'pgintegrated.com'));
-        $senderDomainPassed = str_ends_with($senderEmail, '@'.$domain);
+        $domains = collect(explode(',', strtolower((string) $this->setting(
+            'outlook_company_domain',
+            'pgintegrated.com,mediazone.com'
+        ))))
+            ->map(fn ($domain) => ltrim(trim($domain), '@'))
+            ->filter()
+            ->unique();
+        $senderDomainPassed = $domains->contains(
+            fn ($domain) => str_ends_with($senderEmail, '@'.$domain)
+        );
         $senderMemberPassed = User::whereRaw('LOWER(email) = ?', [$senderEmail])->where('is_active', true)->exists();
 
-        $this->record($intake, 'internal_sender_domain', $senderDomainPassed, $senderDomainPassed ? 'Sender domain accepted.' : 'Sender is outside the company domain.');
+        $this->record($intake, 'internal_sender_domain', $senderDomainPassed, $senderDomainPassed ? 'Sender domain accepted.' : 'Sender is outside the approved company domains.');
         $this->record($intake, 'active_company_member', $senderMemberPassed, $senderMemberPassed ? 'Sender is an active member.' : 'Sender email is not an active system user.');
 
         $pattern = (string) $this->setting('outlook_job_number_pattern', '\\b(?:JOB-)?\\d{5}\\b');
