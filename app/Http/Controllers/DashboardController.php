@@ -12,6 +12,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\WorkflowStage;
 use App\Modules\Workload\Services\WorkloadService;
+use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
@@ -85,6 +86,13 @@ class DashboardController extends Controller
 
         $workloadUsers = $this->workloadService->users()->take(5);
 
+        $saudiCalendarEvents = collect($this->saudiCalendarEvents())
+            ->filter(fn (array $event) => Carbon::parse($event['date'])->isToday() || Carbon::parse($event['date'])->isFuture())
+            ->sortBy('date')
+            ->take(6)
+            ->values()
+            ->all();
+
         return view('dashboard', compact(
             'totalJobs',
             'urgentJobs',
@@ -101,7 +109,22 @@ class DashboardController extends Controller
             'latestJobs',
             'latestActivities',
             'workflowStages',
-            'workloadUsers'
+            'workloadUsers',
+            'saudiCalendarEvents'
         ));
+    }
+
+    private function saudiCalendarEvents(): array
+    {
+        return [
+            ['date' => '2026-01-01', 'title' => 'New Year Planning Window', 'type' => 'planning', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-02-18', 'title' => 'Ramadan Campaign Season', 'type' => 'seasonal', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-02-22', 'title' => 'Saudi Founding Day', 'type' => 'national', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-03-20', 'title' => 'Eid Al-Fitr Content Window', 'type' => 'seasonal', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-05-26', 'title' => 'Hajj Campaign Readiness', 'type' => 'seasonal', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-05-27', 'title' => 'Eid Al-Adha Content Window', 'type' => 'seasonal', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-09-23', 'title' => 'Saudi National Day', 'type' => 'national', 'country' => 'Saudi Arabia'],
+            ['date' => '2026-11-20', 'title' => 'End of Year Campaign Planning', 'type' => 'planning', 'country' => 'Saudi Arabia'],
+        ];
     }
 }
