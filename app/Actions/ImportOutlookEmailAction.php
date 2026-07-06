@@ -34,7 +34,18 @@ class ImportOutlookEmailAction
             );
 
             $this->storeAttachments($intake, $message['attachments'] ?? []);
-            $this->validator->execute($intake->fresh('attachments'));
+            $passed = $this->validator->execute($intake->fresh('attachments'));
+
+            if (! $passed) {
+                $reason = $intake->fresh()->validation_errors ?? [];
+
+                $intake->update([
+                    'status' => 'IGNORED',
+                    'rejection_reason' => '[AUTO_FILTERED] '.implode(' ', $reason),
+                    'reviewed_at' => now(),
+                    'rejected_at' => now(),
+                ]);
+            }
 
             return $intake->fresh(['attachments', 'validations']);
         });

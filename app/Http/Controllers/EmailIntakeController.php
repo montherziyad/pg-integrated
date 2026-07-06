@@ -46,8 +46,11 @@ class EmailIntakeController extends Controller
                     continue;
                 }
 
-                $importer->execute($graph->withSafeAttachments($message));
-                $imported++;
+                $intake = $importer->execute($graph->withSafeAttachments($message));
+
+                if ($intake->validation_passed) {
+                    $imported++;
+                }
             }
 
             return redirect()

@@ -9,6 +9,8 @@ class EmailIntakeRepository
     public function pending()
     {
         return EmailIntake::query()
+            ->where('status', 'NEW')
+            ->where('validation_passed', true)
             ->withCount('attachments')
             ->with('reviewer')
             ->latest('received_at')
@@ -25,7 +27,11 @@ class EmailIntakeRepository
         return [
             'new' => EmailIntake::where('status', 'NEW')->count(),
             'valid' => EmailIntake::where('status', 'NEW')->where('validation_passed', true)->count(),
-            'rejected' => EmailIntake::where('status', 'IGNORED')->count(),
+            'rejected' => EmailIntake::where('status', 'IGNORED')
+                ->where(fn ($query) => $query
+                    ->whereNull('rejection_reason')
+                    ->orWhere('rejection_reason', 'not like', '[AUTO_FILTERED]%'))
+                ->count(),
             'converted' => EmailIntake::where('status', 'CONVERTED_TO_JOB')->count(),
             'failed' => EmailIntake::where('status', 'FAILED')->count(),
         ];

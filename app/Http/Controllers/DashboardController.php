@@ -32,7 +32,9 @@ class DashboardController extends Controller
 
         $totalProjects = Project::count();
 
-        $pendingEmailIntakes = EmailIntake::where('status', 'NEW')->count();
+        $pendingEmailIntakes = EmailIntake::where('status', 'NEW')
+            ->where('validation_passed', true)
+            ->count();
         $pendingClientApprovals = Client::where('is_active', false)->orWhere('portal_enabled', false)->count();
         $pendingEmployeeApprovals = User::where('is_active', false)->count();
         $newClientRequests = ClientProjectRequest::where('status', 'new')->count();
