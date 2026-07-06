@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AiApprovalSuggestion;
+use App\Models\AiEmployee;
 use App\Models\ClientProjectRequest;
 use App\Models\CreativeJob;
 use App\Models\CrmCompany;
@@ -18,6 +19,7 @@ class AiEmployeeController extends Controller
     public function index(): View
     {
         return view('ai-employee.index', [
+            'aiEmployees' => AiEmployee::orderBy('department')->orderBy('name')->get(),
             'pendingSuggestions' => AiApprovalSuggestion::with('subject')->where('status', 'pending')->latest()->get(),
             'clientRequests' => ClientProjectRequest::with(['client', 'project'])->latest()->take(10)->get(),
             'supportTickets' => SupportTicket::with(['messages', 'company'])->where('status', '!=', 'closed')->latest()->take(10)->get(),
@@ -28,6 +30,20 @@ class AiEmployeeController extends Controller
                 ->take(12)
                 ->get(),
         ]);
+    }
+
+    public function toggle(Request $request, AiEmployee $aiEmployee): RedirectResponse
+    {
+        abort_unless($request->user()?->role?->code === 'SUPER_ADMIN', 403);
+
+        $aiEmployee->update([
+            'status' => $aiEmployee->status === 'active' ? 'paused' : 'active',
+        ]);
+
+        return back()->with(
+            'status',
+            $aiEmployee->name.' is now '.$aiEmployee->status.'.'
+        );
     }
 
     public function suggestClientRequest(Request $request, ClientProjectRequest $clientRequest): RedirectResponse

@@ -256,6 +256,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ai-employee', [AiEmployeeController::class, 'index'])
         ->name('ai-employee.index');
 
+    Route::post('/ai-employee/employees/{aiEmployee}/toggle', [AiEmployeeController::class, 'toggle'])
+        ->name('ai-employee.employees.toggle');
+
     Route::post('/ai-employee/client-requests/{clientRequest}/suggest', [AiEmployeeController::class, 'suggestClientRequest'])
         ->name('ai-employee.client-requests.suggest');
 

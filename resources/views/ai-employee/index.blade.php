@@ -10,6 +10,61 @@
         <p class="mt-1 text-sm">The AI Employee only creates suggestions. Nothing is posted, created, or changed until an authorized employee clicks Approve.</p>
     </div>
 
+    <section class="mb-6">
+        <div class="mb-4 flex items-end justify-between">
+            <div>
+                <h2 class="text-2xl font-bold">AI Employees</h2>
+                <p class="mt-1 text-sm text-slate-500">Digital employees, responsibilities, operating status, and mandatory guardrails.</p>
+            </div>
+        </div>
+        <div class="grid gap-6 xl:grid-cols-2">
+            @foreach($aiEmployees as $employee)
+                <article class="rounded-2xl bg-white p-6 shadow">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-[.18em] text-slate-400">{{ $employee->department }}</div>
+                            <h3 class="mt-2 text-2xl font-bold">{{ $employee->name }}</h3>
+                            <p class="mt-1 font-semibold text-slate-600">{{ $employee->job_title }}</p>
+                        </div>
+                        <span class="rounded-full px-3 py-1 text-xs font-bold {{ $employee->status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700' }}">
+                            {{ ucfirst($employee->status) }}
+                        </span>
+                    </div>
+                    <p class="mt-4 text-sm leading-6 text-slate-600">{{ $employee->description }}</p>
+                    <div class="mt-5 grid gap-5 md:grid-cols-2">
+                        <div>
+                            <h4 class="font-bold">Responsibilities</h4>
+                            <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                                @foreach($employee->capabilities ?? [] as $capability)
+                                    <li>• {{ $capability }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Guardrails</h4>
+                            <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                                @foreach($employee->guardrails ?? [] as $guardrail)
+                                    <li>• {{ $guardrail }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                        <span class="text-sm font-semibold text-amber-700">{{ $employee->approval_required ? 'Approval required for every action' : 'Automatic actions enabled' }}</span>
+                        @if(auth()->user()?->role?->code === 'SUPER_ADMIN')
+                            <form method="POST" action="{{ route('ai-employee.employees.toggle', $employee) }}">
+                                @csrf
+                                <button class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold">
+                                    {{ $employee->status === 'active' ? 'Pause employee' : 'Activate employee' }}
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </section>
+
     <section class="rounded-2xl bg-white p-6 shadow">
         <h2 class="text-2xl font-bold">Pending approvals</h2>
         <div class="mt-5 space-y-4">
