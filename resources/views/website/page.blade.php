@@ -20,6 +20,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $description }}">
     <title>{{ $title }}</title>
     <link rel="icon" href="{{ asset('prd-assets/images/favicon.png') }}">
@@ -259,5 +260,35 @@
             <a href="{{ route('admin.cms.index') }}">CMS</a>
         </div>
     </footer>
+    <div id="pg-chat" class="fixed bottom-5 right-5 z-[70]">
+        <button id="pg-chat-toggle" class="rounded-full bg-slate-950 px-5 py-3 font-bold text-white shadow-2xl">Chat with PG</button>
+        <div id="pg-chat-panel" class="hidden mt-3 w-[min(92vw,390px)] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-2xl">
+            <div class="bg-slate-950 p-5 text-white"><div class="font-black">PG Integrated Assistant</div><div class="mt-1 text-xs text-slate-300">Public information only · Human support available</div></div>
+            <div id="pg-chat-messages" class="h-72 space-y-3 overflow-y-auto bg-slate-50 p-4 text-sm"><div class="rounded-2xl bg-white p-3">Hello! Ask me about PG Integrated services, work, or how to start a project.</div></div>
+            <form id="pg-chat-form" class="flex gap-2 border-t p-3"><input id="pg-chat-input" maxlength="2000" class="min-w-0 flex-1 rounded-xl border-slate-300 text-sm" placeholder="Type your question..." required><button class="rounded-xl bg-slate-950 px-4 text-sm font-bold text-white">Send</button></form>
+            <button id="pg-human-toggle" class="w-full border-t px-4 py-3 text-sm font-bold text-amber-700">Talk to a team member / Schedule a call</button>
+            <form id="pg-contact-form" class="hidden space-y-3 border-t p-4">
+                <input name="name" class="w-full rounded-xl border-slate-300 text-sm" placeholder="Name" required>
+                <div class="grid grid-cols-2 gap-2"><input name="email" type="email" class="w-full rounded-xl border-slate-300 text-sm" placeholder="Email"><input name="phone" class="w-full rounded-xl border-slate-300 text-sm" placeholder="Phone"></div>
+                <input name="company" class="w-full rounded-xl border-slate-300 text-sm" placeholder="Company">
+                <input name="preferred_at" type="datetime-local" class="w-full rounded-xl border-slate-300 text-sm">
+                <textarea name="contact_notes" rows="2" class="w-full rounded-xl border-slate-300 text-sm" placeholder="How can we help?"></textarea>
+                <button class="w-full rounded-xl bg-amber-300 px-4 py-3 text-sm font-black">Request contact</button>
+            </form>
+        </div>
+    </div>
+    <script>
+    (() => {
+        const panel=document.getElementById('pg-chat-panel'), messages=document.getElementById('pg-chat-messages');
+        const tokenKey='pg_website_chat_token', csrf=document.querySelector('meta[name="csrf-token"]').content;
+        const add=(text,user=false)=>{const el=document.createElement('div');el.className='rounded-2xl p-3 '+(user?'ml-8 bg-amber-200':'mr-8 bg-white');el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;};
+        document.getElementById('pg-chat-toggle').onclick=()=>panel.classList.toggle('hidden');
+        document.getElementById('pg-human-toggle').onclick=()=>document.getElementById('pg-contact-form').classList.toggle('hidden');
+        document.getElementById('pg-chat-form').onsubmit=async(e)=>{e.preventDefault();const input=document.getElementById('pg-chat-input'),text=input.value.trim();if(!text)return;add(text,true);input.value='';
+            try{const r=await fetch(@json(route('website-assistant.message')),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':csrf,'Accept':'application/json'},body:JSON.stringify({visitor_token:localStorage.getItem(tokenKey),message:text,locale:document.documentElement.lang})});const d=await r.json();if(!r.ok)throw new Error(d.message||'Request failed');localStorage.setItem(tokenKey,d.visitor_token);add(d.answer);if(d.needs_human)add('I can also record your details for a team member—use the contact button below.');}catch{add('The assistant is temporarily unavailable. Please request contact with our team.');}};
+        document.getElementById('pg-contact-form').onsubmit=async(e)=>{e.preventDefault();const form=e.currentTarget,data=Object.fromEntries(new FormData(form));data.visitor_token=localStorage.getItem(tokenKey);data.locale=document.documentElement.lang;
+            try{const r=await fetch(@json(route('website-assistant.contact')),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':csrf,'Accept':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw new Error(d.message||'Request failed');localStorage.setItem(tokenKey,d.visitor_token);add(d.message);form.reset();form.classList.add('hidden');}catch(err){add(err.message);}};
+    })();
+    </script>
 </body>
 </html>

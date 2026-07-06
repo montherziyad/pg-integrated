@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminWebsiteChatController;
 use App\Http\Controllers\AiEmployeeController;
 use App\Http\Controllers\AiWorkspaceController;
 use App\Http\Controllers\ArchiveController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WebsiteChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicWebsiteController::class, 'home'])->name('website.home');
@@ -41,6 +43,8 @@ Route::get('/contact', [PublicWebsiteController::class, 'contact'])->name('websi
 Route::get('/join-us', [CareerController::class, 'index'])->name('careers.index');
 Route::post('/join-us/apply', [CareerController::class, 'apply'])->name('careers.apply');
 Route::get('/pages/{page:slug}', [PublicWebsiteController::class, 'show'])->name('website.page');
+Route::post('/website-assistant/message', [WebsiteChatController::class, 'message'])->middleware('throttle:20,1')->name('website-assistant.message');
+Route::post('/website-assistant/contact', [WebsiteChatController::class, 'contact'])->middleware('throttle:5,1')->name('website-assistant.contact');
 
 Route::middleware('guest:client')->group(function () {
     Route::get('/client/login', [ClientAuthController::class, 'create'])->name('client.login');
@@ -68,6 +72,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/website-chat', [AdminWebsiteChatController::class, 'index'])->name('admin.website-chat.index');
+    Route::post('/admin/website-chat/knowledge/{knowledge}/approve', [AdminWebsiteChatController::class, 'approveKnowledge'])->name('admin.website-chat.knowledge.approve');
 
     /*
     |--------------------------------------------------------------------------

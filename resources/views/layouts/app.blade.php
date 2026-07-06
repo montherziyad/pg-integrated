@@ -31,6 +31,7 @@
                 <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Website</div>
                 <a href="{{ route('admin.cms.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.cms.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Website Pages</a>
                 <a href="{{ route('admin.careers.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.careers.*') || request()->routeIs('admin.career-applications.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Careers / Join Us</a>
+                <a href="{{ route('admin.website-chat.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.website-chat.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Website Chat</a>
 
                 <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Clients</div>
                 <a href="{{ route('admin.clients.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Clients</a>
