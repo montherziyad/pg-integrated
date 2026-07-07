@@ -27,7 +27,7 @@ class UserController extends Controller
                 $query->where(function ($query) use ($search) {
                     $query->where('name', 'ilike', "%{$search}%")
                         ->orWhere('email', 'ilike', "%{$search}%")
-                        ->orWhere('phone', 'ilike', "%{$search}%")
+                        ->orWhere('mobile', 'ilike', "%{$search}%")
                         ->orWhereHas('branch', fn ($branch) => $branch->where('name', 'ilike', "%{$search}%"))
                         ->orWhereHas('team', fn ($team) => $team->where('name', 'ilike', "%{$search}%"))
                         ->orWhereHas('role', fn ($role) => $role->where('name', 'ilike', "%{$search}%"));
