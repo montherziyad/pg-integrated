@@ -29,9 +29,9 @@ class RoleSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'Account Manager',
+                'name' => 'Client Service',
                 'code' => 'ACCOUNT_MANAGER',
-                'description' => 'Account Manager',
+                'description' => 'Client Service daily account follow-up and client coordination.',
                 'is_active' => true,
             ],
             [
