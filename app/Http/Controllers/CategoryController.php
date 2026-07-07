@@ -6,14 +6,34 @@ use App\Models\JobCategory;
 use App\Modules\Categories\Requests\StoreCategoryRequest;
 use App\Modules\Categories\Requests\UpdateCategoryRequest;
 use App\Modules\Categories\Services\CategoryService;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     public function __construct(protected CategoryService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.categories.index', ['categories' => $this->service->all()]);
+        $search = trim((string) $request->query('q', ''));
+
+        $categories = JobCategory::query()
+            ->with('parent')
+            ->withCount(['jobs', 'descendantJobs'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('code', 'ilike', "%{$search}%")
+                        ->orWhere('default_team', 'ilike', "%{$search}%")
+                        ->orWhere('description', 'ilike', "%{$search}%")
+                        ->orWhereHas('parent', fn ($parent) => $parent->where('name', 'ilike', "%{$search}%"));
+                });
+            })
+            ->orderByRaw('CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END')
+            ->orderBy('parent_id')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create()

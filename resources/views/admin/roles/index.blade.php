@@ -15,6 +15,8 @@
 
         @include('admin.partials.nav')
 
+        @include('admin.partials.search', ['action' => route('admin.roles.index'), 'placeholder' => 'Search roles by name, code, or description...'])
+
         @if(session('success'))
             <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
                 {{ session('success') }}

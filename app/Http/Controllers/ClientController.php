@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\Clients\Requests\StoreClientRequest;
 use App\Modules\Clients\Requests\UpdateClientRequest;
 use App\Modules\Clients\Services\ClientService;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
@@ -15,9 +16,26 @@ class ClientController extends Controller
         protected ClientService $clientService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $clients = $this->clientService->all();
+        $search = trim((string) $request->query('q', ''));
+
+        $clients = Client::query()
+            ->with(['branch', 'accountManager', 'clientServiceUsers'])
+            ->withCount('projects')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('client_code', 'ilike', "%{$search}%")
+                        ->orWhere('email', 'ilike', "%{$search}%")
+                        ->orWhere('contact_person', 'ilike', "%{$search}%")
+                        ->orWhere('company_name', 'ilike', "%{$search}%")
+                        ->orWhereHas('branch', fn ($branch) => $branch->where('name', 'ilike', "%{$search}%"))
+                        ->orWhereHas('clientServiceUsers', fn ($user) => $user->where('name', 'ilike', "%{$search}%"));
+                });
+            })
+            ->orderBy('name')
+            ->get();
 
         return view('admin.clients.index', compact('clients'));
     }

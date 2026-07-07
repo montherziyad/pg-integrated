@@ -20,6 +20,8 @@
 
         @include('admin.partials.nav')
 
+        @include('admin.partials.search', ['action' => route('admin.users.index'), 'placeholder' => 'Search users by name, email, phone, branch, team, or role...'])
+
         <div class="pg-card">
             <div class="pg-card-body">
                 <div class="overflow-x-auto">

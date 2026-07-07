@@ -11,10 +11,23 @@ use Illuminate\View\View;
 
 class CmsPageController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $search = trim((string) $request->query('q', ''));
+
         return view('admin.cms.index', [
-            'pages' => CmsPage::query()->latest()->paginate(20),
+            'pages' => CmsPage::query()
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $query->where('title', 'ilike', "%{$search}%")
+                            ->orWhere('key', 'ilike', "%{$search}%")
+                            ->orWhere('slug', 'ilike', "%{$search}%")
+                            ->orWhere('page_type', 'ilike', "%{$search}%");
+                    });
+                })
+                ->latest()
+                ->paginate(20)
+                ->withQueryString(),
         ]);
     }
 

@@ -7,6 +7,8 @@
         </div>
         <a href="{{ route('admin.cms.create') }}" class="px-4 py-2 bg-slate-900 text-white rounded-lg">New Page</a>
     </div>
+    @include('admin.partials.search', ['action' => route('admin.cms.index'), 'placeholder' => 'Search website pages by title, key, slug, or type...'])
+
     <div class="bg-white rounded-xl shadow overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-slate-50"><tr><th class="p-4 text-left">Title</th><th>Slug</th><th>Type</th><th>Status</th><th></th></tr></thead>

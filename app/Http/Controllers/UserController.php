@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\Users\Requests\StoreUserRequest;
 use App\Modules\Users\Requests\UpdateUserRequest;
 use App\Modules\Users\Services\UserService;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -16,9 +17,24 @@ class UserController extends Controller
         protected UserService $userService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userService->all();
+        $search = trim((string) $request->query('q', ''));
+
+        $users = User::query()
+            ->with(['branch', 'team', 'role'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('email', 'ilike', "%{$search}%")
+                        ->orWhere('phone', 'ilike', "%{$search}%")
+                        ->orWhereHas('branch', fn ($branch) => $branch->where('name', 'ilike', "%{$search}%"))
+                        ->orWhereHas('team', fn ($team) => $team->where('name', 'ilike', "%{$search}%"))
+                        ->orWhereHas('role', fn ($role) => $role->where('name', 'ilike', "%{$search}%"));
+                });
+            })
+            ->orderBy('name')
+            ->get();
 
         return view('admin.users.index', compact('users'));
     }
@@ -35,13 +51,9 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $user = $this->userService->create(
-            $request->validated()
-        );
+        $user = $this->userService->create($request->validated());
 
-        return redirect()
-            ->route('admin.users.show', $user)
-            ->with('success', 'User created successfully.');
+        return redirect()->route('admin.users.show', $user)->with('success', 'User created successfully.');
     }
 
     public function show(User $user)
@@ -63,22 +75,15 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $this->userService->update(
-            $user,
-            $request->validated()
-        );
+        $this->userService->update($user, $request->validated());
 
-        return redirect()
-            ->route('admin.users.show', $user)
-            ->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users.show', $user)->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
         $this->userService->delete($user);
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }

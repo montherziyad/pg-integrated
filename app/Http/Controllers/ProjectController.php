@@ -8,14 +8,31 @@ use App\Models\User;
 use App\Modules\Projects\Requests\StoreProjectRequest;
 use App\Modules\Projects\Requests\UpdateProjectRequest;
 use App\Modules\Projects\Services\ProjectService;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function __construct(protected ProjectService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.projects.index', ['projects' => $this->service->all()]);
+        $search = trim((string) $request->query('q', ''));
+
+        $projects = Project::query()
+            ->with(['client.accountManager', 'client.clientServiceUsers', 'projectManager'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('project_code', 'ilike', "%{$search}%")
+                        ->orWhere('description', 'ilike', "%{$search}%")
+                        ->orWhereHas('client', fn ($client) => $client->where('name', 'ilike', "%{$search}%"))
+                        ->orWhereHas('projectManager', fn ($user) => $user->where('name', 'ilike', "%{$search}%"));
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.projects.index', compact('projects'));
     }
 
     public function create()

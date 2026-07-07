@@ -6,6 +6,8 @@
             <a href="{{ route('admin.projects.create') }}" class="pg-btn-primary">+ New Project</a>
         </div>
         @include('admin.partials.nav')
+
+        @include('admin.partials.search', ['action' => route('admin.projects.index'), 'placeholder' => 'Search projects by name, code, client, manager, or description...'])
         @if(session('success'))<div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">{{ session('success') }}</div>@endif
         <div class="pg-card"><div class="pg-card-body overflow-x-auto">
             <table class="w-full text-sm">
