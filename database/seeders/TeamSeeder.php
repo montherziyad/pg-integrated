@@ -26,6 +26,7 @@ class TeamSeeder extends Seeder
             ['name' => 'Customer Support', 'code' => 'CUSTOMER_SUPPORT', 'description' => 'Support tickets and customer service operations.'],
             ['name' => 'Strategy Team', 'code' => 'STRATEGY', 'description' => 'Campaign strategy, brand narrative, planning, and positioning.'],
             ['name' => 'Operations Management', 'code' => 'OPERATIONS', 'description' => 'Operations leadership and delivery governance.'],
+            ['name' => 'الإدارة', 'code' => 'ADMINISTRATION', 'description' => 'Executive administration, HR coordination, and company management.'],
         ];
 
         foreach ($teams as $team) {

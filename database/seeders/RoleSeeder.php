@@ -76,6 +76,18 @@ class RoleSeeder extends Seeder
                 'description' => 'Archive Officer',
                 'is_active' => true,
             ],
+            [
+                'name' => 'مدير عام',
+                'code' => 'GENERAL_MANAGER',
+                'description' => 'General Manager with company-level oversight and management access.',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'HR',
+                'code' => 'HR',
+                'description' => 'Human Resources role for employee records, recruitment, and internal follow-up.',
+                'is_active' => true,
+            ],
         ];
 
         foreach ($roles as $role) {
