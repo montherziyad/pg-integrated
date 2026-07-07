@@ -42,15 +42,24 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password') + ['is_active' => true], $this->boolean('remember'))) {
+        $relaxedEmployeeLogin = (bool) env('EMPLOYEE_LOGIN_RELAXED', false);
+        $credentials = $this->only('email', 'password');
+
+        if (! $relaxedEmployeeLogin) {
+            $credentials['is_active'] = true;
+        }
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => 'These credentials are invalid, the email is outside PG Integrated domain, or the employee account is still pending approval.',
+                'email' => $relaxedEmployeeLogin
+                    ? 'These credentials are invalid.'
+                    : 'These credentials are invalid, the email is outside PG Integrated domain, or the employee account is still pending approval.',
             ]);
         }
 
-        if (Auth::user() && ! Auth::user()->hasVerifiedEmail()) {
+        if (! $relaxedEmployeeLogin && Auth::user() && ! Auth::user()->hasVerifiedEmail()) {
             Auth::logout();
 
             throw ValidationException::withMessages([
