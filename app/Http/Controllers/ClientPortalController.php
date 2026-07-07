@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ClientProjectRequest;
 use App\Models\CreativeJob;
+use App\Services\EventCalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,10 @@ use Illuminate\View\View;
 
 class ClientPortalController extends Controller
 {
+    public function __construct(
+        protected EventCalendarService $eventCalendarService
+    ) {}
+
     public function index(Request $request): View
     {
         $client = $request->user('client')->loadMissing(['accountManager', 'clientServiceUsers']);
@@ -28,7 +33,7 @@ class ClientPortalController extends Controller
                 ->latest()
                 ->get(),
             'projectRequests' => $client->projectRequests()->latest()->take(6)->get(),
-            'calendarEvents' => $this->calendarEvents($client->country ?: 'Saudi Arabia'),
+            'calendarEvents' => $this->eventCalendarService->upcoming('client', $client->country ?: 'Saudi Arabia', 6)->all(),
         ]);
     }
 
@@ -153,7 +158,7 @@ class ClientPortalController extends Controller
 
         return view('client-portal.calendar', [
             'client' => $client,
-            'calendarEvents' => $this->calendarEvents($client->country ?: 'Saudi Arabia'),
+            'calendarEvents' => $this->eventCalendarService->all('client', $client->country ?: 'Saudi Arabia')->all(),
         ]);
     }
 
@@ -171,25 +176,4 @@ class ClientPortalController extends Controller
         ]);
     }
 
-    private function calendarEvents(string $country): array
-    {
-        $saudiEvents = [
-            ['date' => '2026-01-01', 'title' => 'New Year Planning Window', 'country' => 'Saudi Arabia', 'type' => 'planning'],
-            ['date' => '2026-02-22', 'title' => 'Saudi Founding Day', 'country' => 'Saudi Arabia', 'type' => 'national'],
-            ['date' => '2026-02-18', 'title' => 'Ramadan Campaign Season', 'country' => 'Saudi Arabia', 'type' => 'seasonal'],
-            ['date' => '2026-03-20', 'title' => 'Eid Al-Fitr Content Window', 'country' => 'Saudi Arabia', 'type' => 'seasonal'],
-            ['date' => '2026-05-26', 'title' => 'Hajj Campaign Readiness', 'country' => 'Saudi Arabia', 'type' => 'seasonal'],
-            ['date' => '2026-05-27', 'title' => 'Eid Al-Adha Content Window', 'country' => 'Saudi Arabia', 'type' => 'seasonal'],
-            ['date' => '2026-09-23', 'title' => 'Saudi National Day', 'country' => 'Saudi Arabia', 'type' => 'national'],
-        ];
-
-        $globalEvents = [
-            ['date' => '2026-01-01', 'title' => 'New Year', 'country' => 'Global', 'type' => 'global'],
-            ['date' => '2026-12-31', 'title' => 'Year-end Campaign Review', 'country' => 'Global', 'type' => 'planning'],
-        ];
-
-        return str($country)->lower()->contains(['saudi', 'ksa', 'arabia'])
-            ? $saudiEvents
-            : $globalEvents;
-    }
 }
