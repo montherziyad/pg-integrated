@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Modules\Users\Requests\StoreRoleRequest;
 use App\Modules\Users\Requests\UpdateRoleRequest;
 use App\Modules\Users\Services\RoleService;
+use App\Support\RoleScreenPermissions;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -38,6 +39,7 @@ class RoleController extends Controller
     {
         return view('admin.roles.create', [
             'role' => new Role,
+            'screenPermissionGroups' => RoleScreenPermissions::groups(),
         ]);
     }
 
@@ -52,12 +54,18 @@ class RoleController extends Controller
     {
         $role = $this->roleService->find($role->id);
 
-        return view('admin.roles.show', compact('role'));
+        return view('admin.roles.show', [
+            'role' => $role,
+            'screenPermissionGroups' => RoleScreenPermissions::groups(),
+        ]);
     }
 
     public function edit(Role $role)
     {
-        return view('admin.roles.edit', compact('role'));
+        return view('admin.roles.edit', [
+            'role' => $role,
+            'screenPermissionGroups' => RoleScreenPermissions::groups(),
+        ]);
     }
 
     public function update(UpdateRoleRequest $request, Role $role)

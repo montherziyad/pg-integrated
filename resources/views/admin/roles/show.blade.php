@@ -35,6 +35,38 @@
             </div>
         </div>
 
+
+
+        <div class="pg-card">
+            <div class="pg-card-body">
+                <div class="mb-5 flex items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold">Screen Access</h3>
+                        <p class="text-sm text-slate-500">Screens this role can see and open in the dashboard.</p>
+                    </div>
+                </div>
+
+                @php $enabledPermissions = $role->enabledScreenPermissions(); @endphp
+
+                <div class="space-y-5">
+                    @foreach($screenPermissionGroups ?? [] as $group => $screens)
+                        @php $visibleScreens = collect($screens)->filter(fn ($screen, $key) => data_get($enabledPermissions, $key, false)); @endphp
+
+                        @if($visibleScreens->isNotEmpty())
+                            <div>
+                                <div class="mb-2 text-xs font-black uppercase tracking-[.22em] text-slate-500">{{ $group }}</div>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($visibleScreens as $key => $screen)
+                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">{{ $screen['label'] }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
         <div class="pg-card">
             <div class="pg-card-body">
                 <h3 class="text-lg font-bold mb-4">Users With This Role</h3>

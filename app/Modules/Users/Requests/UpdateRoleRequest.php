@@ -25,6 +25,8 @@ class UpdateRoleRequest extends FormRequest
                 Rule::unique('roles', 'code')->ignore($roleId),
             ],
             'description' => ['nullable', 'string'],
+            'screen_permissions' => ['nullable', 'array'],
+            'screen_permissions.*' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

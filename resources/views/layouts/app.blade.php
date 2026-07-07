@@ -26,38 +26,62 @@
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                @php
+                    $canAccessScreen = fn (string $screen): bool => Auth::user()?->canAccessScreen($screen) ?? false;
+                    $navGroups = [
+                        'Website' => [
+                            ['screen' => 'website_pages', 'route' => 'admin.cms.index', 'active' => 'admin.cms.*', 'label' => 'Website Pages'],
+                            ['screen' => 'careers', 'route' => 'admin.careers.index', 'active' => ['admin.careers.*', 'admin.career-applications.*'], 'label' => 'Careers / Join Us'],
+                            ['screen' => 'website_chat', 'route' => 'admin.website-chat.index', 'active' => 'admin.website-chat.*', 'label' => 'Website Chat'],
+                        ],
+                        'Clients' => [
+                            ['screen' => 'clients', 'route' => 'admin.clients.index', 'active' => 'admin.clients.*', 'label' => 'Clients'],
+                            ['screen' => 'projects', 'route' => 'admin.projects.index', 'active' => 'admin.projects.*', 'label' => 'Projects'],
+                            ['screen' => 'client_requests', 'route' => 'admin.client-requests.index', 'active' => 'admin.client-requests.*', 'label' => 'Client Requests'],
+                            ['screen' => 'crm', 'route' => 'crm.index', 'active' => 'crm.*', 'label' => 'CRM'],
+                            ['screen' => 'support', 'route' => 'support.index', 'active' => 'support.*', 'label' => 'Customer Support'],
+                        ],
+                        'Growth' => [
+                            ['screen' => 'ai_employee', 'route' => 'ai-employee.index', 'active' => 'ai-employee.*', 'label' => 'AI Employee'],
+                            ['screen' => 'ai_workspace', 'route' => 'ai.workspace', 'active' => 'ai.*', 'label' => 'AI Workspace'],
+                            ['screen' => 'marketing', 'route' => 'marketing.index', 'active' => 'marketing.*', 'label' => 'Marketing'],
+                        ],
+                        'Traffic' => [
+                            ['screen' => 'email_intake', 'route' => 'email-intakes.index', 'active' => 'email-intakes.*', 'label' => 'Email Intake'],
+                            ['screen' => 'jobs', 'route' => 'jobs.index', 'active' => 'jobs.*', 'label' => 'Jobs'],
+                            ['screen' => 'deliveries', 'route' => 'deliveries.index', 'active' => 'deliveries.*', 'label' => 'Delivery / Handover'],
+                            ['screen' => 'traffic_board', 'route' => 'traffic.index', 'active' => 'traffic.*', 'label' => 'Traffic Board'],
+                            ['screen' => 'team_workload', 'route' => 'workload.index', 'active' => 'workload.*', 'label' => 'Team Workload'],
+                            ['screen' => 'employee_leaves', 'route' => 'employee-leaves.index', 'active' => 'employee-leaves.*', 'label' => 'Employee Leaves'],
+                            ['screen' => 'archive', 'route' => 'archive.index', 'active' => 'archive.*', 'label' => 'Archive'],
+                            ['screen' => 'reports', 'route' => 'reports.index', 'active' => 'reports.*', 'label' => 'Reports'],
+                        ],
+                        'System' => [
+                            ['screen' => 'users', 'route' => 'admin.users.index', 'active' => 'admin.users.*', 'label' => 'Users'],
+                            ['screen' => 'teams', 'route' => 'admin.teams.index', 'active' => 'admin.teams.*', 'label' => 'Teams'],
+                            ['screen' => 'roles', 'route' => 'admin.roles.index', 'active' => 'admin.roles.*', 'label' => 'Roles & Permissions'],
+                            ['screen' => 'branches', 'route' => 'admin.branches.index', 'active' => 'admin.branches.*', 'label' => 'Branches'],
+                            ['screen' => 'categories', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'label' => 'Categories'],
+                            ['screen' => 'settings', 'route' => 'admin.settings.index', 'active' => 'admin.settings.*', 'label' => 'Settings'],
+                            ['screen' => 'events', 'route' => 'admin.events.index', 'active' => 'admin.events.*', 'label' => 'Events'],
+                        ],
+                    ];
+                    $navLinkClass = fn ($active) => 'block px-4 py-3 rounded-xl '.(request()->routeIs(...(array) $active) ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white');
+                @endphp
+
                 <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Dashboard</a>
 
-                <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Website</div>
-                <a href="{{ route('admin.cms.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.cms.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Website Pages</a>
-                <a href="{{ route('admin.careers.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.careers.*') || request()->routeIs('admin.career-applications.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Careers / Join Us</a>
-                <a href="{{ route('admin.website-chat.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.website-chat.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Website Chat</a>
+                @foreach($navGroups as $group => $items)
+                    @php $visibleItems = collect($items)->filter(fn ($item) => $canAccessScreen($item['screen'])); @endphp
 
-                <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Clients</div>
-                <a href="{{ route('admin.clients.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Clients</a>
-                <a href="{{ route('admin.projects.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.projects.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Projects</a>
-                <a href="{{ route('admin.client-requests.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.client-requests.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Client Requests</a>
-                <a href="{{ route('crm.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('crm.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">CRM</a>
-                <a href="{{ route('support.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('support.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Customer Support</a>
+                    @if($visibleItems->isNotEmpty())
+                        <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">{{ $group }}</div>
 
-                <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Growth</div>
-                <a href="{{ route('ai-employee.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('ai-employee.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">AI Employee</a>
-                <a href="{{ route('ai.workspace') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('ai.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">AI Workspace</a>
-                <a href="{{ route('marketing.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('marketing.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Marketing</a>
-
-                <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">Traffic</div>
-                <a href="{{ route('email-intakes.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('email-intakes.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Email Intake</a>
-                <a href="{{ route('jobs.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('jobs.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Jobs</a>
-                <a href="{{ route('deliveries.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('deliveries.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Delivery / Handover</a>
-                <a href="{{ route('traffic.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('traffic.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Traffic Board</a>
-                <a href="{{ route('workload.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('workload.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Team Workload</a>
-                <a href="{{ route('employee-leaves.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('employee-leaves.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Employee Leaves</a>
-                <a href="{{ route('archive.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('archive.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Archive</a>
-                <a href="{{ route('reports.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('reports.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Reports</a>
-
-                <div class="px-4 pt-5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-500">System</div>
-                <a href="{{ route('admin.settings.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Settings</a>
-                <a href="{{ route('admin.events.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('admin.events.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Events</a>
+                        @foreach($visibleItems as $item)
+                            <a href="{{ route($item['route']) }}" class="{{ $navLinkClass($item['active']) }}">{{ $item['label'] }}</a>
+                        @endforeach
+                    @endif
+                @endforeach
             </nav>
 
             <div class="p-4 border-t border-slate-800 text-xs text-slate-400">
@@ -78,12 +102,14 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <form method="POST" action="{{ route('admin.settings.clear-cache') }}" onsubmit="return confirm('Clear system cache now?');">
-                        @csrf
-                        <button class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
-                            Clear Cache
-                        </button>
-                    </form>
+                    @if(Auth::user()?->canAccessScreen('settings'))
+                        <form method="POST" action="{{ route('admin.settings.clear-cache') }}" onsubmit="return confirm('Clear system cache now?');">
+                            @csrf
+                            <button class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                                Clear Cache
+                            </button>
+                        </form>
+                    @endif
 
                     <div class="text-right">
                         <div class="text-sm font-semibold">{{ Auth::user()->name }}</div>

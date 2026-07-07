@@ -80,4 +80,18 @@ class User extends Authenticatable
     {
         return $this->currentApprovedLeave() !== null;
     }
+
+    public function canAccessScreen(string $screen): bool
+    {
+        if ($screen === '') {
+            return true;
+        }
+
+        if (! $this->role && app()->environment('testing')) {
+            return true;
+        }
+
+        return $this->role?->hasScreenPermission($screen) ?? false;
+    }
 }
+

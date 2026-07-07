@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+use App\Support\RoleScreenPermissions;
 
 class RoleSeeder extends Seeder
 {
@@ -91,6 +92,8 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
+            $role['screen_permissions'] = RoleScreenPermissions::defaultsForRole($role['code']);
+
             Role::query()->updateOrCreate(
                 ['code' => $role['code']],
                 $role,
