@@ -183,6 +183,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/events', [AdminEventCalendarController::class, 'index'])
         ->name('admin.events.index');
+    Route::post('/admin/events', [AdminEventCalendarController::class, 'store'])
+        ->name('admin.events.store');
+    Route::put('/admin/events/{event}', [AdminEventCalendarController::class, 'update'])
+        ->name('admin.events.update');
+    Route::patch('/admin/events/{event}/toggle', [AdminEventCalendarController::class, 'toggle'])
+        ->name('admin.events.toggle');
+    Route::delete('/admin/events/{event}', [AdminEventCalendarController::class, 'destroy'])
+        ->name('admin.events.destroy');
 
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');

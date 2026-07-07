@@ -2,27 +2,85 @@
 
 namespace App\Services;
 
+use App\Models\CalendarEvent;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 
 class EventCalendarService
 {
-    public function all(?string $audience = null, ?string $country = null): Collection
+    public function all(?string $audience = null, ?string $country = null, ?int $teamId = null): Collection
     {
-        return collect($this->events())
+        $this->ensureDefaultEventsExist();
+
+        return $this->sourceEvents()
             ->filter(fn (array $event) => $this->matchesAudience($event, $audience))
             ->filter(fn (array $event) => $this->matchesCountry($event, $country))
+            ->filter(fn (array $event) => $this->matchesTeam($event, $teamId))
             ->sortBy('date')
             ->values()
             ->map(fn (array $event) => $this->decorate($event));
     }
 
-    public function upcoming(?string $audience = null, ?string $country = null, int $limit = 8): Collection
+    public function upcoming(?string $audience = null, ?string $country = null, int $limit = 8, ?int $teamId = null): Collection
     {
-        return $this->all($audience, $country)
+        return $this->all($audience, $country, $teamId)
             ->filter(fn (array $event) => $event['is_upcoming'])
             ->take($limit)
             ->values();
+    }
+
+    public function defaultEvents(): array
+    {
+        return $this->events();
+    }
+
+    public function ensureDefaultEventsExist(): void
+    {
+        if (! Schema::hasTable('calendar_events') || CalendarEvent::query()->exists()) {
+            return;
+        }
+
+        foreach ($this->defaultEvents() as $event) {
+            CalendarEvent::query()->create([
+                'event_date' => $event['date'],
+                'title' => $event['title'],
+                'title_ar' => $event['title_ar'] ?? null,
+                'type' => $event['type'] ?? 'planning',
+                'country' => $event['country'] ?? 'Saudi Arabia',
+                'audience' => $event['audience'] ?? [],
+                'roles' => $event['roles'] ?? [],
+                'team_ids' => [],
+                'note' => $event['note'] ?? null,
+                'action' => $event['action'] ?? null,
+                'is_active' => true,
+            ]);
+        }
+    }
+
+    private function sourceEvents(): Collection
+    {
+        if (! Schema::hasTable('calendar_events')) {
+            return collect($this->events());
+        }
+
+        return CalendarEvent::query()
+            ->where('is_active', true)
+            ->orderBy('event_date')
+            ->get()
+            ->map(fn (CalendarEvent $event) => [
+                'id' => $event->id,
+                'date' => $event->event_date?->toDateString(),
+                'title' => $event->title,
+                'title_ar' => $event->title_ar,
+                'type' => $event->type,
+                'country' => $event->country,
+                'audience' => $event->audience ?: [],
+                'roles' => $event->roles ?: [],
+                'team_ids' => $event->team_ids ?: [],
+                'note' => $event->note,
+                'action' => $event->action,
+            ]);
     }
 
     private function decorate(array $event): array
@@ -52,6 +110,17 @@ class EventCalendarService
         $audiences = $event['audience'] ?? [];
 
         return in_array('all', $audiences, true) || in_array($audience, $audiences, true);
+    }
+
+    private function matchesTeam(array $event, ?int $teamId): bool
+    {
+        if ($teamId === null) {
+            return true;
+        }
+
+        $teamIds = array_filter(array_map('intval', $event['team_ids'] ?? []));
+
+        return $teamIds === [] || in_array($teamId, $teamIds, true);
     }
 
     private function matchesCountry(array $event, ?string $country): bool

@@ -87,7 +87,7 @@ class DashboardController extends Controller
 
         $workloadUsers = $this->workloadService->users()->take(5);
 
-        $saudiCalendarEvents = $this->eventCalendarService->upcoming('employee', 'Saudi Arabia', 6)->all();
+        $saudiCalendarEvents = $this->eventCalendarService->upcoming('employee', 'Saudi Arabia', 6, auth()->user()?->team_id)->all();
 
         return view('dashboard', compact(
             'totalJobs',
