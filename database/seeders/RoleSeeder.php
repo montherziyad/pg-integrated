@@ -77,7 +77,7 @@ class RoleSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'مدير عام',
+                'name' => 'General Manager',
                 'code' => 'GENERAL_MANAGER',
                 'description' => 'General Manager with company-level oversight and management access.',
                 'is_active' => true,
