@@ -167,12 +167,36 @@
                 <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><div class="text-xs font-black uppercase tracking-[.2em] text-slate-400">05 · Website management</div><h3 class="mt-2 text-lg font-bold">Website shortcuts</h3><p class="mt-1 text-sm text-slate-500">Quick access to website sections and page editors.</p></div><div class="flex flex-wrap gap-2"><a href="{{ route('admin.cms.index') }}" class="rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Manage all pages</a><a href="{{ route('website.home') }}" target="_blank" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold">Open website</a></div></div>
                 <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                     @foreach ($websitePages as $websitePage)
-                        @php
-                            $type = data_get($websitePage->sections, 'type', $websitePage->key);
-                            $publicUrl = match ($websitePage->key) {'home' => route('website.home'), 'about', 'services', 'work', 'team', 'clients', 'contact' => url($websitePage->slug), default => route('website.page', $websitePage->slug)};
-                            $label = match ($websitePage->key) {'work' => 'Projects & portfolio', 'team' => 'Team members', 'services' => 'Services content', 'clients' => 'Client logos', 'contact' => 'Contact details', 'about' => 'About content', default => 'Homepage sections'};
-                        @endphp
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="flex items-start justify-between gap-3"><div><div class="text-xs font-bold uppercase tracking-wide text-slate-400">{{ $type }}</div><div class="mt-1 text-lg font-bold">{{ $websitePage->title }}</div><div class="mt-1 text-sm text-slate-500">{{ $label }}</div></div><span class="rounded-full px-2 py-1 text-xs font-semibold {{ $websitePage->is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">{{ $websitePage->is_published ? 'Live' : 'Draft' }}</span></div><div class="mt-4 flex gap-2"><a href="{{ route('admin.cms.edit', $websitePage) }}" class="flex-1 rounded-xl bg-white px-3 py-2 text-center text-sm font-semibold shadow-sm">Edit</a><a href="{{ $publicUrl }}" target="_blank" class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-center text-sm font-semibold">View</a></div></div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="text-xs font-bold uppercase tracking-wide text-slate-400">{{ data_get($websitePage->sections, 'type', $websitePage->key) }}</div>
+                                    <div class="mt-1 text-lg font-bold">{{ $websitePage->title }}</div>
+                                    <div class="mt-1 text-sm text-slate-500">
+                                        {{ match ($websitePage->key) {
+                                            'work' => 'Projects & portfolio',
+                                            'team' => 'Team members',
+                                            'services' => 'Services content',
+                                            'clients' => 'Client logos',
+                                            'contact' => 'Contact details',
+                                            'about' => 'About content',
+                                            default => 'Homepage sections',
+                                        } }}
+                                    </div>
+                                </div>
+                                <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $websitePage->is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">
+                                    {{ $websitePage->is_published ? 'Live' : 'Draft' }}
+                                </span>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <a href="{{ route('admin.cms.edit', $websitePage) }}" class="flex-1 rounded-xl bg-white px-3 py-2 text-center text-sm font-semibold shadow-sm">Edit</a>
+                                <a href="{{ match ($websitePage->key) {
+                                    'home' => route('website.home'),
+                                    'about', 'services', 'work', 'team', 'clients', 'contact' => url($websitePage->slug),
+                                    default => route('website.page', $websitePage->slug),
+                                } }}" target="_blank" class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-center text-sm font-semibold">View</a>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             </div>
