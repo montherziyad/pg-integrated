@@ -72,16 +72,51 @@ class ClientPortalController extends Controller
     public function projects(Request $request): View
     {
         $client = $request->user('client');
+        $search = trim((string) $request->query('q', ''));
 
         return view('client-portal.projects', [
             'client' => $client,
-            'projects' => $client->projects()->withCount('jobs')->latest()->get(),
+            'search' => $search,
+            'projects' => $client->projects()
+                ->withCount('jobs')
+                ->when($search !== '', function ($query) use ($search): void {
+                    $query->where(function ($query) use ($search): void {
+                        $query
+                            ->where('name', 'ilike', "%{$search}%")
+                            ->orWhere('project_code', 'ilike', "%{$search}%")
+                            ->orWhere('description', 'ilike', "%{$search}%");
+                    });
+                })
+                ->latest()
+                ->get(),
             'jobs' => CreativeJob::query()
                 ->whereBelongsTo($client)
                 ->with(['project', 'currentWorkflowStage', 'assets', 'responsibleUser'])
+                ->when($search !== '', function ($query) use ($search): void {
+                    $query->where(function ($query) use ($search): void {
+                        $query
+                            ->where('job_number', 'ilike', "%{$search}%")
+                            ->orWhere('title', 'ilike', "%{$search}%")
+                            ->orWhere('priority', 'ilike', "%{$search}%")
+                            ->orWhereHas('project', fn ($project) => $project->where('name', 'ilike', "%{$search}%"))
+                            ->orWhereHas('responsibleUser', fn ($user) => $user->where('name', 'ilike', "%{$search}%"));
+                    });
+                })
                 ->latest()
                 ->get(),
-            'projectRequests' => $client->projectRequests()->latest()->get(),
+            'projectRequests' => $client->projectRequests()
+                ->when($search !== '', function ($query) use ($search): void {
+                    $query->where(function ($query) use ($search): void {
+                        $query
+                            ->where('request_number', 'ilike', "%{$search}%")
+                            ->orWhere('title', 'ilike', "%{$search}%")
+                            ->orWhere('service_name', 'ilike', "%{$search}%")
+                            ->orWhere('type', 'ilike', "%{$search}%")
+                            ->orWhere('status', 'ilike', "%{$search}%");
+                    });
+                })
+                ->latest()
+                ->get(),
         ]);
     }
 

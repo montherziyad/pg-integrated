@@ -161,9 +161,9 @@ class JobService
         return $this->repository->find($id);
     }
 
-    public function all($user = null)
+    public function all($user = null, string $search = '')
     {
-        return $this->repository->all($user);
+        return $this->repository->all($user, $search);
     }
 
     public function update(CreativeJob $job, array $data): bool

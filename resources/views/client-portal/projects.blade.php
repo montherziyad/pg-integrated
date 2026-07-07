@@ -7,6 +7,26 @@
         <a href="{{ route('client.requests.create') }}" class="rounded-2xl bg-slate-950 px-5 py-3 text-center font-bold text-white">Request new project</a>
     </div>
 
+    <form method="GET" action="{{ route('client.projects') }}" class="mt-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center">
+            <div class="flex-1">
+                <label class="sr-only" for="client-project-search">Search projects and jobs</label>
+                <input id="client-project-search"
+                       type="search"
+                       name="q"
+                       value="{{ $search ?? request('q') }}"
+                       placeholder="Search projects, jobs, delivery links, requests..."
+                       class="w-full rounded-2xl border-slate-300 px-4 py-3 text-sm focus:border-slate-900 focus:ring-slate-900">
+            </div>
+            <div class="flex gap-2">
+                <button class="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800">Search</button>
+                @if(($search ?? request('q')))
+                    <a href="{{ route('client.projects') }}" class="rounded-2xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50">Clear</a>
+                @endif
+            </div>
+        </div>
+    </form>
+
     <section class="mt-8 grid gap-5 md:grid-cols-2">
         @forelse ($projects as $project)
             <article class="rounded-3xl bg-white p-6">

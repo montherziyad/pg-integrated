@@ -22,6 +22,13 @@
             @endif
         </div>
 
+        @include('admin.partials.search', [
+            'action' => $isHandoverView ? route('handovers.index') : route('jobs.index'),
+            'placeholder' => $isHandoverView
+                ? 'Search my handover tasks by job number, title, client, project, status...'
+                : 'Search jobs by job number, title, client, project, responsible, priority...',
+        ])
+
         <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
             <div class="pg-card"><div class="pg-card-body"><div class="pg-stat-label">Visible Jobs</div><div class="pg-stat-value">{{ $jobs->count() }}</div></div></div>
             <div class="pg-card"><div class="pg-card-body"><div class="pg-stat-label">Pending Handover</div><div class="pg-stat-value">{{ $jobs->where('employee_handover_status', 'not_submitted')->count() }}</div></div></div>

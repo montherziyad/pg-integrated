@@ -30,10 +30,11 @@ class JobController extends Controller
 
     public function index(Request $request)
     {
-        $jobs = $this->jobService->all($request->user());
+        $search = trim((string) $request->query('q', ''));
+        $jobs = $this->jobService->all($request->user(), $search);
         $isHandoverView = $request->routeIs('handovers.*');
 
-        return view('jobs.index', compact('jobs', 'isHandoverView'));
+        return view('jobs.index', compact('jobs', 'isHandoverView', 'search'));
     }
 
     public function create()
