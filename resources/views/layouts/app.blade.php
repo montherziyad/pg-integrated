@@ -51,6 +51,7 @@
                 <a href="{{ route('deliveries.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('deliveries.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Delivery / Handover</a>
                 <a href="{{ route('traffic.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('traffic.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Traffic Board</a>
                 <a href="{{ route('workload.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('workload.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Team Workload</a>
+                <a href="{{ route('employee-leaves.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('employee-leaves.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Employee Leaves</a>
                 <a href="{{ route('archive.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('archive.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Archive</a>
                 <a href="{{ route('reports.index') }}" class="block px-4 py-3 rounded-xl {{ request()->routeIs('reports.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">Reports</a>
 

@@ -7,6 +7,7 @@ use App\Models\ClientProjectRequest;
 use App\Models\CmsPage;
 use App\Models\CreativeJob;
 use App\Models\EmailIntake;
+use App\Models\EmployeeLeave;
 use App\Models\JobActivity;
 use App\Models\Project;
 use App\Models\User;
@@ -40,6 +41,11 @@ class DashboardController extends Controller
         $pendingClientApprovals = Client::where('is_active', false)->orWhere('portal_enabled', false)->count();
         $pendingEmployeeApprovals = User::where('is_active', false)->count();
         $newClientRequests = ClientProjectRequest::where('status', 'new')->count();
+        $pendingLeaveRequests = EmployeeLeave::where('status', 'pending')->count();
+        $employeesOnLeaveToday = EmployeeLeave::where('status', 'approved')
+            ->whereDate('starts_at', '<=', now()->toDateString())
+            ->whereDate('ends_at', '>=', now()->toDateString())
+            ->count();
 
         $pendingClients = Client::with('accountManager')
             ->where('is_active', false)
@@ -98,6 +104,8 @@ class DashboardController extends Controller
             'pendingClientApprovals',
             'pendingEmployeeApprovals',
             'newClientRequests',
+            'pendingLeaveRequests',
+            'employeesOnLeaveToday',
             'pendingClients',
             'pendingEmployees',
             'latestClientRequests',

@@ -20,7 +20,10 @@
                 <select name="supervisor_id" class="w-full rounded-xl border-slate-300">
                     <option value="">Select Supervisor</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @php($currentLeave = $user->employeeLeaves->first())
+                        <option value="{{ $user->id }}" @disabled($currentLeave)>
+                            {{ $user->name }}@if($currentLeave) — On Leave until {{ $currentLeave->ends_at?->format('Y-m-d') }} / returns {{ $currentLeave->returns_at?->format('Y-m-d') }}@endif
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -30,7 +33,10 @@
                 <select name="user_id" class="w-full rounded-xl border-slate-300">
                     <option value="">Select Employee</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @php($currentLeave = $user->employeeLeaves->first())
+                        <option value="{{ $user->id }}" @disabled($currentLeave)>
+                            {{ $user->name }}@if($currentLeave) — On Leave until {{ $currentLeave->ends_at?->format('Y-m-d') }} / returns {{ $currentLeave->returns_at?->format('Y-m-d') }}@endif
+                        </option>
                     @endforeach
                 </select>
             </div>

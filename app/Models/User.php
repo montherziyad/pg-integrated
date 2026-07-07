@@ -56,4 +56,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(JobAssignment::class, 'user_id');
     }
+
+    public function employeeLeaves()
+    {
+        return $this->hasMany(EmployeeLeave::class, 'user_id');
+    }
+
+    public function approvedLeaves()
+    {
+        return $this->employeeLeaves()->where('status', 'approved');
+    }
+
+    public function currentApprovedLeave()
+    {
+        return $this->approvedLeaves()
+            ->whereDate('starts_at', '<=', now()->toDateString())
+            ->whereDate('ends_at', '>=', now()->toDateString())
+            ->orderBy('ends_at')
+            ->first();
+    }
+
+    public function isOnApprovedLeave(): bool
+    {
+        return $this->currentApprovedLeave() !== null;
+    }
 }

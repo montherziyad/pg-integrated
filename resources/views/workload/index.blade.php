@@ -8,10 +8,17 @@
                 <tbody>
                 @forelse($users as $user)
                     @php($utilization = $user->capacity_hours > 0 ? round(((float) $user->assigned_hours / $user->capacity_hours) * 100) : 0)
+                    @php($currentLeave = $user->employeeLeaves->first())
                     <tr class="border-b last:border-b-0">
                         <td class="py-4 font-semibold">{{ $user->name }}</td><td>{{ $user->team?->name ?? '-' }}</td><td>{{ $user->role?->name ?? '-' }}</td>
                         <td>{{ $user->active_jobs_count }}</td><td>{{ number_format((float) $user->assigned_hours, 1) }}</td><td>{{ $user->capacity_hours }}</td><td>{{ $utilization }}%</td>
-                        <td><span class="pg-badge {{ $utilization >= 100 ? 'pg-badge-review' : ($utilization >= 70 ? 'pg-badge-progress' : 'pg-badge-completed') }}">{{ $utilization >= 100 ? 'Overloaded' : ($utilization >= 70 ? 'Busy' : 'Available') }}</span></td>
+                        <td>
+                            @if($currentLeave)
+                                <span class="pg-badge pg-badge-review">On Leave until {{ $currentLeave->ends_at?->format('Y-m-d') }}</span>
+                            @else
+                                <span class="pg-badge {{ $utilization >= 100 ? 'pg-badge-review' : ($utilization >= 70 ? 'pg-badge-progress' : 'pg-badge-completed') }}">{{ $utilization >= 100 ? 'Overloaded' : ($utilization >= 70 ? 'Busy' : 'Available') }}</span>
+                            @endif
+                        </td>
                     </tr>
                 @empty<tr><td colspan="8" class="py-10 text-center text-slate-500">No active users.</td></tr>@endforelse
                 </tbody>

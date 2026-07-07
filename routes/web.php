@@ -17,6 +17,7 @@ use App\Http\Controllers\CrmController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmailIntakeController;
+use App\Http\Controllers\EmployeeLeaveController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MarketingCampaignController;
 use App\Http\Controllers\OutlookConnectionController;
@@ -259,6 +260,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/team-workload', [StudioController::class, 'index'])
         ->name('workload.index');
+
+    Route::get('/employee-leaves', [EmployeeLeaveController::class, 'index'])
+        ->name('employee-leaves.index');
+    Route::post('/employee-leaves', [EmployeeLeaveController::class, 'store'])
+        ->name('employee-leaves.store');
+    Route::patch('/employee-leaves/{leave}/approve', [EmployeeLeaveController::class, 'approve'])
+        ->name('employee-leaves.approve');
+    Route::patch('/employee-leaves/{leave}/reject', [EmployeeLeaveController::class, 'reject'])
+        ->name('employee-leaves.reject');
+    Route::patch('/employee-leaves/{leave}/cancel', [EmployeeLeaveController::class, 'cancel'])
+        ->name('employee-leaves.cancel');
+    Route::get('/employee-leaves/{leave}/download', [EmployeeLeaveController::class, 'download'])
+        ->name('employee-leaves.download');
 
     Route::get('/archive', [ArchiveController::class, 'index'])
         ->name('archive.index');

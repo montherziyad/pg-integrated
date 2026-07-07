@@ -106,7 +106,8 @@
                         <tbody>
                             @forelse($workloadUsers as $user)
                                 @php($busy = (float) $user->assigned_hours >= $user->capacity_hours)
-                                <tr class="border-b last:border-b-0"><td class="py-3">{{ $user->name }}</td><td><span class="pg-badge {{ $busy ? 'pg-badge-progress' : 'pg-badge-completed' }}">{{ $busy ? 'Busy' : 'Available' }}</span></td><td>{{ $user->active_jobs_count }}</td></tr>
+                                @php($currentLeave = $user->employeeLeaves->first())
+                                <tr class="border-b last:border-b-0"><td class="py-3">{{ $user->name }}</td><td>@if($currentLeave)<span class="pg-badge pg-badge-review">On Leave</span>@else<span class="pg-badge {{ $busy ? 'pg-badge-progress' : 'pg-badge-completed' }}">{{ $busy ? 'Busy' : 'Available' }}</span>@endif</td><td>{{ $user->active_jobs_count }}</td></tr>
                             @empty<tr><td colspan="3" class="py-6 text-center text-slate-500">No team data.</td></tr>@endforelse
                         </tbody>
                     </table>
@@ -116,7 +117,11 @@
             <div class="pg-card">
                 <div class="pg-card-body">
                     <div class="mb-4 flex items-center justify-between"><h3 class="text-lg font-bold">Pending employee approvals</h3><a href="{{ route('admin.users.index') }}" class="text-sm font-semibold text-slate-600">Open →</a></div>
-                    <div class="mb-4 rounded-2xl border border-blue-200 bg-blue-50 p-4"><div class="text-sm font-bold uppercase tracking-wide text-blue-700">Waiting approval</div><div class="mt-2 text-4xl font-extrabold text-blue-950">{{ $pendingEmployeeApprovals }}</div></div>
+                    <div class="grid gap-3 md:grid-cols-3">
+                        <div class="mb-4 rounded-2xl border border-blue-200 bg-blue-50 p-4"><div class="text-sm font-bold uppercase tracking-wide text-blue-700">Waiting approval</div><div class="mt-2 text-4xl font-extrabold text-blue-950">{{ $pendingEmployeeApprovals }}</div></div>
+                        <a href="{{ route('employee-leaves.index', ['status' => 'pending']) }}" class="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 hover:border-amber-400"><div class="text-sm font-bold uppercase tracking-wide text-amber-700">Pending leaves</div><div class="mt-2 text-4xl font-extrabold text-amber-950">{{ $pendingLeaveRequests }}</div></a>
+                        <a href="{{ route('employee-leaves.index', ['status' => 'approved']) }}" class="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 hover:border-red-400"><div class="text-sm font-bold uppercase tracking-wide text-red-700">On leave today</div><div class="mt-2 text-4xl font-extrabold text-red-950">{{ $employeesOnLeaveToday }}</div></a>
+                    </div>
                     <div class="space-y-3">
                         @forelse($pendingEmployees as $employee)
                             <a href="{{ route('admin.users.edit', $employee) }}" class="block rounded-2xl border border-slate-100 p-4 hover:bg-slate-50"><div class="font-bold">{{ $employee->name }}</div><div class="mt-1 text-sm text-slate-500">{{ $employee->email }}</div></a>

@@ -62,6 +62,7 @@ class JobController extends Controller
         $teams = Team::orderBy('name')->get();
 
         $users = User::where('is_active', true)
+            ->with(['employeeLeaves' => fn ($query) => $query->where('status', 'approved')->whereDate('starts_at', '<=', now()->toDateString())->whereDate('ends_at', '>=', now()->toDateString())])
             ->orderBy('name')
             ->get();
 
