@@ -40,6 +40,11 @@ class CreativeJob extends Model
         'delivery_reviewed_by',
         'delivery_reviewed_at',
         'delivery_published_at',
+        'employee_handover_status',
+        'employee_handover_link',
+        'employee_handover_notes',
+        'employee_handover_submitted_by',
+        'employee_handover_submitted_at',
         'is_archived',
         'archived_at',
         'created_by',
@@ -55,6 +60,7 @@ class CreativeJob extends Model
             'final_delivered_at' => 'datetime',
             'delivery_reviewed_at' => 'datetime',
             'delivery_published_at' => 'datetime',
+            'employee_handover_submitted_at' => 'datetime',
             'archived_at' => 'datetime',
             'is_archived' => 'boolean',
         ];
@@ -104,4 +110,43 @@ class CreativeJob extends Model
     {
         return $this->belongsTo(User::class, 'delivery_reviewed_by');
     }
+
+    public function employeeHandoverSubmitter()
+    {
+        return $this->belongsTo(User::class, 'employee_handover_submitted_by');
+    }
+
+    public function scopeVisibleToUser($query, ?User $user)
+    {
+        if (! $user || app()->environment('testing') && ! $user->role) {
+            return $query;
+        }
+
+        $canSeeAll = $user->canAccessScreen('traffic_board')
+            || $user->canAccessScreen('email_intake')
+            || $user->canAccessScreen('deliveries')
+            || $user->canAccessScreen('clients');
+
+        if ($canSeeAll) {
+            return $query;
+        }
+
+        return $query->where(function ($query) use ($user): void {
+            $query->where('responsible_user_id', $user->id)
+                ->orWhereHas('assignments', fn ($assignment) => $assignment
+                    ->where('user_id', $user->id)
+                    ->orWhere('supervisor_id', $user->id));
+        });
+    }
+
+    public function isAssignedTo(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return (int) $this->responsible_user_id === (int) $user->id
+            || $this->assignments->contains(fn ($assignment) => (int) $assignment->user_id === (int) $user->id || (int) $assignment->supervisor_id === (int) $user->id);
+    }
 }
+

@@ -223,6 +223,8 @@ Route::middleware(['auth', 'screen'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/handovers', [JobController::class, 'index'])->name('handovers.index');
+
     Route::resource('jobs', JobController::class);
 
     Route::get('/deliveries', [DeliveryController::class, 'index'])
@@ -321,6 +323,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
 
     Route::post('/jobs/{job}/attachments', [JobController::class, 'uploadAttachments'])
         ->name('jobs.attachments.upload');
+
+    Route::post('/jobs/{job}/handover', [JobController::class, 'handover'])
+        ->name('jobs.handover');
 
     Route::get('/assets/{asset}/download', [JobController::class, 'downloadAttachment'])
         ->name('assets.download');

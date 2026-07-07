@@ -12,10 +12,11 @@ class JobRepository extends BaseRepository
         $this->model = new CreativeJob();
     }
 
-    public function all()
+    public function all($user = null)
     {
         return $this->model
             ->newQuery()
+            ->visibleToUser($user)
             ->with([
                 'client.accountManager',
                 'client.clientServiceUsers',
@@ -23,6 +24,8 @@ class JobRepository extends BaseRepository
                 'category',
                 'currentWorkflowStage',
                 'responsibleUser',
+                'assignments.assignee',
+                'employeeHandoverSubmitter',
             ])
             ->latest()
             ->get();
@@ -44,6 +47,7 @@ class JobRepository extends BaseRepository
                 'assignments.assignee',
                 'activities.user',
                 'assets.uploader',
+                'employeeHandoverSubmitter',
             ])
             ->find($id);
     }

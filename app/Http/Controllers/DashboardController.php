@@ -8,6 +8,7 @@ use App\Models\CmsPage;
 use App\Models\CreativeJob;
 use App\Models\EmailIntake;
 use App\Models\EmployeeLeave;
+use App\Models\EmployeeNotification;
 use App\Models\JobActivity;
 use App\Models\Project;
 use App\Models\User;
@@ -74,9 +75,25 @@ class DashboardController extends Controller
             'client',
             'project',
             'currentWorkflowStage',
+            'responsibleUser',
+            'assignments.assignee',
         ])
+            ->visibleToUser(auth()->user())
             ->latest()
             ->take(10)
+            ->get();
+
+        $myAssignedJobs = CreativeJob::query()
+            ->with(['client', 'project', 'currentWorkflowStage', 'responsibleUser', 'assignments.assignee', 'employeeHandoverSubmitter'])
+            ->where(function ($query): void {
+                $query->where('responsible_user_id', auth()->id())
+                    ->orWhereHas('assignments', fn ($assignment) => $assignment
+                        ->where('user_id', auth()->id())
+                        ->orWhere('supervisor_id', auth()->id()));
+            })
+            ->where('is_archived', false)
+            ->latest()
+            ->take(8)
             ->get();
 
         $latestActivities = JobActivity::with([
@@ -92,6 +109,14 @@ class DashboardController extends Controller
             ->get();
 
         $workloadUsers = $this->workloadService->users()->take(5);
+
+        $employeeNotifications = EmployeeNotification::query()
+            ->with('job')
+            ->where('user_id', auth()->id())
+            ->whereNull('read_at')
+            ->latest()
+            ->take(5)
+            ->get();
 
         $saudiCalendarEvents = $this->eventCalendarService->upcoming('employee', 'Saudi Arabia', 6, auth()->user()?->team_id)->all();
 
@@ -111,9 +136,11 @@ class DashboardController extends Controller
             'latestClientRequests',
             'websitePages',
             'latestJobs',
+            'myAssignedJobs',
             'latestActivities',
             'workflowStages',
             'workloadUsers',
+            'employeeNotifications',
             'saudiCalendarEvents'
         ));
     }

@@ -11,8 +11,12 @@
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('jobs.edit', $job) }}" class="pg-btn-primary">Edit Job</a>
-                <a href="{{ route('deliveries.edit', $job) }}" class="pg-btn-secondary">Delivery / Handover</a>
+                @if(Auth::user()?->canAccessScreen('traffic_board') || Auth::user()?->canAccessScreen('team_workload'))
+                    <a href="{{ route('jobs.edit', $job) }}" class="pg-btn-primary">Edit Job</a>
+                @endif
+                @if(Auth::user()?->canAccessScreen('deliveries'))
+                    <a href="{{ route('deliveries.edit', $job) }}" class="pg-btn-secondary">Delivery / Handover</a>
+                @endif
                 <a href="{{ route('jobs.index') }}" class="pg-btn-secondary">Back to Jobs</a>
             </div>
         </div>
@@ -26,8 +30,11 @@
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2 space-y-6">
                 @include('jobs.partials.brief')
+                @include('jobs.partials.employee-handover')
                 @include('jobs.partials.attachments')
-                @include('jobs.partials.assignment')
+                @if(Auth::user()?->canAccessScreen('traffic_board') || Auth::user()?->canAccessScreen('team_workload'))
+                    @include('jobs.partials.assignment')
+                @endif
                 @include('jobs.partials.timeline')
                 @include('jobs.partials.activity-log')
             </div>

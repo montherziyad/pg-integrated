@@ -53,6 +53,7 @@
                             ['screen' => 'traffic_board', 'route' => 'traffic.index', 'active' => 'traffic.*', 'label' => 'Traffic Board'],
                             ['screen' => 'team_workload', 'route' => 'workload.index', 'active' => 'workload.*', 'label' => 'Team Workload'],
                             ['screen' => 'employee_leaves', 'route' => 'employee-leaves.index', 'active' => 'employee-leaves.*', 'label' => 'Employee Leaves'],
+                            ['screen' => 'employee_handover', 'route' => 'handovers.index', 'active' => 'handovers.*', 'label' => 'Handover'],
                             ['screen' => 'archive', 'route' => 'archive.index', 'active' => 'archive.*', 'label' => 'Archive'],
                             ['screen' => 'reports', 'route' => 'reports.index', 'active' => 'reports.*', 'label' => 'Reports'],
                         ],

@@ -4,6 +4,7 @@ namespace App\Modules\Jobs\Services;
 
 use App\Models\Asset;
 use App\Models\CreativeJob;
+use App\Models\EmployeeNotification;
 use App\Models\WorkflowStage;
 use App\Modules\Jobs\Actions\ArchiveJobAction;
 use App\Modules\Jobs\Actions\AssignJobAction;
@@ -57,6 +58,16 @@ class JobService
             'JOB_ASSIGNED',
             'Job assigned successfully.'
         );
+
+        if (! empty($data['user_id'])) {
+            EmployeeNotification::query()->create([
+                'user_id' => $data['user_id'],
+                'creative_job_id' => $job->id,
+                'type' => 'job_assigned',
+                'title' => 'New job assigned',
+                'body' => $job->job_number.' — '.$job->title,
+            ]);
+        }
 
         return $assignment;
     }
@@ -150,9 +161,9 @@ class JobService
         return $this->repository->find($id);
     }
 
-    public function all()
+    public function all($user = null)
     {
-        return $this->repository->all();
+        return $this->repository->all($user);
     }
 
     public function update(CreativeJob $job, array $data): bool

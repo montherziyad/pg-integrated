@@ -20,6 +20,7 @@ class RoleScreenPermissions
                 'deliveries' => ['label' => 'Delivery / Handover', 'description' => 'Final delivery links, client service review, and handover.'],
                 'team_workload' => ['label' => 'Team Workload', 'description' => 'Employee workload, availability, and assigned jobs.'],
                 'employee_leaves' => ['label' => 'Employee Leaves', 'description' => 'Leave requests, approvals, and availability checks.'],
+                'employee_handover' => ['label' => 'Employee Handover', 'description' => 'Assigned employees submit files and delivery links to traffic for review.'],
                 'archive' => ['label' => 'Archive', 'description' => 'Archived jobs, assets, and completed delivery records.'],
                 'reports' => ['label' => 'Reports', 'description' => 'Operational reports and summaries.'],
             ],
@@ -108,12 +109,12 @@ class RoleScreenPermissions
                 'dashboard', 'employee_leaves', 'users', 'teams', 'roles', 'branches', 'careers', 'events', 'reports',
             ],
             'DESIGNER', 'SENIOR_DESIGNER', 'CONTENT_WRITER', 'MOTION_DESIGNER', 'QA_REVIEWER' => [
-                'dashboard', 'jobs', 'team_workload', 'employee_leaves', 'archive', 'events',
+                'dashboard', 'jobs', 'employee_handover', 'employee_leaves', 'events',
             ],
             'ARCHIVE_OFFICER' => [
-                'dashboard', 'jobs', 'deliveries', 'archive', 'reports', 'employee_leaves', 'events',
+                'dashboard', 'jobs', 'deliveries', 'employee_handover', 'archive', 'reports', 'employee_leaves', 'events',
             ],
-            default => ['dashboard', 'jobs', 'employee_leaves', 'events'],
+            default => ['dashboard', 'jobs', 'employee_handover', 'employee_leaves', 'events'],
         };
 
         return collect($defaults)->mapWithKeys(fn (string $key) => [$key => true])->all();
@@ -132,6 +133,7 @@ class RoleScreenPermissions
             'email-intakes.' => 'email_intake',
             'traffic.' => 'traffic_board',
             'jobs.' => 'jobs',
+            'handovers.' => 'employee_handover',
             'deliveries.' => 'deliveries',
             'workload.' => 'team_workload',
             'employee-leaves.' => 'employee_leaves',

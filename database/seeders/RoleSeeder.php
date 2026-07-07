@@ -92,7 +92,11 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            $role['screen_permissions'] = RoleScreenPermissions::defaultsForRole($role['code']);
+            $existingRole = Role::query()->where('code', $role['code'])->first();
+
+            if (! $existingRole || blank($existingRole->screen_permissions)) {
+                $role['screen_permissions'] = RoleScreenPermissions::defaultsForRole($role['code']);
+            }
 
             Role::query()->updateOrCreate(
                 ['code' => $role['code']],

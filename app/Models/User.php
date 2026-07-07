@@ -57,6 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(JobAssignment::class, 'user_id');
     }
 
+    public function employeeNotifications()
+    {
+        return $this->hasMany(EmployeeNotification::class);
+    }
+
     public function employeeLeaves()
     {
         return $this->hasMany(EmployeeLeave::class, 'user_id');
