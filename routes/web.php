@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminEventCalendarController;
 use App\Http\Controllers\AdminWebsiteChatController;
 use App\Http\Controllers\AiEmployeeController;
 use App\Http\Controllers\AiWorkspaceController;
@@ -180,9 +179,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/admin/settings/clear-cache', [SettingController::class, 'clearCache'])
         ->name('admin.settings.clear-cache');
-
-    Route::get('/admin/events', [AdminEventCalendarController::class, 'index'])
-        ->name('admin.events.index');
 
     Route::get('/admin', [AdminController::class, 'index'])
         ->name('admin.index');
