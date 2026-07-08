@@ -26,11 +26,13 @@ class AssignJobAction
         $assignments = collect();
         $primarySupervisorId = $supervisorIds->first();
 
+        // Only create assignments when there is at least a user or supervisor
         if ($userIds->isNotEmpty()) {
             foreach ($userIds as $userId) {
                 $assignments->push($this->createAssignment($job, $data, $userId, $primarySupervisorId));
             }
 
+            // Any remaining supervisors become separate supervisor-only assignments
             $supervisorIds
                 ->skip($primarySupervisorId ? 1 : 0)
                 ->each(fn ($supervisorId) => $assignments->push($this->createAssignment($job, $data, null, $supervisorId)));
@@ -39,8 +41,30 @@ class AssignJobAction
                 $assignments->push($this->createAssignment($job, $data, null, $supervisorId));
             }
         } else {
-            $assignments->push($this->createAssignment($job, $data, null, null));
+            // No assignees provided — do not create empty assignments; return empty collection
+            return $assignments;
         }
+
+        // Remove any accidental orphan assignments (both user_id and supervisor_id null) for this job
+        \App\Models\JobAssignment::query()
+            ->where('creative_job_id', $job->id)
+            ->whereNull('user_id')
+            ->whereNull('supervisor_id')
+            ->delete();
+
+        // Ensure job has a workflow stage and is not archived so it appears on Traffic Board
+        if (empty($job->current_workflow_stage_id)) {
+            $startStage = \App\Models\WorkflowStage::where('code', 'email_received')->first();
+            if ($startStage) {
+                $job->current_workflow_stage_id = $startStage->id;
+            }
+        }
+
+        if ($job->is_archived) {
+            $job->is_archived = false;
+        }
+
+        $job->save();
 
         return $assignments->values();
     }
