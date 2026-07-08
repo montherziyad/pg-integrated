@@ -158,10 +158,33 @@
                             <div class="mt-2 font-bold text-slate-950">{{ $step['action'] }}</div>
                             <div class="mt-2 text-sm text-slate-500">Owner: {{ $step['owner'] }}</div>
 
-                            @if($index === $activeIndex && $step['label'] === 'Handover' && Auth::user()?->canAccessScreen('deliveries'))
-                                <a href="{{ route('deliveries.edit', $job) }}" class="mt-4 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
-                                    Open Delivery / Handover
-                                </a>
+                            @if($index === $activeIndex && $step['label'] === 'Handover')
+                                <div class="mt-4 flex flex-wrap items-center gap-2">
+                                    @if(Auth::user()?->canAccessScreen('deliveries'))
+                                        <a href="{{ route('deliveries.edit', $job) }}" class="inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
+                                            Open Delivery / Handover
+                                        </a>
+                                    @endif
+
+                                    @if($job->employee_handover_link)
+                                        <a href="{{ $job->employee_handover_link }}" target="_blank" rel="noopener" class="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:border-slate-950">
+                                            View submitted link
+                                        </a>
+                                    @else
+                                        <a href="#employee-handover" class="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:border-slate-950">
+                                            View attachments / link
+                                        </a>
+                                    @endif
+
+                                    @if(Auth::user()?->canAccessScreen('traffic_board') || Auth::user()?->canAccessScreen('deliveries') || Auth::user()?->canAccessScreen('team_workload'))
+                                        <form method="POST" action="{{ route('jobs.traffic-approve-handover', $job) }}" onsubmit="return confirm('Approve this handover and send it to Client Service?');">
+                                            @csrf
+                                            <button type="submit" class="inline-flex rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700">
+                                                Approve & send to Client Service
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             @endif
                         </div>
                     </div>

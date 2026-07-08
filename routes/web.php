@@ -338,6 +338,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::post('/jobs/{job}/handover', [JobController::class, 'handover'])
         ->name('jobs.handover');
 
+    Route::post('/jobs/{job}/traffic-approve-handover', [JobController::class, 'approveTrafficHandover'])
+        ->name('jobs.traffic-approve-handover');
+
     Route::post('/jobs/{job}/production-due', [JobController::class, 'confirmProductionDue'])
         ->name('jobs.production-due');
 

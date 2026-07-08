@@ -199,6 +199,65 @@ class JobController extends Controller
         return redirect()->route('jobs.show', $job)->with('success', 'Handover sent to traffic successfully.');
     }
 
+    public function approveTrafficHandover(Request $request, CreativeJob $job): RedirectResponse
+    {
+        abort_unless(
+            $request->user()?->canAccessScreen('traffic_board')
+                || $request->user()?->canAccessScreen('deliveries')
+                || $request->user()?->canAccessScreen('team_workload'),
+            403
+        );
+
+        if ($job->employee_handover_status !== 'submitted_to_traffic') {
+            return back()->withErrors([
+                'handover' => 'No submitted handover is available for Traffic review.',
+            ]);
+        }
+
+        $job->loadMissing(['client.clientServiceUsers']);
+
+        $previousStatus = $job->delivery_review_status;
+
+        $job->update([
+            'delivery_review_status' => 'checked',
+            'delivery_reviewed_by' => $request->user()->id,
+            'delivery_reviewed_at' => now(),
+            'delivery_published_at' => null,
+        ]);
+
+        JobActivity::query()->create([
+            'creative_job_id' => $job->id,
+            'user_id' => $request->user()->id,
+            'activity' => 'TRAFFIC_HANDOVER_APPROVED',
+            'activity_type' => 'TRAFFIC_HANDOVER_APPROVED',
+            'description' => 'Traffic approved the handover and sent it to Client Service review.',
+            'activity_at' => now(),
+        ]);
+
+        if ($previousStatus !== 'checked') {
+            $notifyUserIds = collect([$job->responsible_user_id])
+                ->merge($job->client?->clientServiceUsers?->pluck('id') ?? [])
+                ->filter()
+                ->unique()
+                ->reject(fn ($userId) => (int) $userId === (int) $request->user()->id)
+                ->values();
+
+            foreach ($notifyUserIds as $userId) {
+                EmployeeNotification::query()->create([
+                    'user_id' => $userId,
+                    'creative_job_id' => $job->id,
+                    'type' => 'traffic_delivery_checked',
+                    'title' => 'Traffic approved handover',
+                    'body' => $job->job_number.' — '.$job->title.' was approved by Traffic and is ready for Client Service review.',
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('jobs.show', $job)
+            ->with('success', 'Handover approved and sent to Client Service.');
+    }
+
     public function confirmProductionDue(Request $request, CreativeJob $job): RedirectResponse
     {
         $job->load(['assignments', 'client.clientServiceUsers']);
