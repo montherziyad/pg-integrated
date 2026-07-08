@@ -165,6 +165,7 @@ class JobController extends Controller
         JobActivity::query()->create([
             'creative_job_id' => $job->id,
             'user_id' => $request->user()->id,
+            'activity' => 'EMPLOYEE_HANDOVER_SUBMITTED',
             'activity_type' => 'EMPLOYEE_HANDOVER_SUBMITTED',
             'description' => 'Employee submitted handover to traffic review.',
             'activity_at' => now(),
@@ -231,6 +232,7 @@ class JobController extends Controller
         JobActivity::query()->create([
             'creative_job_id' => $job->id,
             'user_id' => $request->user()->id,
+            'activity' => 'PRODUCTION_DUE_CONFIRMED',
             'activity_type' => 'PRODUCTION_DUE_CONFIRMED',
             'description' => 'Production team confirmed expected delivery date: '.$productionDueAt->format('Y-m-d H:i'),
             'activity_at' => now(),
