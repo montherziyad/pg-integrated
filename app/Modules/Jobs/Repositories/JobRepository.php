@@ -27,7 +27,8 @@ class JobRepository extends BaseRepository
                         ->orWhereHas('client', fn ($client) => $client->where('name', 'ilike', "%{$search}%"))
                         ->orWhereHas('project', fn ($project) => $project->where('name', 'ilike', "%{$search}%"))
                         ->orWhereHas('responsibleUser', fn ($user) => $user->where('name', 'ilike', "%{$search}%")->orWhere('email', 'ilike', "%{$search}%"))
-                        ->orWhereHas('assignments.assignee', fn ($user) => $user->where('name', 'ilike', "%{$search}%")->orWhere('email', 'ilike', "%{$search}%"));
+                        ->orWhereHas('assignments.assignee', fn ($user) => $user->where('name', 'ilike', "%{$search}%")->orWhere('email', 'ilike', "%{$search}%"))
+                        ->orWhereHas('assignments.supervisor', fn ($user) => $user->where('name', 'ilike', "%{$search}%")->orWhere('email', 'ilike', "%{$search}%"));
                 });
             })
             ->with([
@@ -38,6 +39,7 @@ class JobRepository extends BaseRepository
                 'currentWorkflowStage',
                 'responsibleUser',
                 'assignments.assignee',
+                'assignments.supervisor',
                 'employeeHandoverSubmitter',
             ])
             ->latest()

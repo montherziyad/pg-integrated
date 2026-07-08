@@ -91,6 +91,34 @@ class CreativeJob extends Model
         return $this->hasMany(JobAssignment::class, 'creative_job_id');
     }
 
+    public function assignedDesigners()
+    {
+        return $this->assignments
+            ->pluck('assignee')
+            ->filter()
+            ->unique('id')
+            ->values();
+    }
+
+    public function assignmentLeads()
+    {
+        return $this->assignments
+            ->pluck('supervisor')
+            ->filter()
+            ->unique('id')
+            ->values();
+    }
+
+    public function assignedDesignerNames(): string
+    {
+        return $this->assignedDesigners()->pluck('name')->implode(', ');
+    }
+
+    public function assignmentLeadNames(): string
+    {
+        return $this->assignmentLeads()->pluck('name')->implode(', ');
+    }
+
     public function activities()
     {
         return $this->hasMany(JobActivity::class, 'creative_job_id');
@@ -149,4 +177,3 @@ class CreativeJob extends Model
             || $this->assignments->contains(fn ($assignment) => (int) $assignment->user_id === (int) $user->id || (int) $assignment->supervisor_id === (int) $user->id);
     }
 }
-

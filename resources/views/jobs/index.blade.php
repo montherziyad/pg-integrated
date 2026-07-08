@@ -46,7 +46,9 @@
                                 <th>Title</th>
                                 <th>Client</th>
                                 <th>Project</th>
-                                <th>Assigned / Responsible</th>
+                                <th>Designers / Team</th>
+                                <th>Leads / Supervisors</th>
+                                <th>Final Owner</th>
                                 <th>Stage</th>
                                 <th>Handover</th>
                                 <th>Due</th>
@@ -62,8 +64,16 @@
                                     <td>{{ $job->client?->name ?? '-' }}</td>
                                     <td>{{ $job->project?->name ?? '-' }}</td>
                                     <td>
-                                        <div class="font-semibold">{{ $job->responsibleUser?->name ?? $job->assignments->pluck('assignee.name')->filter()->unique()->implode(', ') ?: '-' }}</div>
-                                        <div class="text-xs text-slate-500">PG Employee</div>
+                                        <div class="font-semibold">{{ $job->assignedDesignerNames() ?: '-' }}</div>
+                                        <div class="text-xs text-slate-500">Assigned creatives</div>
+                                    </td>
+                                    <td>
+                                        <div class="font-semibold">{{ $job->assignmentLeadNames() ?: '-' }}</div>
+                                        <div class="text-xs text-slate-500">Project leads</div>
+                                    </td>
+                                    <td>
+                                        <div class="font-semibold">{{ $job->responsibleUser?->name ?? '-' }}</div>
+                                        <div class="text-xs text-slate-500">Delivery owner</div>
                                     </td>
                                     <td><span class="pg-badge pg-badge-new">{{ $job->currentWorkflowStage?->name ?? '-' }}</span></td>
                                     <td>
@@ -78,7 +88,7 @@
                                     <td class="text-right"><a href="{{ route('jobs.show', $job->id) }}" class="pg-btn-secondary">Open</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="9" class="py-12 text-center text-slate-500">No jobs found for your role.</td></tr>
+                                <tr><td colspan="11" class="py-12 text-center text-slate-500">No jobs found for your role.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

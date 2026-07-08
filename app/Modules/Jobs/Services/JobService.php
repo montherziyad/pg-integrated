@@ -51,17 +51,23 @@ class JobService
 
     public function assign(CreativeJob $job, array $data)
     {
-        $assignment = $this->assignJobAction->execute($job, $data);
+        $assignments = collect($this->assignJobAction->execute($job, $data));
 
         $this->logJobActivityAction->execute(
             $job,
             'JOB_ASSIGNED',
-            'Job assigned successfully.'
+            $assignments->count() > 1 ? 'Job assigned to multiple team members successfully.' : 'Job assigned successfully.'
         );
 
-        if (! empty($data['user_id'])) {
+        $assignedUserIds = $assignments
+            ->pluck('user_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        foreach ($assignedUserIds as $userId) {
             EmployeeNotification::query()->create([
-                'user_id' => $data['user_id'],
+                'user_id' => $userId,
                 'creative_job_id' => $job->id,
                 'type' => 'job_assigned',
                 'title' => 'New job assigned',
@@ -69,7 +75,7 @@ class JobService
             ]);
         }
 
-        return $assignment;
+        return $assignments->count() === 1 ? $assignments->first() : $assignments;
     }
 
     public function uploadAttachments(CreativeJob $job, array $files): void

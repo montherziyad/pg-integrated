@@ -43,7 +43,7 @@
                     <div>
                         <div class="text-xs font-black uppercase tracking-[.2em] text-slate-400">My work</div>
                         <h3 class="mt-2 text-2xl font-black">Assigned jobs & handover</h3>
-                        <p class="mt-1 text-sm text-slate-500">These are the jobs assigned to you or where you are the responsible employee.</p>
+                        <p class="mt-1 text-sm text-slate-500">These are the jobs assigned to you, led by you, or where you are the responsible employee.</p>
                     </div>
                     @if($can('employee_handover'))<a href="{{ route('handovers.index') }}" class="rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Open Handover →</a>@endif
                 </div>
@@ -56,19 +56,21 @@
 
                 <div class="mt-6 overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead><tr class="border-b text-left text-slate-500"><th class="py-3">Job</th><th>Client</th><th>Stage</th><th>Due</th><th>Handover</th><th></th></tr></thead>
+                        <thead><tr class="border-b text-left text-slate-500"><th class="py-3">Job</th><th>Client</th><th>Designers</th><th>Leads</th><th>Stage</th><th>Due</th><th>Handover</th><th></th></tr></thead>
                         <tbody>
                             @forelse($myAssignedJobs as $job)
                                 <tr class="border-b last:border-b-0">
                                     <td class="py-4"><div class="font-bold">{{ $job->title }}</div><div class="text-xs text-slate-500">{{ $job->job_number }}</div></td>
                                     <td>{{ $job->client?->name ?? '-' }}</td>
+                                    <td>{{ $job->assignedDesignerNames() ?: '-' }}</td>
+                                    <td>{{ $job->assignmentLeadNames() ?: '-' }}</td>
                                     <td>{{ $job->currentWorkflowStage?->name ?? '-' }}</td>
                                     <td>{{ $job->final_due_at?->format('Y-m-d') ?? '-' }}</td>
                                     <td>@if($job->employee_handover_status === 'submitted_to_traffic')<span class="pg-badge pg-badge-review">Submitted</span>@else<span class="pg-badge pg-badge-progress">Pending</span>@endif</td>
                                     <td class="text-right"><a href="{{ route('jobs.show', $job) }}" class="pg-btn-secondary">Open</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="6" class="py-8 text-center text-slate-500">No assigned jobs yet.</td></tr>
+                                <tr><td colspan="8" class="py-8 text-center text-slate-500">No assigned jobs yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

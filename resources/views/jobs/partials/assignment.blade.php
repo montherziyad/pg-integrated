@@ -16,9 +16,8 @@
             </div>
 
             <div>
-                <label class="block mb-2 font-semibold">Department Manager / Supervisor</label>
-                <select name="supervisor_id" class="w-full rounded-xl border-slate-300">
-                    <option value="">Select Supervisor</option>
+                <label class="block mb-2 font-semibold">Leads / Supervisors</label>
+                <select name="supervisor_ids[]" multiple size="8" class="w-full rounded-xl border-slate-300">
                     @foreach($users as $user)
                         @php($currentLeave = $user->employeeLeaves->first())
                         <option value="{{ $user->id }}" @disabled($currentLeave)>
@@ -26,12 +25,12 @@
                         </option>
                     @endforeach
                 </select>
+                <p class="mt-2 text-xs text-slate-500">Hold Cmd/Ctrl to select more than one lead.</p>
             </div>
 
             <div>
-                <label class="block mb-2 font-semibold">Employee</label>
-                <select name="user_id" class="w-full rounded-xl border-slate-300">
-                    <option value="">Select Employee</option>
+                <label class="block mb-2 font-semibold">Designers / Team members</label>
+                <select name="user_ids[]" multiple size="8" class="w-full rounded-xl border-slate-300">
                     @foreach($users as $user)
                         @php($currentLeave = $user->employeeLeaves->first())
                         <option value="{{ $user->id }}" @disabled($currentLeave)>
@@ -39,6 +38,7 @@
                         </option>
                     @endforeach
                 </select>
+                <p class="mt-2 text-xs text-slate-500">Select every designer or creative team member working on this job.</p>
             </div>
 
             <div>

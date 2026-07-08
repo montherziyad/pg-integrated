@@ -6,8 +6,8 @@
             <thead>
                 <tr class="border-b text-left text-slate-500">
                     <th class="py-3">Team</th>
-                    <th>Supervisor</th>
-                    <th>Employee</th>
+                    <th>Lead / Supervisor</th>
+                    <th>Designer / Team Member</th>
                     <th>Hours</th>
                     <th>Status</th>
                     <th>Assigned At</th>
