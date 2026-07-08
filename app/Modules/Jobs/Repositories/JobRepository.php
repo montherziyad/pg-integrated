@@ -25,12 +25,8 @@ class JobRepository extends BaseRepository
             $roleCode = strtoupper($user->role?->code ?? '');
             $managerRoles = ['SUPER_ADMIN', 'GENERAL_MANAGER', 'OPERATIONS_MANAGER', 'TRAFFIC_MANAGER', 'ACCOUNT_MANAGER', 'CLIENT_SERVICE_MANAGER', 'HR'];
 
-            $canSeeAll = in_array($roleCode, $managerRoles, true)
-                || $user->canAccessScreen('traffic_board')
-                || $user->canAccessScreen('email_intake')
-                || $user->canAccessScreen('deliveries')
-                || $user->canAccessScreen('clients')
-                || $user->canAccessScreen('team_workload');
+            // Only manager/admin roles get full visibility by default.
+            $canSeeAll = in_array($roleCode, $managerRoles, true);
 
             if (! $canSeeAll) {
                 $query->where(function ($q) use ($user) {
