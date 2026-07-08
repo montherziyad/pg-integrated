@@ -17,28 +17,100 @@
 
             <div>
                 <label class="block mb-2 font-semibold">Leads / Supervisors</label>
-                <select name="supervisor_ids[]" multiple size="8" class="w-full rounded-xl border-slate-300">
-                    @foreach($users as $user)
-                        @php($currentLeave = $user->employeeLeaves->first())
-                        <option value="{{ $user->id }}" @disabled($currentLeave)>
-                            {{ $user->name }}@if($currentLeave) — On Leave until {{ $currentLeave->ends_at?->format('Y-m-d') }} / returns {{ $currentLeave->returns_at?->format('Y-m-d') }}@endif
-                        </option>
-                    @endforeach
-                </select>
-                <p class="mt-2 text-xs text-slate-500">Hold Cmd/Ctrl to select more than one lead.</p>
+
+                <div x-data="{
+                    query: '',
+                    results: [],
+                    selected: @json([]),
+                    name: 'supervisor_ids[]',
+                    async search() {
+                        if (this.query.length < 2) { this.results = []; return; }
+                        const res = await fetch(`{{ route('users.search') }}?q=` + encodeURIComponent(this.query));
+                        this.results = await res.json();
+                    },
+                    select(user) {
+                        if (!this.selected.find(u => u.id === user.id)) {
+                            this.selected.push(user);
+                        }
+                        this.query = '';
+                        this.results = [];
+                    },
+                    remove(user) { this.selected = this.selected.filter(u => u.id !== user.id); }
+                }" class="relative">
+
+                    <input x-model="query" @input.debounce.300ms="search()" type="search" placeholder="Search name or email..." class="w-full rounded-xl border-slate-300 px-3 py-2" />
+
+                    <div x-show="results.length" class="absolute z-50 left-0 right-0 mt-1 bg-white border rounded shadow max-h-60 overflow-auto">
+                        <template x-for="user in results" :key="user.id">
+                            <div @click.prevent="select(user)" class="p-2 hover:bg-slate-50 cursor-pointer border-b last:border-b-0">
+                                <div class="font-medium" x-text="user.name"></div>
+                                <div class="text-xs text-slate-500" x-text="user.email"></div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <template x-for="user in selected" :key="user.id">
+                            <span class="inline-flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full text-sm">
+                                <span x-text="user.name"></span>
+                                <button type="button" class="text-slate-500" @click.prevent="remove(user)">✕</button>
+                                <input type="hidden" :name="name" :value="user.id" />
+                            </span>
+                        </template>
+                    </div>
+
+                </div>
+
+                <p class="mt-2 text-xs text-slate-500">Search and add supervisors quickly.</p>
             </div>
 
             <div>
                 <label class="block mb-2 font-semibold">Designers / Team members</label>
-                <select name="user_ids[]" multiple size="8" class="w-full rounded-xl border-slate-300">
-                    @foreach($users as $user)
-                        @php($currentLeave = $user->employeeLeaves->first())
-                        <option value="{{ $user->id }}" @disabled($currentLeave)>
-                            {{ $user->name }}@if($currentLeave) — On Leave until {{ $currentLeave->ends_at?->format('Y-m-d') }} / returns {{ $currentLeave->returns_at?->format('Y-m-d') }}@endif
-                        </option>
-                    @endforeach
-                </select>
-                <p class="mt-2 text-xs text-slate-500">Select every designer or creative team member working on this job.</p>
+
+                <div x-data="{
+                    query: '',
+                    results: [],
+                    selected: @json($job->assignedDesigners()->map(fn($u)=>['id'=>$u->id,'name'=>$u->name])->values()),
+                    name: 'user_ids[]',
+                    async search() {
+                        if (this.query.length < 2) { this.results = []; return; }
+                        const res = await fetch(`{{ route('users.search') }}?q=` + encodeURIComponent(this.query));
+                        this.results = await res.json();
+                    },
+                    select(user) {
+                        if (!this.selected.find(u => u.id === user.id)) {
+                            this.selected.push(user);
+                        }
+                        this.query = '';
+                        this.results = [];
+                    },
+                    remove(user) { this.selected = this.selected.filter(u => u.id !== user.id); }
+                }" class="relative">
+
+                    <input x-model="query" @input.debounce.300ms="search()" type="search" placeholder="Search name or email..." class="w-full rounded-xl border-slate-300 px-3 py-2" />
+
+                    <div x-show="results.length" class="absolute z-50 left-0 right-0 mt-1 bg-white border rounded shadow max-h-60 overflow-auto">
+                        <template x-for="user in results" :key="user.id">
+                            <div @click.prevent="select(user)" class="p-2 hover:bg-slate-50 cursor-pointer border-b last:border-b-0">
+                                <div class="font-medium" x-text="user.name"></div>
+                                <div class="text-xs text-slate-500" x-text="user.email"></div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <template x-for="user in selected" :key="user.id">
+                            <span class="inline-flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full text-sm">
+                                <span x-text="user.name"></span>
+                                <button type="button" class="text-slate-500" @click.prevent="remove(user)">✕</button>
+                                <input type="hidden" :name="name" :value="user.id" />
+                            </span>
+                        </template>
+                    </div>
+
+                </div>
+
+                <p class="mt-2 text-xs text-slate-500">Search and add team members quickly.</p>
             </div>
 
             <div>

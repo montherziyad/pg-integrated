@@ -200,6 +200,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
 
+    // AJAX user search for assignment autocomplete
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+
     Route::get('/admin/users/create', [UserController::class, 'create'])
         ->name('admin.users.create');
 
