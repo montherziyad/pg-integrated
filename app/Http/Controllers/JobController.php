@@ -328,7 +328,7 @@ class JobController extends Controller
                 'storage_type' => 'local',
                 'storage_path' => $path,
                 'version' => ((int) $job->revision_count) + 1,
-                'asset_stage' => 'CLIENT_SERVICE_REVISION',
+                'asset_stage' => 'REVIEW',
                 'is_final' => false,
                 'notes' => $data['revision_notes'],
             ]);
