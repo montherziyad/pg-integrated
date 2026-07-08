@@ -83,6 +83,14 @@ class DeliveryController extends Controller
             $data['delivery_published_at'] = null;
         }
 
+        if (
+            blank($data['final_delivery_path'] ?? null)
+            && filled($job->employee_handover_link)
+            && in_array($data['delivery_review_status'], ['checked', 'published'], true)
+        ) {
+            $data['final_delivery_path'] = $job->employee_handover_link;
+        }
+
         if ($archiveAfterDelivery) {
             $archiveStage = WorkflowStage::query()->where('code', 'ARCHIVE')->first();
             $data['is_archived'] = true;

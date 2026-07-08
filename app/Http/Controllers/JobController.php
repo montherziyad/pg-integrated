@@ -220,6 +220,7 @@ class JobController extends Controller
 
         $job->update([
             'delivery_review_status' => 'checked',
+            'final_delivery_path' => $job->final_delivery_path ?: $job->employee_handover_link,
             'delivery_reviewed_by' => $request->user()->id,
             'delivery_reviewed_at' => now(),
             'delivery_published_at' => null,
