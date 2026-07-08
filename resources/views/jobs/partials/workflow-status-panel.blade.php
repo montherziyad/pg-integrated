@@ -26,7 +26,7 @@
     }
 
     if ($job->delivery_review_status === 'checked') {
-        $currentStep = 'Checked by Traffic';
+        $currentStep = 'Client Service Review';
         $nextAction = 'Client Service should approve and publish the final link to the client portal.';
         $nextOwner = $clientService->pluck('name')->implode(', ') ?: ($job->responsibleUser?->name ?? 'Client Service');
         $statusTone = 'border-purple-200 bg-purple-50';
@@ -80,7 +80,7 @@
             'label' => 'Traffic Checked',
             'owner' => 'Traffic',
             'meaning' => 'Traffic has checked the output and it is ready for Client Service review.',
-            'action' => 'Send the checked delivery to Client Service for final approval.',
+            'action' => 'Completed by Traffic. The checked delivery is now waiting for Client Service.',
         ],
         [
             'label' => 'Client Service',
@@ -98,7 +98,7 @@
 
     $activeIndex = match (true) {
         $job->delivery_review_status === 'published' => 8,
-        $job->delivery_review_status === 'checked' => 6,
+        $job->delivery_review_status === 'checked' => 7,
         $job->employee_handover_status === 'submitted_to_traffic' => 5,
         (bool) $job->production_due_at => 4,
         $designers->isNotEmpty() || $leads->isNotEmpty() => 2,
