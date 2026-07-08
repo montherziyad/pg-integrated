@@ -22,6 +22,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 class JobController extends Controller
 {
@@ -203,12 +204,25 @@ class JobController extends Controller
         );
 
         $data = $request->validate([
-            'production_due_at' => ['required', 'date', 'after:now'],
+            'production_due_date' => ['required', 'date', 'after_or_equal:today'],
+            'production_due_time' => ['required', 'date_format:H:i'],
             'production_due_notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
+        $productionDueAt = Carbon::createFromFormat(
+            'Y-m-d H:i',
+            $data['production_due_date'].' '.$data['production_due_time'],
+            config('app.timezone')
+        );
+
+        if ($productionDueAt->isPast()) {
+            return back()
+                ->withInput()
+                ->withErrors(['production_due_time' => 'Please choose a future date and time.']);
+        }
+
         $job->update([
-            'production_due_at' => $data['production_due_at'],
+            'production_due_at' => $productionDueAt,
             'production_due_confirmed_by' => $request->user()->id,
             'production_due_confirmed_at' => now(),
             'production_due_notes' => $data['production_due_notes'] ?? null,
@@ -218,7 +232,7 @@ class JobController extends Controller
             'creative_job_id' => $job->id,
             'user_id' => $request->user()->id,
             'activity_type' => 'PRODUCTION_DUE_CONFIRMED',
-            'description' => 'Production team confirmed expected delivery date: '.$job->fresh()->production_due_at?->format('Y-m-d H:i'),
+            'description' => 'Production team confirmed expected delivery date: '.$productionDueAt->format('Y-m-d H:i'),
             'activity_at' => now(),
         ]);
 
@@ -235,7 +249,7 @@ class JobController extends Controller
                 'creative_job_id' => $job->id,
                 'type' => 'production_due_confirmed',
                 'title' => 'Production delivery date confirmed',
-                'body' => $job->job_number.' — '.$job->title.' will be ready on '.$job->production_due_at?->format('Y-m-d H:i').'.',
+                'body' => $job->job_number.' — '.$job->title.' will be ready on '.$productionDueAt->format('d M Y, h:i A').'.',
             ]);
         }
 

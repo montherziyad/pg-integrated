@@ -3,6 +3,7 @@
         || Auth::user()?->canAccessScreen('traffic_board')
         || Auth::user()?->canAccessScreen('team_workload');
 @endphp
+@php($currentProductionDue = $job->production_due_at)
 
 <div class="pg-card border-l-4 border-l-blue-500">
     <div class="pg-card-body space-y-5">
@@ -21,10 +22,10 @@
 
         @if($job->production_due_at)
             <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-950">
-                <div class="font-bold">Expected handover to Traffic: {{ $job->production_due_at?->format('Y-m-d H:i') }}</div>
+                <div class="font-bold">Expected handover to Traffic: {{ $job->production_due_at?->format('d M Y, h:i A') }}</div>
                 <div class="mt-1">
                     Confirmed by {{ $job->productionDueConfirmer?->name ?? 'PG employee' }}
-                    at {{ $job->production_due_confirmed_at?->format('Y-m-d H:i') ?? '-' }}.
+                    at {{ $job->production_due_confirmed_at?->format('d M Y, h:i A') ?? '-' }}.
                 </div>
                 @if($job->production_due_notes)
                     <div class="mt-3 text-blue-900">{{ $job->production_due_notes }}</div>
@@ -33,15 +34,26 @@
         @endif
 
         @if($canConfirmDue)
-            <form method="POST" action="{{ route('jobs.production-due', $job) }}" class="grid gap-4 md:grid-cols-[1fr_1.5fr_auto] md:items-end">
+            <form method="POST" action="{{ route('jobs.production-due', $job) }}" class="grid gap-4 md:grid-cols-[1fr_.8fr_1.5fr_auto] md:items-end">
                 @csrf
 
                 <div>
-                    <label class="block mb-2 font-semibold">Expected delivery to Traffic</label>
+                    <label class="block mb-2 font-semibold">Delivery date</label>
                     <input
-                        name="production_due_at"
-                        type="datetime-local"
-                        value="{{ old('production_due_at', $job->production_due_at?->format('Y-m-d\\TH:i')) }}"
+                        name="production_due_date"
+                        type="date"
+                        value="{{ old('production_due_date', $currentProductionDue?->format('Y-m-d')) }}"
+                        class="w-full rounded-xl border-slate-300"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">Time</label>
+                    <input
+                        name="production_due_time"
+                        type="time"
+                        value="{{ old('production_due_time', $currentProductionDue?->format('H:i') ?? '17:00') }}"
                         class="w-full rounded-xl border-slate-300"
                         required
                     >
