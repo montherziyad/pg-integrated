@@ -21,7 +21,12 @@ class JobRepository extends BaseRepository
         // If user is provided and does NOT have broad visibility permissions,
         // restrict to jobs where the user is assigned or responsible.
         if ($user) {
-            $canSeeAll = $user->canAccessScreen('traffic_board')
+            // Determine role-based visibility: allow full visibility only for manager/admin roles.
+            $roleCode = strtoupper($user->role?->code ?? '');
+            $managerRoles = ['SUPER_ADMIN', 'GENERAL_MANAGER', 'OPERATIONS_MANAGER', 'TRAFFIC_MANAGER', 'ACCOUNT_MANAGER', 'CLIENT_SERVICE_MANAGER', 'HR'];
+
+            $canSeeAll = in_array($roleCode, $managerRoles, true)
+                || $user->canAccessScreen('traffic_board')
                 || $user->canAccessScreen('email_intake')
                 || $user->canAccessScreen('deliveries')
                 || $user->canAccessScreen('clients')
