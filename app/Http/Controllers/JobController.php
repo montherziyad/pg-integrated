@@ -259,6 +259,125 @@ class JobController extends Controller
             ->with('success', 'Handover approved and sent to Client Service.');
     }
 
+    public function publishFromClientService(Request $request, CreativeJob $job): RedirectResponse
+    {
+        abort_unless($this->canClientServiceReview($request), 403);
+
+        if ($job->delivery_review_status !== 'checked') {
+            return back()->withErrors([
+                'delivery_review_status' => 'This job must be checked by Traffic before Client Service can publish it.',
+            ]);
+        }
+
+        $data = $request->validate([
+            'client_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $job->update([
+            'delivery_review_status' => 'published',
+            'final_delivery_path' => $job->final_delivery_path ?: $job->employee_handover_link,
+            'client_notes' => $data['client_notes'] ?? $job->client_notes,
+            'delivery_reviewed_by' => $request->user()->id,
+            'delivery_reviewed_at' => now(),
+            'delivery_published_at' => now(),
+            'final_delivered_at' => $job->final_delivered_at ?? now(),
+            'completion_percentage' => max((int) $job->completion_percentage, 100),
+        ]);
+
+        JobActivity::query()->create([
+            'creative_job_id' => $job->id,
+            'user_id' => $request->user()->id,
+            'activity' => 'CLIENT_SERVICE_PUBLISHED',
+            'activity_type' => 'CLIENT_SERVICE_PUBLISHED',
+            'description' => 'Client Service approved the final delivery and published it to the client portal.',
+            'activity_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('jobs.show', $job)
+            ->with('success', 'Delivery approved and published to the client portal.');
+    }
+
+    public function requestClientServiceRevision(Request $request, CreativeJob $job): RedirectResponse
+    {
+        abort_unless($this->canClientServiceReview($request), 403);
+
+        if ($job->delivery_review_status !== 'checked') {
+            return back()->withErrors([
+                'delivery_review_status' => 'Only checked deliveries can be sent back for revision.',
+            ]);
+        }
+
+        $data = $request->validate([
+            'revision_notes' => ['required', 'string', 'min:5', 'max:3000'],
+            'revision_files' => ['nullable', 'array'],
+            'revision_files.*' => ['file', 'max:51200', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,psd,ai,aep,png,jpg,jpeg,svg,mp4,mov'],
+        ]);
+
+        foreach ($request->file('revision_files', []) as $file) {
+            $path = $file->store('creative-jobs/'.$job->job_number.'/client-service-revisions', 'local');
+
+            Asset::query()->create([
+                'creative_job_id' => $job->id,
+                'uploaded_by' => Auth::id(),
+                'file_name' => basename($path),
+                'original_name' => $file->getClientOriginalName(),
+                'file_type' => $file->getClientOriginalExtension(),
+                'mime_type' => $file->getMimeType(),
+                'file_size' => $file->getSize(),
+                'storage_type' => 'local',
+                'storage_path' => $path,
+                'version' => ((int) $job->revision_count) + 1,
+                'asset_stage' => 'CLIENT_SERVICE_REVISION',
+                'is_final' => false,
+                'notes' => $data['revision_notes'],
+            ]);
+        }
+
+        $job->loadMissing('assignments.assignee');
+
+        $job->update([
+            'delivery_review_status' => 'draft',
+            'employee_handover_status' => 'not_submitted',
+            'employee_handover_notes' => $data['revision_notes'],
+            'delivery_published_at' => null,
+            'revision_count' => ((int) $job->revision_count) + 1,
+            'client_notes' => trim(($job->client_notes ? $job->client_notes."\n\n" : '').'Client Service revision request: '.$data['revision_notes']),
+        ]);
+
+        JobActivity::query()->create([
+            'creative_job_id' => $job->id,
+            'user_id' => $request->user()->id,
+            'activity' => 'CLIENT_SERVICE_REVISION_REQUESTED',
+            'activity_type' => 'CLIENT_SERVICE_REVISION_REQUESTED',
+            'description' => 'Client Service requested revisions: '.$data['revision_notes'],
+            'activity_at' => now(),
+        ]);
+
+        $notifyUserIds = $job->assignments
+            ->pluck('user_id')
+            ->merge($job->assignments->pluck('supervisor_id'))
+            ->merge([$job->traffic_manager_id, $job->project_manager_id])
+            ->filter()
+            ->unique()
+            ->reject(fn ($userId) => (int) $userId === (int) $request->user()->id)
+            ->values();
+
+        foreach ($notifyUserIds as $userId) {
+            EmployeeNotification::query()->create([
+                'user_id' => $userId,
+                'creative_job_id' => $job->id,
+                'type' => 'client_service_revision_requested',
+                'title' => 'Revision requested by Client Service',
+                'body' => $job->job_number.' — '.$job->title.' needs revision. Notes: '.$data['revision_notes'],
+            ]);
+        }
+
+        return redirect()
+            ->route('jobs.show', $job)
+            ->with('success', 'Revision request sent to Traffic and the assigned production team.');
+    }
+
     public function confirmProductionDue(Request $request, CreativeJob $job): RedirectResponse
     {
         $job->load(['assignments', 'client.clientServiceUsers']);
@@ -365,5 +484,20 @@ class JobController extends Controller
     public function destroy(int $id)
     {
         //
+    }
+
+    private function canClientServiceReview(Request $request): bool
+    {
+        $user = $request->user();
+        $roleCode = str($user?->role?->code ?? '')->lower()->replace(['-', ' '], '_')->toString();
+        $jobTitle = str($user?->job_title ?? '')->lower()->toString();
+
+        return $user?->canAccessScreen('deliveries')
+            || $user?->canAccessScreen('clients')
+            || str_contains($roleCode, 'admin')
+            || str_contains($roleCode, 'client_service')
+            || str_contains($roleCode, 'account')
+            || str_contains($jobTitle, 'client service')
+            || str_contains($jobTitle, 'account manager');
     }
 }

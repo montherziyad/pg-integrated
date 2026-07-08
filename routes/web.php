@@ -341,6 +341,12 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::post('/jobs/{job}/traffic-approve-handover', [JobController::class, 'approveTrafficHandover'])
         ->name('jobs.traffic-approve-handover');
 
+    Route::post('/jobs/{job}/client-service-publish', [JobController::class, 'publishFromClientService'])
+        ->name('jobs.client-service-publish');
+
+    Route::post('/jobs/{job}/client-service-revision', [JobController::class, 'requestClientServiceRevision'])
+        ->name('jobs.client-service-revision');
+
     Route::post('/jobs/{job}/production-due', [JobController::class, 'confirmProductionDue'])
         ->name('jobs.production-due');
 

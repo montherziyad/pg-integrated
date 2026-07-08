@@ -186,6 +186,39 @@
                                     @endif
                                 </div>
                             @endif
+
+                            @if($index === $activeIndex && $step['label'] === 'Client Service')
+                                <div class="mt-4 space-y-4">
+                                    @if($job->final_delivery_path || $job->employee_handover_link)
+                                        <a href="{{ $job->final_delivery_path ?: $job->employee_handover_link }}" target="_blank" rel="noopener" class="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-800 hover:border-slate-950">
+                                            View final link before approval
+                                        </a>
+                                    @endif
+
+                                    <form method="POST" action="{{ route('jobs.client-service-publish', $job) }}" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4" onsubmit="return confirm('Approve and publish this delivery to the client portal?');">
+                                        @csrf
+                                        <label class="block text-sm font-bold text-emerald-950">Client delivery note</label>
+                                        <textarea name="client_notes" rows="3" class="mt-2 w-full rounded-xl border-emerald-200 bg-white text-sm" placeholder="Optional note visible internally and useful for the client delivery record.">{{ old('client_notes', $job->client_notes) }}</textarea>
+                                        <button type="submit" class="mt-3 inline-flex rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700">
+                                            Approve & send to Client
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('jobs.client-service-revision', $job) }}" enctype="multipart/form-data" class="rounded-2xl border border-red-200 bg-red-50 p-4" onsubmit="return confirm('Send this job back for revision?');">
+                                        @csrf
+                                        <label class="block text-sm font-bold text-red-950">Revision notes</label>
+                                        <textarea name="revision_notes" rows="3" required minlength="5" class="mt-2 w-full rounded-xl border-red-200 bg-white text-sm" placeholder="Explain exactly what needs to be changed before publishing to the client.">{{ old('revision_notes') }}</textarea>
+
+                                        <label class="mt-3 block text-sm font-bold text-red-950">Revision attachments</label>
+                                        <input type="file" name="revision_files[]" multiple class="mt-2 block w-full rounded-xl border border-red-200 bg-white p-3 text-sm">
+                                        <p class="mt-1 text-xs text-red-700">Optional: upload screenshots, marked PDFs, or reference files for Traffic and the production team.</p>
+
+                                        <button type="submit" class="mt-3 inline-flex rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700">
+                                            Request revision
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
