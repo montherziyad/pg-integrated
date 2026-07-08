@@ -21,7 +21,7 @@
                 <div x-data='{
                     query: '',
                     results: [],
-                    selected: @json([]),
+                    selected: @json($assignedSupervisors ?? []),
                     name: 'supervisor_ids[]',
                     async search() {
                         if (this.query.length < 2) { this.results = []; return; }
@@ -70,7 +70,7 @@
                 <div x-data='{
                     query: '',
                     results: [],
-                    selected: @json($job->assignedDesigners()->map(fn($u)=>['id'=>$u->id,'name'=>$u->name])->values()),
+                    selected: @json($assignedDesigners ?? []),
                     name: 'user_ids[]',
                     async search() {
                         if (this.query.length < 2) { this.results = []; return; }

@@ -76,10 +76,16 @@ class JobController extends Controller
 
         abort_unless($job->fresh(['assignments'])->isAssignedTo(request()->user()) || request()->user()?->canAccessScreen('traffic_board') || request()->user()?->canAccessScreen('team_workload') || request()->user()?->canAccessScreen('deliveries') || request()->user()?->canAccessScreen('clients'), 403);
 
+        // Prepare selected users data for the assignment UI (id + name)
+        $assignedDesigners = $job->assignedDesigners()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values()->toArray();
+        $assignedSupervisors = $job->assignmentLeads()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values()->toArray();
+
         return view('jobs.show', compact(
             'job',
             'teams',
-            'users'
+            'users',
+            'assignedDesigners',
+            'assignedSupervisors'
         ));
     }
 
