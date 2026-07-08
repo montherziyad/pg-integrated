@@ -183,6 +183,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::post('/admin/settings/clear-cache', [SettingController::class, 'clearCache'])
         ->name('admin.settings.clear-cache');
 
+    Route::post('/admin/settings/reset-test-data', [SettingController::class, 'resetTestData'])
+        ->name('admin.settings.reset-test-data');
+
     Route::get('/admin/events', [AdminEventCalendarController::class, 'index'])
         ->name('admin.events.index');
     Route::post('/admin/events', [AdminEventCalendarController::class, 'store'])
