@@ -1,0 +1,178 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\WorkflowStage;
+use Illuminate\Database\Seeder;
+
+class WorkflowSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $stages = [
+            [
+                'name' => 'Email Received',
+                'code' => 'email_received',
+                'description' => 'Email received from client',
+                'sort_order' => 1,
+                'color' => '#3B82F6',
+                'icon' => 'mail',
+                'is_start' => true,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Meeting Scheduled',
+                'code' => 'meeting_scheduled',
+                'description' => 'Meeting scheduled for brief understanding',
+                'sort_order' => 2,
+                'color' => '#6366F1',
+                'icon' => 'calendar',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Brief Approved',
+                'code' => 'brief_approved',
+                'description' => 'Brief approved and team assigned',
+                'sort_order' => 3,
+                'color' => '#8B5CF6',
+                'icon' => 'check',
+                'is_start' => false,
+                'requires_approval' => true,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Awaiting Traffic Approval',
+                'code' => 'traffic_approval_pending',
+                'description' => 'Awaiting approval from Traffic Manager',
+                'sort_order' => 4,
+                'color' => '#EC4899',
+                'icon' => 'clock',
+                'is_start' => false,
+                'requires_approval' => true,
+                'allow_file_upload' => false,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Traffic Approved',
+                'code' => 'traffic_approved',
+                'description' => 'Brief approved by Traffic Manager',
+                'sort_order' => 5,
+                'color' => '#06B6D4',
+                'icon' => 'check-circle',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'In Execution',
+                'code' => 'in_execution',
+                'description' => 'Project execution started',
+                'sort_order' => 6,
+                'color' => '#14B8A6',
+                'icon' => 'play',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Awaiting Review',
+                'code' => 'review_pending',
+                'description' => 'Deliverables ready for review',
+                'sort_order' => 7,
+                'color' => '#F59E0B',
+                'icon' => 'search',
+                'is_start' => false,
+                'requires_approval' => true,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Leader Approval',
+                'code' => 'leader_approval',
+                'description' => 'Awaiting Team Leader approval',
+                'sort_order' => 8,
+                'color' => '#EF4444',
+                'icon' => 'star',
+                'is_start' => false,
+                'requires_approval' => true,
+                'allow_file_upload' => false,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Client Service Feedback',
+                'code' => 'cs_feedback',
+                'description' => 'Feedback received from Client Service',
+                'sort_order' => 9,
+                'color' => '#F97316',
+                'icon' => 'message-square',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => false,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Revisions Needed',
+                'code' => 'revisions_needed',
+                'description' => 'Apply feedback and revisions',
+                'sort_order' => 10,
+                'color' => '#FBBF24',
+                'icon' => 'edit',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Final Delivery',
+                'code' => 'final_delivery',
+                'description' => 'Final deliverables approved',
+                'sort_order' => 11,
+                'color' => '#10B981',
+                'icon' => 'send',
+                'is_start' => false,
+                'requires_approval' => false,
+                'allow_file_upload' => true,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Delivered to Client',
+                'code' => 'delivered_to_client',
+                'description' => 'Project delivered to client',
+                'sort_order' => 12,
+                'color' => '#059669',
+                'icon' => 'check-double',
+                'is_end' => true,
+                'requires_approval' => false,
+                'allow_file_upload' => false,
+                'allow_comments' => true,
+            ],
+            [
+                'name' => 'Cancelled',
+                'code' => 'cancelled',
+                'description' => 'Project cancelled',
+                'sort_order' => 13,
+                'color' => '#6B7280',
+                'icon' => 'x-circle',
+                'is_end' => true,
+                'requires_approval' => false,
+                'allow_file_upload' => false,
+                'allow_comments' => true,
+            ],
+        ];
+
+        foreach ($stages as $stage) {
+            WorkflowStage::updateOrCreate(
+                ['code' => $stage['code']],
+                $stage
+            );
+        }
+    }
+}

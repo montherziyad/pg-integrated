@@ -135,6 +135,21 @@ class CreativeJob extends Model
         return $this->hasMany(Asset::class, 'creative_job_id');
     }
 
+    public function approvals()
+    {
+        return $this->hasMany(JobApproval::class, 'creative_job_id');
+    }
+
+    public function pendingApprovals()
+    {
+        return $this->approvals()->where('status', 'pending');
+    }
+
+    public function revisions()
+    {
+        return $this->hasMany(Revision::class, 'creative_job_id');
+    }
+
     public function responsibleUser()
     {
         return $this->belongsTo(User::class, 'responsible_user_id');
@@ -186,5 +201,105 @@ class CreativeJob extends Model
 
         return (int) $this->responsible_user_id === (int) $user->id
             || $this->assignments->contains(fn ($assignment) => (int) $assignment->user_id === (int) $user->id || (int) $assignment->supervisor_id === (int) $user->id);
+    }
+
+    // Workflow Management Methods
+    public function canTransitionTo(WorkflowStage $stage, ?User $user = null): bool
+    {
+        // Check if current stage allows transition to this stage
+        $currentStage = $this->currentWorkflowStage;
+        if (!$currentStage) {
+            return $stage->is_start;
+        }
+
+        // Check if all required approvals for current stage are completed
+        if ($this->hasRequiredApprovalsForCurrentStage() === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function hasRequiredApprovalsForCurrentStage(): bool
+    {
+        $requiredApprovals = $this->approvals()
+            ->where('workflow_stage_id', $this->current_workflow_stage_id)
+            ->where('is_required', true)
+            ->count();
+
+        $approvedCount = $this->approvals()
+            ->where('workflow_stage_id', $this->current_workflow_stage_id)
+            ->where('status', 'approved')
+            ->count();
+
+        return $requiredApprovals === $approvedCount;
+    }
+
+    public function getPendingApprovalsForRole(string $role)
+    {
+        return $this->approvals()
+            ->where('workflow_stage_id', $this->current_workflow_stage_id)
+            ->where('role', $role)
+            ->where('status', 'pending')
+            ->get();
+    }
+
+    public function moveToStage(WorkflowStage $stage, ?string $notes = null): bool
+    {
+        if (!$this->canTransitionTo($stage)) {
+            return false;
+        }
+
+        $this->current_workflow_stage_id = $stage->id;
+        $this->save();
+
+        // Record stage history
+        JobStageHistory::create([
+            'creative_job_id' => $this->id,
+            'from_stage_id' => $this->currentWorkflowStage->id,
+            'to_stage_id' => $stage->id,
+            'notes' => $notes,
+            'moved_by' => auth()->id(),
+        ]);
+
+        return true;
+    }
+
+    public function getCompletionPercentage(): int
+    {
+        $totalStages = WorkflowStage::where('is_start', false)
+            ->where('is_end', false)
+            ->count();
+
+        $currentOrder = $this->currentWorkflowStage?->sort_order ?? 0;
+        $percentage = round(($currentOrder / $totalStages) * 100);
+
+        return min(100, max(0, $percentage));
+    }
+
+    public function getAllAssignedUsers()
+    {
+        return $this->assignments()
+            ->with('assignee')
+            ->get()
+            ->map(fn ($assignment) => $assignment->assignee)
+            ->unique('id');
+    }
+
+    public function hasApprovalFromRole(string $role, string $status = 'approved'): bool
+    {
+        return $this->approvals()
+            ->where('role', $role)
+            ->where('status', $status)
+            ->exists();
+    }
+
+    public function requiresApprovalFrom(string $role): bool
+    {
+        return $this->approvals()
+            ->where('role', $role)
+            ->where('is_required', true)
+            ->where('status', 'pending')
+            ->exists();
     }
 }

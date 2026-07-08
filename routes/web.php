@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\EmailIntakeController;
 use App\Http\Controllers\EmployeeLeaveController;
+use App\Http\Controllers\JobApprovalController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MarketingCampaignController;
 use App\Http\Controllers\OutlookConnectionController;
@@ -226,6 +227,13 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::get('/handovers', [JobController::class, 'index'])->name('handovers.index');
 
     Route::resource('jobs', JobController::class);
+
+    // Approval Routes
+    Route::resource('approvals', JobApprovalController::class)->only(['index', 'show']);
+    Route::post('/approvals/{approval}/approve', [JobApprovalController::class, 'approve'])->name('approvals.approve');
+    Route::post('/approvals/{approval}/reject', [JobApprovalController::class, 'reject'])->name('approvals.reject');
+    Route::post('/approvals/bulk-approve', [JobApprovalController::class, 'bulkApprove'])->name('approvals.bulk-approve');
+    Route::get('/jobs/{job}/approvals', [JobApprovalController::class, 'jobApprovals'])->name('jobs.approvals');
 
     Route::get('/deliveries', [DeliveryController::class, 'index'])
         ->name('deliveries.index');
