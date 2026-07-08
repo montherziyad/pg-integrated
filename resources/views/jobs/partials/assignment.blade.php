@@ -18,7 +18,7 @@
             <div>
                 <label class="block mb-2 font-semibold">Leads / Supervisors</label>
 
-                <div x-data="{
+                <div x-data='{
                     query: '',
                     results: [],
                     selected: @json([]),
@@ -67,7 +67,7 @@
             <div>
                 <label class="block mb-2 font-semibold">Designers / Team members</label>
 
-                <div x-data="{
+                <div x-data='{
                     query: '',
                     results: [],
                     selected: @json($job->assignedDesigners()->map(fn($u)=>['id'=>$u->id,'name'=>$u->name])->values()),
