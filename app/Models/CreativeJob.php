@@ -24,6 +24,10 @@ class CreativeJob extends Model
         'received_at',
         'first_draft_due_at',
         'final_due_at',
+        'production_due_at',
+        'production_due_confirmed_by',
+        'production_due_confirmed_at',
+        'production_due_notes',
         'first_draft_sent_at',
         'final_delivered_at',
         'estimated_hours',
@@ -56,6 +60,8 @@ class CreativeJob extends Model
             'received_at' => 'datetime',
             'first_draft_due_at' => 'datetime',
             'final_due_at' => 'datetime',
+            'production_due_at' => 'datetime',
+            'production_due_confirmed_at' => 'datetime',
             'first_draft_sent_at' => 'datetime',
             'final_delivered_at' => 'datetime',
             'delivery_reviewed_at' => 'datetime',
@@ -142,6 +148,11 @@ class CreativeJob extends Model
     public function employeeHandoverSubmitter()
     {
         return $this->belongsTo(User::class, 'employee_handover_submitted_by');
+    }
+
+    public function productionDueConfirmer()
+    {
+        return $this->belongsTo(User::class, 'production_due_confirmed_by');
     }
 
     public function scopeVisibleToUser($query, ?User $user)

@@ -33,7 +33,9 @@
                             <th>Client</th>
                             <th>Project</th>
                             <th>Stage</th>
+                            <th>Team Due</th>
                             <th>Progress</th>
+                            <th>Handover</th>
                             <th>Delivery</th>
                             <th></th>
                         </tr>
@@ -48,7 +50,15 @@
                             <td>{{ $job->client?->name ?? '-' }}</td>
                             <td>{{ $job->project?->name ?? '-' }}</td>
                             <td>{{ $job->currentWorkflowStage?->name ?? 'Preparing' }}</td>
+                            <td>{{ $job->production_due_at?->format('Y-m-d H:i') ?? 'Waiting' }}</td>
                             <td>{{ $job->completion_percentage }}%</td>
+                            <td>
+                                @if($job->employee_handover_status === 'submitted_to_traffic')
+                                    <span class="pg-badge pg-badge-review">Submitted</span>
+                                @else
+                                    <span class="pg-badge pg-badge-progress">Pending</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($job->final_delivery_path)
                                     <a href="{{ $job->final_delivery_path }}" target="_blank" class="font-bold text-blue-600">Delivery link</a>
@@ -61,7 +71,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-10 text-center text-slate-500">No active jobs found.</td></tr>
+                        <tr><td colspan="9" class="py-10 text-center text-slate-500">No active jobs found.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

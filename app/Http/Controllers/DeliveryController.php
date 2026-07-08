@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CreativeJob;
+use App\Models\EmployeeNotification;
 use App\Models\WorkflowStage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -95,7 +96,30 @@ class DeliveryController extends Controller
             }
         }
 
+        $previousStatus = $job->delivery_review_status;
+
         $job->update($data);
+
+        if ($previousStatus !== $job->delivery_review_status && $job->delivery_review_status === 'checked') {
+            $job->loadMissing(['client.clientServiceUsers']);
+
+            $notifyUserIds = collect([$job->responsible_user_id])
+                ->merge($job->client?->clientServiceUsers?->pluck('id') ?? [])
+                ->filter()
+                ->unique()
+                ->reject(fn ($userId) => (int) $userId === (int) $request->user()->id)
+                ->values();
+
+            foreach ($notifyUserIds as $userId) {
+                EmployeeNotification::query()->create([
+                    'user_id' => $userId,
+                    'creative_job_id' => $job->id,
+                    'type' => 'traffic_delivery_checked',
+                    'title' => 'Traffic checked final output',
+                    'body' => $job->job_number.' — '.$job->title.' is ready for Client Service approval and client portal publishing.',
+                ]);
+            }
+        }
 
         if ($archiveAfterDelivery) {
             return redirect()->route('archive.index')->with('success', 'Delivery saved and job moved to archive.');

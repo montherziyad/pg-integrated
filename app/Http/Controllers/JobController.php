@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asset;
 use App\Models\Client;
 use App\Models\CreativeJob;
+use App\Models\EmployeeNotification;
 use App\Models\JobCategory;
 use App\Models\JobActivity;
 use App\Models\JobStatus;
@@ -168,7 +169,77 @@ class JobController extends Controller
             'activity_at' => now(),
         ]);
 
+        $trafficUserIds = User::query()
+            ->whereHas('role', fn ($role) => $role->whereIn('code', ['TRAFFIC_MANAGER', 'OPERATIONS_MANAGER', 'SUPER_ADMIN']))
+            ->pluck('id')
+            ->merge([$job->traffic_manager_id, $job->project_manager_id])
+            ->filter()
+            ->unique()
+            ->reject(fn ($userId) => (int) $userId === (int) $request->user()->id)
+            ->values();
+
+        foreach ($trafficUserIds as $userId) {
+            EmployeeNotification::query()->create([
+                'user_id' => $userId,
+                'creative_job_id' => $job->id,
+                'type' => 'employee_handover_submitted',
+                'title' => 'Handover submitted to Traffic',
+                'body' => $job->job_number.' — '.$job->title.' was submitted by '.$request->user()->name.' for traffic review.',
+            ]);
+        }
+
         return redirect()->route('jobs.show', $job)->with('success', 'Handover sent to traffic successfully.');
+    }
+
+    public function confirmProductionDue(Request $request, CreativeJob $job): RedirectResponse
+    {
+        $job->load(['assignments', 'client.clientServiceUsers']);
+
+        abort_unless(
+            $job->isAssignedTo($request->user())
+                || $request->user()?->canAccessScreen('traffic_board')
+                || $request->user()?->canAccessScreen('team_workload'),
+            403
+        );
+
+        $data = $request->validate([
+            'production_due_at' => ['required', 'date', 'after:now'],
+            'production_due_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $job->update([
+            'production_due_at' => $data['production_due_at'],
+            'production_due_confirmed_by' => $request->user()->id,
+            'production_due_confirmed_at' => now(),
+            'production_due_notes' => $data['production_due_notes'] ?? null,
+        ]);
+
+        JobActivity::query()->create([
+            'creative_job_id' => $job->id,
+            'user_id' => $request->user()->id,
+            'activity_type' => 'PRODUCTION_DUE_CONFIRMED',
+            'description' => 'Production team confirmed expected delivery date: '.$job->fresh()->production_due_at?->format('Y-m-d H:i'),
+            'activity_at' => now(),
+        ]);
+
+        $notifyUserIds = collect([$job->responsible_user_id])
+            ->merge($job->client?->clientServiceUsers?->pluck('id') ?? [])
+            ->filter()
+            ->unique()
+            ->reject(fn ($userId) => (int) $userId === (int) $request->user()->id)
+            ->values();
+
+        foreach ($notifyUserIds as $userId) {
+            EmployeeNotification::query()->create([
+                'user_id' => $userId,
+                'creative_job_id' => $job->id,
+                'type' => 'production_due_confirmed',
+                'title' => 'Production delivery date confirmed',
+                'body' => $job->job_number.' — '.$job->title.' will be ready on '.$job->production_due_at?->format('Y-m-d H:i').'.',
+            ]);
+        }
+
+        return redirect()->route('jobs.show', $job)->with('success', 'Delivery date confirmed and Client Service notified.');
     }
 
     public function edit(int $id)

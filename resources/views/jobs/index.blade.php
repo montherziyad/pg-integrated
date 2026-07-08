@@ -50,6 +50,7 @@
                                 <th>Leads / Supervisors</th>
                                 <th>Final Owner</th>
                                 <th>Stage</th>
+                                <th>Team Due</th>
                                 <th>Handover</th>
                                 <th>Due</th>
                                 <th></th>
@@ -64,11 +65,23 @@
                                     <td>{{ $job->client?->name ?? '-' }}</td>
                                     <td>{{ $job->project?->name ?? '-' }}</td>
                                     <td>
-                                        <div class="font-semibold">{{ $job->assignedDesignerNames() ?: '-' }}</div>
+                                        <div class="font-semibold space-y-1">
+                                            @forelse($job->assignedDesigners() as $designer)
+                                                <div>{{ $designer->name }}</div>
+                                            @empty
+                                                <div>-</div>
+                                            @endforelse
+                                        </div>
                                         <div class="text-xs text-slate-500">Assigned creatives</div>
                                     </td>
                                     <td>
-                                        <div class="font-semibold">{{ $job->assignmentLeadNames() ?: '-' }}</div>
+                                        <div class="font-semibold space-y-1">
+                                            @forelse($job->assignmentLeads() as $lead)
+                                                <div>{{ $lead->name }}</div>
+                                            @empty
+                                                <div>-</div>
+                                            @endforelse
+                                        </div>
                                         <div class="text-xs text-slate-500">Project leads</div>
                                     </td>
                                     <td>
@@ -76,6 +89,12 @@
                                         <div class="text-xs text-slate-500">Delivery owner</div>
                                     </td>
                                     <td><span class="pg-badge pg-badge-new">{{ $job->currentWorkflowStage?->name ?? '-' }}</span></td>
+                                    <td>
+                                        <div class="font-semibold">{{ $job->production_due_at?->format('Y-m-d') ?? 'Waiting' }}</div>
+                                        @if($job->productionDueConfirmer)
+                                            <div class="text-xs text-slate-500">By {{ $job->productionDueConfirmer->name }}</div>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($job->employee_handover_status === 'submitted_to_traffic')
                                             <span class="pg-badge pg-badge-review">Submitted to Traffic</span>
@@ -88,7 +107,7 @@
                                     <td class="text-right"><a href="{{ route('jobs.show', $job->id) }}" class="pg-btn-secondary">Open</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="11" class="py-12 text-center text-slate-500">No jobs found for your role.</td></tr>
+                                <tr><td colspan="12" class="py-12 text-center text-slate-500">No jobs found for your role.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

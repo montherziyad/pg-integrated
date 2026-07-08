@@ -327,6 +327,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::post('/jobs/{job}/handover', [JobController::class, 'handover'])
         ->name('jobs.handover');
 
+    Route::post('/jobs/{job}/production-due', [JobController::class, 'confirmProductionDue'])
+        ->name('jobs.production-due');
+
     Route::get('/assets/{asset}/download', [JobController::class, 'downloadAttachment'])
         ->name('assets.download');
 

@@ -78,6 +78,7 @@ class DashboardController extends Controller
             'responsibleUser',
             'assignments.assignee',
             'assignments.supervisor',
+            'productionDueConfirmer',
         ])
             ->visibleToUser(auth()->user())
             ->latest()
@@ -85,7 +86,7 @@ class DashboardController extends Controller
             ->get();
 
         $myAssignedJobs = CreativeJob::query()
-            ->with(['client', 'project', 'currentWorkflowStage', 'responsibleUser', 'assignments.assignee', 'assignments.supervisor', 'employeeHandoverSubmitter'])
+            ->with(['client', 'project', 'currentWorkflowStage', 'responsibleUser', 'assignments.assignee', 'assignments.supervisor', 'employeeHandoverSubmitter', 'productionDueConfirmer'])
             ->where(function ($query): void {
                 $query->where('responsible_user_id', auth()->id())
                     ->orWhereHas('assignments', fn ($assignment) => $assignment

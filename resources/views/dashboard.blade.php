@@ -56,21 +56,34 @@
 
                 <div class="mt-6 overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead><tr class="border-b text-left text-slate-500"><th class="py-3">Job</th><th>Client</th><th>Designers</th><th>Leads</th><th>Stage</th><th>Due</th><th>Handover</th><th></th></tr></thead>
+                        <thead><tr class="border-b text-left text-slate-500"><th class="py-3">Job</th><th>Client</th><th>Designers</th><th>Leads</th><th>Stage</th><th>Team Due</th><th>Final Due</th><th>Handover</th><th></th></tr></thead>
                         <tbody>
                             @forelse($myAssignedJobs as $job)
                                 <tr class="border-b last:border-b-0">
                                     <td class="py-4"><div class="font-bold">{{ $job->title }}</div><div class="text-xs text-slate-500">{{ $job->job_number }}</div></td>
                                     <td>{{ $job->client?->name ?? '-' }}</td>
-                                    <td>{{ $job->assignedDesignerNames() ?: '-' }}</td>
-                                    <td>{{ $job->assignmentLeadNames() ?: '-' }}</td>
+                                    <td>
+                                        @forelse($job->assignedDesigners() as $designer)
+                                            <div>{{ $designer->name }}</div>
+                                        @empty
+                                            -
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        @forelse($job->assignmentLeads() as $lead)
+                                            <div>{{ $lead->name }}</div>
+                                        @empty
+                                            -
+                                        @endforelse
+                                    </td>
                                     <td>{{ $job->currentWorkflowStage?->name ?? '-' }}</td>
+                                    <td>{{ $job->production_due_at?->format('Y-m-d H:i') ?? 'Waiting' }}</td>
                                     <td>{{ $job->final_due_at?->format('Y-m-d') ?? '-' }}</td>
                                     <td>@if($job->employee_handover_status === 'submitted_to_traffic')<span class="pg-badge pg-badge-review">Submitted</span>@else<span class="pg-badge pg-badge-progress">Pending</span>@endif</td>
                                     <td class="text-right"><a href="{{ route('jobs.show', $job) }}" class="pg-btn-secondary">Open</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="8" class="py-8 text-center text-slate-500">No assigned jobs yet.</td></tr>
+                                <tr><td colspan="9" class="py-8 text-center text-slate-500">No assigned jobs yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

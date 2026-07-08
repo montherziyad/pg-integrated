@@ -37,6 +37,8 @@
                         'Category' => $job->category?->name ?? '-',
                         'Priority' => $job->priority,
                         'Workflow Stage' => $job->currentWorkflowStage?->name ?? '-',
+                        'Team Delivery Commitment' => $job->production_due_at?->format('Y-m-d H:i') ?? 'Waiting for team response',
+                        'Production Handover' => $job->employee_handover_status === 'submitted_to_traffic' ? 'Submitted to Traffic' : 'Pending',
                         'Estimated Hours' => number_format((float) $job->estimated_hours, 2),
                         'Delivery Status' => str($job->delivery_review_status ?? 'draft')->replace('_', ' ')->title(),
                     ] as $label => $value)

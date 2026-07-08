@@ -40,6 +40,7 @@ class JobRepository extends BaseRepository
                 'responsibleUser',
                 'assignments.assignee',
                 'assignments.supervisor',
+                'productionDueConfirmer',
                 'employeeHandoverSubmitter',
             ])
             ->latest()
@@ -60,6 +61,7 @@ class JobRepository extends BaseRepository
                 'assignments.team',
                 'assignments.supervisor',
                 'assignments.assignee',
+                'productionDueConfirmer',
                 'activities.user',
                 'assets.uploader',
                 'employeeHandoverSubmitter',

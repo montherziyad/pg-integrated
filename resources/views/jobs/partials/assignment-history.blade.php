@@ -18,8 +18,22 @@
                 @forelse($job->assignments as $assignment)
                     <tr class="border-b last:border-b-0">
                         <td class="py-3">{{ $assignment->team?->name ?? '-' }}</td>
-                        <td>{{ $assignment->supervisor?->name ?? '-' }}</td>
-                        <td>{{ $assignment->assignee?->name ?? '-' }}</td>
+                        <td>
+                            @if($assignment->supervisor)
+                                <div class="font-semibold">{{ $assignment->supervisor->name }}</div>
+                                <div class="text-xs text-slate-500">{{ $assignment->supervisor->email }}</div>
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
+                            @if($assignment->assignee)
+                                <div class="font-semibold">{{ $assignment->assignee->name }}</div>
+                                <div class="text-xs text-slate-500">{{ $assignment->assignee->email }}</div>
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>{{ $assignment->estimated_hours }}</td>
                         <td>{{ $assignment->status }}</td>
                         <td>
