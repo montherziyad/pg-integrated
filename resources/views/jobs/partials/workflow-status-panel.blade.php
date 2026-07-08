@@ -40,15 +40,60 @@
     }
 
     $steps = [
-        'Brief',
-        'Traffic Review',
-        'Assigned',
-        'Team Due',
-        'Production',
-        'Handover',
-        'Traffic Checked',
-        'Client Service',
-        'Published',
+        [
+            'label' => 'Brief',
+            'owner' => 'Traffic / Client Service',
+            'meaning' => 'The request, email, or brief has been received and needs to be understood before work starts.',
+            'action' => 'Check the brief, attachments, client, project, category, and due dates.',
+        ],
+        [
+            'label' => 'Traffic Review',
+            'owner' => 'Traffic',
+            'meaning' => 'Traffic verifies that the job is valid and ready to be assigned.',
+            'action' => 'Confirm priority, scope, required team, and missing information before assignment.',
+        ],
+        [
+            'label' => 'Assigned',
+            'owner' => 'Traffic',
+            'meaning' => 'The job has designers/team members and leads attached to it.',
+            'action' => 'Make sure the assigned team and lead are correct.',
+        ],
+        [
+            'label' => 'Team Due',
+            'owner' => 'Designer / Lead',
+            'meaning' => 'The assigned team must confirm when they can hand over files to Traffic.',
+            'action' => 'Designer or lead confirms the expected delivery date and time.',
+        ],
+        [
+            'label' => 'Production',
+            'owner' => 'Designer / Creative Team',
+            'meaning' => 'The team is working on the creative output.',
+            'action' => 'Prepare the requested files according to the brief and delivery date.',
+        ],
+        [
+            'label' => 'Handover',
+            'owner' => 'Traffic',
+            'meaning' => 'The designer has submitted files or a link to Traffic.',
+            'action' => 'Traffic reviews the files. If correct, open Delivery / Handover and mark it Checked. If not, request revision.',
+        ],
+        [
+            'label' => 'Traffic Checked',
+            'owner' => 'Traffic',
+            'meaning' => 'Traffic has checked the output and it is ready for Client Service review.',
+            'action' => 'Send the checked delivery to Client Service for final approval.',
+        ],
+        [
+            'label' => 'Client Service',
+            'owner' => 'Client Service',
+            'meaning' => 'Client Service reviews the final output before publishing it to the client portal.',
+            'action' => 'Approve, add delivery note/link, and publish to client portal when ready.',
+        ],
+        [
+            'label' => 'Published',
+            'owner' => 'Client / Archive',
+            'meaning' => 'The final delivery link is visible to the client.',
+            'action' => 'Confirm visibility and archive after completion.',
+        ],
     ];
 
     $activeIndex = match (true) {
@@ -61,7 +106,7 @@
     };
 @endphp
 
-<div class="pg-card {{ $statusTone }} border-l-4">
+<div class="pg-card {{ $statusTone }} border-l-4" x-data="{ selectedStep: {{ $activeIndex }} }">
     <div class="pg-card-body space-y-6">
         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div>
@@ -86,8 +131,40 @@
                     $done = $index < $activeIndex;
                     $current = $index === $activeIndex;
                 @endphp
-                <div class="rounded-2xl border p-3 text-center text-xs font-bold {{ $current ? 'border-slate-950 bg-slate-950 text-white' : ($done ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-400') }}">
-                    {{ $step }}
+                <button
+                    type="button"
+                    @click="selectedStep = {{ $index }}"
+                    class="rounded-2xl border p-3 text-center text-xs font-bold transition hover:border-slate-950 hover:text-slate-950 {{ $current ? 'border-slate-950 bg-slate-950 text-white' : ($done ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-400') }}"
+                >
+                    {{ $step['label'] }}
+                </button>
+            @endforeach
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-5">
+            @foreach($steps as $index => $step)
+                <div x-show="selectedStep === {{ $index }}" x-cloak>
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <div class="text-xs font-black uppercase tracking-wide text-slate-400">Step guide</div>
+                            <h4 class="mt-2 text-xl font-black">{{ $step['label'] }}</h4>
+                            <p class="mt-2 text-sm leading-6 text-slate-600">{{ $step['meaning'] }}</p>
+                        </div>
+
+                        <div class="rounded-2xl border {{ $index === $activeIndex ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50' }} p-4 lg:min-w-[360px]">
+                            <div class="text-xs font-black uppercase tracking-wide text-slate-400">
+                                {{ $index === $activeIndex ? 'Required now' : 'For reference only' }}
+                            </div>
+                            <div class="mt-2 font-bold text-slate-950">{{ $step['action'] }}</div>
+                            <div class="mt-2 text-sm text-slate-500">Owner: {{ $step['owner'] }}</div>
+
+                            @if($index === $activeIndex && $step['label'] === 'Handover' && Auth::user()?->canAccessScreen('deliveries'))
+                                <a href="{{ route('deliveries.edit', $job) }}" class="mt-4 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
+                                    Open Delivery / Handover
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
