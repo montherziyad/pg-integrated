@@ -17,6 +17,13 @@ class DeliveryController extends Controller
 
         $jobs = CreativeJob::query()
             ->with(['client', 'project', 'category', 'currentWorkflowStage'])
+            ->when($this->shouldRestrictToClientServiceJobs($request), function ($query) use ($request): void {
+                $query->where(function ($query) use ($request): void {
+                    $query
+                        ->where('responsible_user_id', $request->user()->id)
+                        ->orWhereHas('client.clientServiceUsers', fn ($clientService) => $clientService->where('users.id', $request->user()->id));
+                });
+            })
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($query) use ($search): void {
                     $query
@@ -149,5 +156,25 @@ class DeliveryController extends Controller
             || str_contains($jobTitle, 'client service')
             || str_contains($jobTitle, 'customer service')
             || str_contains($jobTitle, 'account manager');
+    }
+
+    private function shouldRestrictToClientServiceJobs(Request $request): bool
+    {
+        $user = $request->user();
+        $roleCode = str($user?->role?->code ?? '')->lower()->replace(['-', ' '], '_')->toString();
+        $jobTitle = str($user?->job_title ?? '')->lower()->toString();
+
+        $isBroadManager = str_contains($roleCode, 'super_admin')
+            || str_contains($roleCode, 'general_manager')
+            || str_contains($roleCode, 'operations_manager')
+            || str_contains($roleCode, 'traffic_manager')
+            || str_contains($roleCode, 'hr');
+
+        $isClientService = str_contains($roleCode, 'client_service')
+            || str_contains($roleCode, 'account')
+            || str_contains($jobTitle, 'client service')
+            || str_contains($jobTitle, 'account manager');
+
+        return $isClientService && ! $isBroadManager;
     }
 }

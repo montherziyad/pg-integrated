@@ -18,17 +18,23 @@ class JobRepository extends BaseRepository
             ->newQuery()
             ->visibleToUser($user);
 
-        // If user is provided and does NOT have broad visibility permissions,
-        // restrict to jobs where the user is assigned or responsible.
         if ($user) {
-            // Determine role-based visibility: allow full visibility only for manager/admin roles.
             $roleCode = strtoupper($user->role?->code ?? '');
-            $managerRoles = ['SUPER_ADMIN', 'GENERAL_MANAGER', 'OPERATIONS_MANAGER', 'TRAFFIC_MANAGER', 'ACCOUNT_MANAGER', 'CLIENT_SERVICE_MANAGER', 'HR'];
+            $jobTitle = strtolower((string) $user->job_title);
+            $managerRoles = ['SUPER_ADMIN', 'GENERAL_MANAGER', 'OPERATIONS_MANAGER', 'TRAFFIC_MANAGER', 'HR'];
 
-            // Only manager/admin roles get full visibility by default.
             $canSeeAll = in_array($roleCode, $managerRoles, true);
+            $isClientService = str_contains($roleCode, 'CLIENT_SERVICE')
+                || str_contains($roleCode, 'ACCOUNT')
+                || str_contains($jobTitle, 'client service')
+                || str_contains($jobTitle, 'account manager');
 
-            if (! $canSeeAll) {
+            if ($isClientService && ! $canSeeAll) {
+                $query->where(function ($q) use ($user) {
+                    $q->where('responsible_user_id', $user->id)
+                        ->orWhereHas('client.clientServiceUsers', fn ($clientService) => $clientService->where('users.id', $user->id));
+                });
+            } elseif (! $canSeeAll) {
                 $query->where(function ($q) use ($user) {
                     $q->where('responsible_user_id', $user->id)
                         ->orWhereHas('assignments', fn ($a) => $a->where('user_id', $user->id)->orWhere('supervisor_id', $user->id));
