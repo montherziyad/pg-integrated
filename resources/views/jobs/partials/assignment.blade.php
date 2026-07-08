@@ -18,25 +18,7 @@
             <div>
                 <label class="block mb-2 font-semibold">Leads / Supervisors</label>
 
-                <div x-data='{
-                    query: '',
-                    results: [],
-                    selected: @json($assignedSupervisors ?? []),
-                    name: 'supervisor_ids[]',
-                    async search() {
-                        if (this.query.length < 2) { this.results = []; return; }
-                        const res = await fetch(`{{ route('users.search') }}?q=` + encodeURIComponent(this.query));
-                        this.results = await res.json();
-                    },
-                    select(user) {
-                        if (!this.selected.find(u => u.id === user.id)) {
-                            this.selected.push(user);
-                        }
-                        this.query = '';
-                        this.results = [];
-                    },
-                    remove(user) { this.selected = this.selected.filter(u => u.id !== user.id); }
-                }" class="relative">
+                <div x-data="initSelect('supervisor_ids[]', @json($assignedSupervisors ?? []))" class="relative">
 
                     <input x-model="query" @input.debounce.300ms="search()" type="search" placeholder="Search name or email..." class="w-full rounded-xl border-slate-300 px-3 py-2" />
 
@@ -67,25 +49,7 @@
             <div>
                 <label class="block mb-2 font-semibold">Designers / Team members</label>
 
-                <div x-data='{
-                    query: '',
-                    results: [],
-                    selected: @json($assignedDesigners ?? []),
-                    name: 'user_ids[]',
-                    async search() {
-                        if (this.query.length < 2) { this.results = []; return; }
-                        const res = await fetch(`{{ route('users.search') }}?q=` + encodeURIComponent(this.query));
-                        this.results = await res.json();
-                    },
-                    select(user) {
-                        if (!this.selected.find(u => u.id === user.id)) {
-                            this.selected.push(user);
-                        }
-                        this.query = '';
-                        this.results = [];
-                    },
-                    remove(user) { this.selected = this.selected.filter(u => u.id !== user.id); }
-                }" class="relative">
+                <div x-data="initSelect('user_ids[]', @json($assignedDesigners ?? []))" class="relative">
 
                     <input x-model="query" @input.debounce.300ms="search()" type="search" placeholder="Search name or email..." class="w-full rounded-xl border-slate-300 px-3 py-2" />
 
@@ -112,6 +76,35 @@
 
                 <p class="mt-2 text-xs text-slate-500">Search and add team members quickly.</p>
             </div>
+
+            {{-- Alpine helper for initSelect used above --}}
+            <script>
+                function initSelect(inputName, initial) {
+                    return {
+                        query: '',
+                        results: [],
+                        selected: initial || [],
+                        name: inputName,
+                        searchDebounce: null,
+                        async search() {
+                            if (this.query.length < 2) { this.results = []; return; }
+                            try {
+                                const res = await fetch(`{{ route('users.search') }}?q=` + encodeURIComponent(this.query));
+                                this.results = await res.json();
+                            } catch (e) {
+                                console.error(e);
+                                this.results = [];
+                            }
+                        },
+                        select(user) {
+                            if (!this.selected.find(u => u.id === user.id)) this.selected.push(user);
+                            this.query = '';
+                            this.results = [];
+                        },
+                        remove(user) { this.selected = this.selected.filter(u => u.id !== user.id); }
+                    };
+                }
+            </script>
 
             <div>
                 <label class="block mb-2 font-semibold">Estimated Hours</label>
