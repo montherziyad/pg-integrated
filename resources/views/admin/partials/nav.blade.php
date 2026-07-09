@@ -38,6 +38,16 @@
                 Settings
             </a>
 
+            <a href="{{ route('admin.settings.outlook') }}" class="pg-btn-secondary justify-center">
+                Outlook Intake
+            </a>
+
+            @if(Auth::user()?->role?->code === 'SUPER_ADMIN')
+                <a href="{{ route('admin.settings.reset-test-data.index') }}" class="justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center font-semibold text-red-700 hover:bg-red-100">
+                    Test Data Reset
+                </a>
+            @endif
+
         </div>
     </div>
 </div>

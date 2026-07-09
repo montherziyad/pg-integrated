@@ -1,5 +1,12 @@
+@php
+    $platformSettings = app(\App\Modules\Settings\Services\SettingService::class)->all();
+    $platformLanguage = $platformSettings['default_language'] ?? str_replace('_', '-', app()->getLocale());
+    $platformDirection = $platformLanguage === 'ar' ? 'rtl' : 'ltr';
+    $appearanceMode = $platformSettings['appearance_mode'] ?? 'light';
+    $dashboardLogo = $platformSettings['dashboard_logo_path'] ?? null;
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ $platformLanguage }}" dir="{{ $platformDirection }}" class="h-full {{ $appearanceMode === 'dark' ? 'dark' : '' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,15 +20,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="h-full font-sans antialiased bg-slate-100 text-slate-900">
+<body class="h-full font-sans antialiased bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
     <div class="min-h-screen flex">
 
         <!-- Sidebar -->
         <aside class="w-72 bg-slate-950 text-white flex flex-col">
             <div class="h-20 flex items-center px-6 border-b border-slate-800">
-                <div>
+                <div class="flex items-center gap-3">
+                    @if($dashboardLogo)
+                        <img src="{{ str_starts_with($dashboardLogo, 'http') ? $dashboardLogo : asset(ltrim($dashboardLogo, '/')) }}" alt="PG Integrated" class="h-10 w-auto rounded object-contain">
+                    @endif
+                    <div>
                     <div class="text-xl font-bold">PG Integrated</div>
                     <div class="text-xs text-slate-400">CreativeOps Platform</div>
+                    </div>
                 </div>
             </div>
 
@@ -50,6 +62,7 @@
                             ['screen' => 'email_intake', 'route' => 'email-intakes.index', 'active' => 'email-intakes.*', 'label' => 'Email Intake'],
                             ['screen' => 'jobs', 'route' => 'jobs.index', 'active' => 'jobs.*', 'label' => 'Jobs'],
                             ['screen' => 'deliveries', 'route' => 'deliveries.index', 'active' => 'deliveries.*', 'label' => 'Delivery / Handover'],
+                            ['screen' => 'deliveries', 'route' => 'completed-jobs.index', 'active' => 'completed-jobs.*', 'label' => 'Completed Jobs'],
                             ['screen' => 'traffic_board', 'route' => 'traffic.index', 'active' => 'traffic.*', 'label' => 'Traffic Board'],
                             ['screen' => 'team_workload', 'route' => 'workload.index', 'active' => 'workload.*', 'label' => 'Team Workload'],
                             ['screen' => 'employee_leaves', 'route' => 'employee-leaves.index', 'active' => 'employee-leaves.*', 'label' => 'Employee Leaves'],
@@ -94,7 +107,7 @@
         <div class="flex-1 flex flex-col">
 
             <!-- Top Bar -->
-            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8">
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 dark:border-slate-800 dark:bg-slate-900">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">
                         {{ $header ?? 'Dashboard' }}
@@ -127,7 +140,7 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 p-8">
+            <main class="flex-1 p-8 dark:bg-slate-950">
                 {{ $slot }}
             </main>
         </div>

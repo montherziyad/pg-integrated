@@ -281,6 +281,7 @@ class JobController extends Controller
             'delivery_reviewed_at' => now(),
             'delivery_published_at' => now(),
             'final_delivered_at' => $job->final_delivered_at ?? now(),
+            'current_workflow_stage_id' => WorkflowStage::query()->where('code', 'COMPLETED')->value('id') ?? $job->current_workflow_stage_id,
             'completion_percentage' => max((int) $job->completion_percentage, 100),
         ]);
 
@@ -294,7 +295,7 @@ class JobController extends Controller
         ]);
 
         return redirect()
-            ->route('jobs.show', $job)
+            ->route('completed-jobs.index')
             ->with('success', 'Delivery approved and published to the client portal.');
     }
 
@@ -328,7 +329,7 @@ class JobController extends Controller
                 'storage_type' => 'local',
                 'storage_path' => $path,
                 'version' => ((int) $job->revision_count) + 1,
-                'asset_stage' => 'REVIEW',
+                'asset_stage' => 'CLIENT_SERVICE_REVISION',
                 'is_final' => false,
                 'notes' => $data['revision_notes'],
             ]);

@@ -13,6 +13,7 @@ use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\CmsPageController;
+use App\Http\Controllers\CompletedJobController;
 use App\Http\Controllers\CrmController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryController;
@@ -180,8 +181,17 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::put('/admin/settings', [SettingController::class, 'update'])
         ->name('admin.settings.update');
 
+    Route::get('/admin/settings/outlook', [SettingController::class, 'outlook'])
+        ->name('admin.settings.outlook');
+
+    Route::put('/admin/settings/outlook', [SettingController::class, 'updateOutlook'])
+        ->name('admin.settings.outlook.update');
+
     Route::post('/admin/settings/clear-cache', [SettingController::class, 'clearCache'])
         ->name('admin.settings.clear-cache');
+
+    Route::get('/admin/settings/reset-test-data', [SettingController::class, 'resetPage'])
+        ->name('admin.settings.reset-test-data.index');
 
     Route::post('/admin/settings/reset-test-data', [SettingController::class, 'resetTestData'])
         ->name('admin.settings.reset-test-data');
@@ -292,6 +302,12 @@ Route::middleware(['auth', 'screen'])->group(function () {
 
     Route::get('/archive', [ArchiveController::class, 'index'])
         ->name('archive.index');
+
+    Route::get('/completed-jobs', [CompletedJobController::class, 'index'])
+        ->name('completed-jobs.index');
+
+    Route::post('/completed-jobs/{job}/reopen', [CompletedJobController::class, 'reopen'])
+        ->name('completed-jobs.reopen');
 
     Route::get('/archive/assets', [ArchiveController::class, 'assets'])
         ->name('archive.assets');

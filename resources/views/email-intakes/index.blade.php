@@ -8,7 +8,7 @@
                     @csrf
                     <button type="submit" class="pg-btn-primary">Sync Outlook</button>
                 </form>
-                <a href="{{ route('admin.settings.index') }}" class="pg-btn-secondary">Outlook Settings</a>
+                <a href="{{ route('admin.settings.outlook') }}" class="pg-btn-secondary">Outlook Settings</a>
             </div>
         </div>
 

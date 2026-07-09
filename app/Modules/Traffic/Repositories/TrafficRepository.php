@@ -3,7 +3,6 @@
 namespace App\Modules\Traffic\Repositories;
 
 use App\Models\CreativeJob;
-use App\Models\WorkflowStage;
 use Illuminate\Support\Collection;
 
 class TrafficRepository
@@ -26,98 +25,99 @@ class TrafficRepository
             }
         };
 
-        $submittedToTrafficJobs = CreativeJob::query()
+        $baseQuery = fn () => CreativeJob::query()
             ->where('is_archived', false)
-            ->where('employee_handover_status', 'submitted_to_traffic')
-            ->whereNotIn('delivery_review_status', ['checked', 'published'])
-            ->with(['client', 'project', 'assignments.assignee', 'assignments.supervisor', 'productionDueConfirmer'])
-            ->tap($visibleToUser)
-            ->orderByRaw('final_due_at IS NULL')
-            ->orderBy('final_due_at')
-            ->get();
-
-        $waitingTeamDateJobs = CreativeJob::query()
-            ->where('is_archived', false)
-            ->whereNull('production_due_at')
             ->where(function ($query): void {
-                $query->whereHas('assignments')
-                    ->orWhereNotNull('responsible_user_id');
-            })
-            ->where(function ($query): void {
-                $query->whereNull('employee_handover_status')
-                    ->orWhere('employee_handover_status', 'not_submitted');
+                $query->whereNull('delivery_review_status')
+                    ->orWhere('delivery_review_status', '!=', 'published');
             })
             ->with(['client', 'project', 'assignments.assignee', 'assignments.supervisor', 'productionDueConfirmer'])
             ->tap($visibleToUser)
             ->orderByRaw('final_due_at IS NULL')
             ->orderBy('final_due_at')
-            ->get();
+            ->latest();
 
-        $virtualStages = new Collection();
-
-        if ($submittedToTrafficJobs->isNotEmpty()) {
-            $virtualStages->push((object) [
-                'id' => -2,
-                'code' => 'submitted_to_traffic',
-                'name' => 'Submitted to Traffic',
-                'description' => 'Traffic must review handover files and send checked output to Client Service.',
-                'jobs' => $submittedToTrafficJobs,
-            ]);
-        }
-
-        if ($waitingTeamDateJobs->isNotEmpty()) {
-            $virtualStages->push((object) [
-                'id' => -1,
-                'code' => 'waiting_team_date',
-                'name' => 'Waiting Team Date',
-                'description' => 'Assigned team or lead must confirm expected delivery time.',
-                'jobs' => $waitingTeamDateJobs,
-            ]);
-        }
-
-        // Fetch regular stages with their jobs
-        $stages = WorkflowStage::query()
-            ->where('is_active', true)
-            ->with(['jobs' => function ($query) use ($visibleToUser) {
-                $query->where('is_archived', false)
+        $columns = [
+            [
+                'id' => 1,
+                'code' => 'traffic_review',
+                'name' => '1. Traffic Review',
+                'description' => 'New jobs and briefs that Traffic must review, validate, and assign.',
+                'action' => 'Review brief, client, project, priority, due date, then assign team.',
+                'jobs' => $baseQuery()
                     ->where(function ($query): void {
-                        $query->where('employee_handover_status', '!=', 'submitted_to_traffic')
-                            ->orWhereNull('employee_handover_status')
-                            ->orWhereIn('delivery_review_status', ['checked', 'published']);
+                        $query->whereDoesntHave('assignments')
+                            ->orWhereNull('current_workflow_stage_id');
                     })
-                    ->with(['client', 'project', 'assignments.assignee', 'assignments.supervisor', 'productionDueConfirmer'])
-                    ->tap($visibleToUser)
-                    ->orderByRaw('final_due_at IS NULL')
-                    ->orderBy('final_due_at');
-            }])
-            ->orderBy('sort_order')
-            ->get();
+                    ->where(function ($query): void {
+                        $query->whereNull('employee_handover_status')
+                            ->orWhere('employee_handover_status', 'not_submitted');
+                    })
+                    ->whereNull('production_due_at')
+                    ->get(),
+            ],
+            [
+                'id' => 2,
+                'code' => 'waiting_team_date',
+                'name' => '2. Waiting Team Date',
+                'description' => 'Assigned jobs waiting for the designer or lead to confirm delivery date.',
+                'action' => 'Follow up with assigned team to confirm expected delivery to Traffic.',
+                'jobs' => $baseQuery()
+                    ->whereNull('production_due_at')
+                    ->where(function ($query): void {
+                        $query->whereHas('assignments')
+                            ->orWhereNotNull('responsible_user_id');
+                    })
+                    ->where(function ($query): void {
+                        $query->whereNull('employee_handover_status')
+                            ->orWhere('employee_handover_status', 'not_submitted');
+                    })
+                    ->get(),
+            ],
+            [
+                'id' => 3,
+                'code' => 'production',
+                'name' => '3. In Production',
+                'description' => 'Team confirmed a date and is working before handover.',
+                'action' => 'Monitor delivery date. Team must upload handover link/files when ready.',
+                'jobs' => $baseQuery()
+                    ->whereNotNull('production_due_at')
+                    ->where(function ($query): void {
+                        $query->whereNull('employee_handover_status')
+                            ->orWhere('employee_handover_status', 'not_submitted');
+                    })
+                    ->where(function ($query): void {
+                        $query->whereNull('delivery_review_status')
+                            ->orWhere('delivery_review_status', 'draft');
+                    })
+                    ->get(),
+            ],
+            [
+                'id' => 4,
+                'code' => 'handover_review',
+                'name' => '4. Handover Review',
+                'description' => 'Designer submitted files/link. Traffic must review and send to Client Service.',
+                'action' => 'Open handover, view the link/files, then approve or request revision.',
+                'jobs' => $baseQuery()
+                    ->where('employee_handover_status', 'submitted_to_traffic')
+                    ->where(function ($query): void {
+                        $query->whereNull('delivery_review_status')
+                            ->orWhere('delivery_review_status', 'draft');
+                    })
+                    ->get(),
+            ],
+            [
+                'id' => 5,
+                'code' => 'client_service_review',
+                'name' => '5. Client Service Review',
+                'description' => 'Traffic checked the output. Client Service must approve or request revision.',
+                'action' => 'Client Service approves and publishes to client portal, or sends revision notes back.',
+                'jobs' => $baseQuery()
+                    ->where('delivery_review_status', 'checked')
+                    ->get(),
+            ],
+        ];
 
-        // Also include any jobs that currently have no stage (unstaged)
-        $unstagedJobsQuery = CreativeJob::query()
-            ->whereNull('current_workflow_stage_id')
-            ->where('is_archived', false)
-            ->where(function ($query): void {
-                $query->where('employee_handover_status', '!=', 'submitted_to_traffic')
-                    ->orWhereNull('employee_handover_status');
-            })
-            ->with(['client', 'project', 'assignments.assignee', 'assignments.supervisor', 'productionDueConfirmer'])
-            ->tap($visibleToUser)
-            ->orderByRaw('final_due_at IS NULL')
-            ->orderBy('final_due_at');
-
-        $unstagedJobs = $unstagedJobsQuery->get();
-
-        if ($unstagedJobs->isNotEmpty()) {
-            $virtualStages->push((object) [
-                'id' => 0,
-                'code' => 'unstaged',
-                'name' => 'Unstaged / No Stage',
-                'description' => 'These jobs need a workflow stage.',
-                'jobs' => $unstagedJobs,
-            ]);
-        }
-
-        return $virtualStages->merge($stages);
+        return collect($columns)->map(fn (array $column) => (object) $column);
     }
 }

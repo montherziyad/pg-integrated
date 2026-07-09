@@ -21,10 +21,22 @@ class SettingController extends Controller
     {
         return view('admin.settings.index', [
             'settings' => $this->settingService->all(),
+        ]);
+    }
+
+    public function outlook()
+    {
+        return view('admin.settings.outlook', [
+            'settings' => $this->settingService->all(),
             'users' => User::where('is_active', true)->orderBy('name')->get(),
             'trafficMemberIds' => EmailIntakeTrafficMember::where('is_active', true)->pluck('user_id')->all(),
             'outlookSecretConfigured' => filled(config('services.outlook.client_secret')),
         ]);
+    }
+
+    public function resetPage()
+    {
+        return view('admin.settings.reset-data');
     }
 
     public function clearCache()
@@ -115,6 +127,15 @@ class SettingController extends Controller
 
     public function update(UpdateSettingsRequest $request)
     {
+        $this->settingService->update($request->validated());
+
+        return redirect()
+            ->route('admin.settings.index')
+            ->with('success', 'Settings updated successfully.');
+    }
+
+    public function updateOutlook(UpdateSettingsRequest $request)
+    {
         $data = $request->validated();
         $trafficMemberIds = $data['traffic_member_ids'] ?? [];
         unset($data['traffic_member_ids']);
@@ -135,8 +156,8 @@ class SettingController extends Controller
         });
 
         return redirect()
-            ->route('admin.settings.index')
-            ->with('success', 'Settings updated successfully.');
+            ->route('admin.settings.outlook')
+            ->with('success', 'Outlook intake settings updated successfully.');
     }
 
     private function deleteTables(array $tables): int

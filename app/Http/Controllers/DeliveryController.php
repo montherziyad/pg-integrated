@@ -34,6 +34,10 @@ class DeliveryController extends Controller
                 });
             })
             ->where('is_archived', false)
+            ->where(function ($query): void {
+                $query->whereNull('delivery_review_status')
+                    ->orWhere('delivery_review_status', '!=', 'published');
+            })
             ->latest()
             ->paginate(12)
             ->withQueryString();
@@ -60,23 +64,19 @@ class DeliveryController extends Controller
             'current_workflow_stage_id' => ['nullable', 'exists:workflow_stages,id'],
             'completion_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'dropbox_folder_path' => ['nullable', 'string', 'max:1000'],
-            'final_delivery_path' => ['nullable', 'required_if:archive_after_delivery,1', 'string', 'max:1000'],
+            'final_delivery_path' => ['nullable', 'required_if:delivery_review_status,published', 'string', 'max:1000'],
             'client_notes' => ['nullable', 'string', 'max:2000'],
             'final_delivered_at' => ['nullable', 'date'],
             'delivery_review_status' => ['required', 'in:draft,checked,published'],
-            'archive_after_delivery' => ['nullable', 'boolean'],
         ]);
 
-        $archiveAfterDelivery = $request->boolean('archive_after_delivery');
-        unset($data['archive_after_delivery']);
-
         if (
-            ($archiveAfterDelivery || $data['delivery_review_status'] === 'published')
+            $data['delivery_review_status'] === 'published'
             && ! $this->canPublishDelivery($request)
         ) {
             return back()
                 ->withInput()
-                ->withErrors(['delivery_review_status' => 'Only Admin, Account, or Client Service employees can publish deliveries to the client portal or move jobs to archive.']);
+                ->withErrors(['delivery_review_status' => 'Only Admin, Account, or Client Service employees can publish deliveries to the client portal.']);
         }
 
         if (in_array($data['delivery_review_status'], ['checked', 'published'], true)) {
@@ -86,6 +86,14 @@ class DeliveryController extends Controller
 
         if ($data['delivery_review_status'] === 'published') {
             $data['delivery_published_at'] = $job->delivery_published_at ?? now();
+            $data['final_delivered_at'] = $data['final_delivered_at'] ?? now();
+            $data['completion_percentage'] = 100;
+
+            $completedStage = WorkflowStage::query()->where('code', 'COMPLETED')->first();
+
+            if ($completedStage) {
+                $data['current_workflow_stage_id'] = $completedStage->id;
+            }
         } else {
             $data['delivery_published_at'] = null;
         }
@@ -96,19 +104,6 @@ class DeliveryController extends Controller
             && in_array($data['delivery_review_status'], ['checked', 'published'], true)
         ) {
             $data['final_delivery_path'] = $job->employee_handover_link;
-        }
-
-        if ($archiveAfterDelivery) {
-            $archiveStage = WorkflowStage::query()->where('code', 'ARCHIVE')->first();
-            $data['is_archived'] = true;
-            $data['archived_at'] = now();
-            $data['final_delivered_at'] = $data['final_delivered_at'] ?? now();
-            $data['delivery_review_status'] = 'published';
-            $data['delivery_published_at'] = $data['delivery_published_at'] ?? now();
-
-            if ($archiveStage) {
-                $data['current_workflow_stage_id'] = $archiveStage->id;
-            }
         }
 
         $previousStatus = $job->delivery_review_status;
@@ -136,8 +131,10 @@ class DeliveryController extends Controller
             }
         }
 
-        if ($archiveAfterDelivery) {
-            return redirect()->route('archive.index')->with('success', 'Delivery saved and job moved to archive.');
+        if ($job->delivery_review_status === 'published') {
+            return redirect()
+                ->route('completed-jobs.index')
+                ->with('success', 'Delivery published to the client portal and moved to Completed Jobs.');
         }
 
         return redirect()->route('deliveries.edit', $job)->with('success', 'Delivery details saved.');

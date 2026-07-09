@@ -5,7 +5,7 @@
         <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
                 <h2 class="pg-title">{{ $job->job_number }} — {{ $job->title }}</h2>
-                <p class="pg-subtitle mt-1">This page is only for delivery links, production handover, and archive. Brief requirements stay protected in the Job page.</p>
+                <p class="pg-subtitle mt-1">This page is only for delivery links, production handover, and client publishing. Brief requirements stay protected in the Job page.</p>
             </div>
             <div class="flex gap-3">
                 <a href="{{ route('jobs.show', $job) }}" class="pg-btn-secondary">View Job Brief</a>
@@ -153,17 +153,14 @@
                         <textarea name="client_notes" rows="5" class="w-full rounded-xl border-slate-300" placeholder="Example: Final campaign strategy deck, approved key visual, and editable production files delivered.">{{ old('client_notes', $job->client_notes) }}</textarea>
                     </div>
 
-                    <label class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                        <input type="checkbox" name="archive_after_delivery" value="1" class="mt-1 rounded border-slate-300">
-                        <span>
-                            <span class="block font-bold text-amber-950">Move to Archive after saving</span>
-                            <span class="mt-1 block text-sm text-amber-900">Use this only after Client Service approves the output. This publishes the delivery to the client and moves the job into Archive.</span>
-                        </span>
-                    </label>
+                    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                        <span class="block font-bold text-emerald-950">Publishing rule</span>
+                        <span class="mt-1 block">When Client Service changes the status to Published, the delivery becomes visible to the client portal and this job moves automatically to Completed Jobs.</span>
+                    </div>
 
                     <div class="flex justify-end gap-3 border-t border-slate-200 pt-5">
                         <a href="{{ route('deliveries.index') }}" class="pg-btn-secondary">Cancel</a>
-                        <button class="pg-btn-primary">Save Delivery / Handover</button>
+                        <button class="pg-btn-primary">Save Delivery / Approval</button>
                     </div>
                 </div>
             </form>

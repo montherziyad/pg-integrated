@@ -5,9 +5,9 @@
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
                 <h2 class="pg-title">Delivery / Handover</h2>
-                <p class="pg-subtitle mt-1">Search for a job, add delivery links, document what was delivered, then move it to archive when ready.</p>
+                <p class="pg-subtitle mt-1">Search for a job, review delivery links, document what was delivered, then publish approved work to Completed Jobs.</p>
             </div>
-            <a href="{{ route('archive.index') }}" class="pg-btn-secondary">Open Archive</a>
+            <a href="{{ route('completed-jobs.index') }}" class="pg-btn-secondary">Open Completed Jobs</a>
         </div>
 
         @if(session('success'))
