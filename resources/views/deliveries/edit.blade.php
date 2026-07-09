@@ -60,6 +60,39 @@
                         <p class="mt-1 text-sm text-slate-500">هذه الصفحة منفصلة عن البريف. استخدمها فقط للروابط النهائية، ملفات الإنتاج، وما تم تسليمه للعميل.</p>
                     </div>
 
+                    @if($job->employee_handover_link || $job->employee_handover_notes || $job->employee_handover_submitted_at)
+                        <div class="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                            <div class="text-xs font-black uppercase tracking-wide text-blue-500">Production handover from designer</div>
+                            <div class="mt-2 text-sm text-blue-950">
+                                This is the original handover sent to Traffic. Use the same link for review, then approve it for Client Service.
+                            </div>
+                            <div class="mt-3 space-y-2 text-sm">
+                                @if($job->employee_handover_link)
+                                    <div>
+                                        <span class="font-bold text-slate-700">Submitted link:</span>
+                                        <a href="{{ $job->employee_handover_link }}" target="_blank" rel="noopener" class="font-bold text-blue-700 underline">
+                                            {{ $job->employee_handover_link }}
+                                        </a>
+                                    </div>
+                                @endif
+
+                                @if($job->employee_handover_submitted_at)
+                                    <div>
+                                        <span class="font-bold text-slate-700">Submitted at:</span>
+                                        {{ $job->employee_handover_submitted_at?->format('Y-m-d H:i') }}
+                                    </div>
+                                @endif
+
+                                @if($job->employee_handover_notes)
+                                    <div>
+                                        <span class="font-bold text-slate-700">Notes:</span>
+                                        {{ $job->employee_handover_notes }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <label class="block mb-2 font-semibold">Client Service review status</label>
                         <select name="delivery_review_status" class="w-full rounded-xl border-slate-300">
@@ -105,7 +138,8 @@
 
                         <div>
                             <label class="block mb-2 font-semibold">Final / WeTransfer link</label>
-                            <input name="final_delivery_path" value="{{ old('final_delivery_path', $job->final_delivery_path) }}" placeholder="https://wetransfer.com/..." class="w-full rounded-xl border-slate-300">
+                            <input name="final_delivery_path" value="{{ old('final_delivery_path', $job->final_delivery_path ?: $job->employee_handover_link) }}" placeholder="https://wetransfer.com/..." class="w-full rounded-xl border-slate-300">
+                            <p class="mt-1 text-xs text-slate-500">Auto-filled from the designer handover link when no final link has been saved yet.</p>
                         </div>
 
                         <div>

@@ -183,6 +183,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
     Route::post('/admin/settings/clear-cache', [SettingController::class, 'clearCache'])
         ->name('admin.settings.clear-cache');
 
+    Route::post('/admin/settings/reset-test-data', [SettingController::class, 'resetTestData'])
+        ->name('admin.settings.reset-test-data');
+
     Route::get('/admin/events', [AdminEventCalendarController::class, 'index'])
         ->name('admin.events.index');
     Route::post('/admin/events', [AdminEventCalendarController::class, 'store'])
@@ -199,6 +202,9 @@ Route::middleware(['auth', 'screen'])->group(function () {
 
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
+
+    // AJAX user search for assignment autocomplete
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 
     Route::get('/admin/users/create', [UserController::class, 'create'])
         ->name('admin.users.create');
@@ -334,6 +340,15 @@ Route::middleware(['auth', 'screen'])->group(function () {
 
     Route::post('/jobs/{job}/handover', [JobController::class, 'handover'])
         ->name('jobs.handover');
+
+    Route::post('/jobs/{job}/traffic-approve-handover', [JobController::class, 'approveTrafficHandover'])
+        ->name('jobs.traffic-approve-handover');
+
+    Route::post('/jobs/{job}/client-service-publish', [JobController::class, 'publishFromClientService'])
+        ->name('jobs.client-service-publish');
+
+    Route::post('/jobs/{job}/client-service-revision', [JobController::class, 'requestClientServiceRevision'])
+        ->name('jobs.client-service-revision');
 
     Route::post('/jobs/{job}/production-due', [JobController::class, 'confirmProductionDue'])
         ->name('jobs.production-due');

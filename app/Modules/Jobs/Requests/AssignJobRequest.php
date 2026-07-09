@@ -37,6 +37,7 @@ class AssignJobRequest extends FormRequest
                 ->unique()
                 ->values();
 
+            // Validate leaves
             foreach ($userIds as $index => $userId) {
                 $leave = EmployeeLeave::query()
                     ->where('user_id', $userId)
@@ -51,6 +52,16 @@ class AssignJobRequest extends FormRequest
                         'This employee is on approved leave until '.$leave->ends_at->format('Y-m-d').' and returns on '.$leave->returns_at->format('Y-m-d').'.'
                     );
                 }
+            }
+
+            // Ensure at least one supervisor and one designer selected
+            $supervisorIds = collect($this->input('supervisor_ids', []))->push($this->input('supervisor_id'))->filter()->values();
+            if ($supervisorIds->isEmpty()) {
+                $validator->errors()->add('supervisor_ids', 'Please assign at least one lead / supervisor.');
+            }
+
+            if ($userIds->isEmpty()) {
+                $validator->errors()->add('user_ids', 'Please assign at least one designer or team member.');
             }
         });
     }

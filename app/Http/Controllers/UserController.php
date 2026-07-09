@@ -39,6 +39,23 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    // AJAX search endpoint used by assignment UI (returns JSON)
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        $users = User::query()
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('name', 'ilike', "%{$q}%")
+                    ->orWhere('email', 'ilike', "%{$q}%");
+            })
+            ->orderBy('name')
+            ->limit(25)
+            ->get(['id', 'name', 'email']);
+
+        return response()->json($users);
+    }
+
     public function create()
     {
         return view('admin.users.create', [

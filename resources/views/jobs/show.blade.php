@@ -27,6 +27,8 @@
             </div>
         @endif
 
+        @include('jobs.partials.workflow-status-panel')
+
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2 space-y-6">
                 @include('jobs.partials.brief')
